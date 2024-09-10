@@ -1,10 +1,8 @@
 # content-monkey
----
 node version: 22.8
 
 Java 21
 
----
 # Frontend
 
 Install dependencies <br>
@@ -17,8 +15,6 @@ To create a build
 `npm run build` <br>
 Ensure this runs with no errors before making a pull request
 
----
 # Backend
 
----
 # Database
