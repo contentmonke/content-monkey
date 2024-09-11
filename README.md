@@ -35,6 +35,6 @@ Run `mvn spring-boot:start` to start the backend development server <br>
 Download <a href="https://www.postgresql.org/download/">PostgreSQL<a />. <br>
 Open pgAdmin <br><br>
 Right click Servers > Register > Server...<br>
-Name it then go to the Connection tab, past the Host, Username, and Password from <a href="https://data.heroku.com/">Heroku<a/>. <br>
+Name it then go to the Connection tab, paste the Host, Username, and Password from <a href="https://data.heroku.com/">Heroku<a/>. <br>
 Parameters tab - sslmode = require <br>
 Advanced tab - Set DB restriction to the "Database" value from <a href="https://data.heroku.com/">Heroku<a/>. This filters database results because our database is one of many hosted on the AWS instance provided by Heroku.<br>
