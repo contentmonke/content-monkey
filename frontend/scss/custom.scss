@@ -1,0 +1,18 @@
+// Required
+@import "../node_modules/bootstrap/scss/functions";
+
+$primary: #E5F3FF;
+$secondary: #31628F;
+$background: #F2F2F2;
+
+// Required
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/root";
+
+// Optional Bootstrap components here
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+

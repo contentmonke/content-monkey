@@ -1,5 +1,4 @@
 import 'bootstrap/';
-import './custom.scss';
 import './index.css';
 
 import { StrictMode } from 'react'

@@ -1,5 +1,4 @@
 import './App.css';
-import './custom.scss';
 
 import { useState } from 'react'
 import cmLogo from '/monkey.svg'
