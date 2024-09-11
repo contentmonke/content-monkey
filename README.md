@@ -23,7 +23,7 @@ Go to <a href="https://data.heroku.com/">Heroku<a/> and click on content-monkey.
 Go to the Settings tab, View Credentials. <br><br>
 
 Set environment variables in your Shell profile where <br>
-`CM_DB_URL=jdbc:postgresql://[host]`<br>
+`CM_DB_URL=jdbc:postgresql://[host]/[database]`<br>
 `CM_DB_USERNAME=[user]`<br>
 `CM_DB_PASSWORD=[password]`<br><br>
 
