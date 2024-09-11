@@ -13,7 +13,11 @@ Start development server <br>
 
 To create a build <br>
 `npm run build` <br>
-Ensure this runs with no errors before making a pull request
+Ensure this runs with no errors before making a pull request <br><br>
+
+## Sass
+`npm i -g sass@1.77.6` <br>
+`sass --watch ./scss/custom.scss ./css/custom.css` <br>
 
 # Backend
 
