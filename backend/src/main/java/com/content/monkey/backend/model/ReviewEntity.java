@@ -1,9 +1,13 @@
 package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,21 +20,28 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "id")
+    @NotNull
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<CommentEntity> comments;
 
+    @NotNull
+    @NotEmpty
     @Column(name = "date_created")
-    private String dateCreated;
+    private LocalDateTime dateCreated;
 
+    @NotNull
+    @NotEmpty
     private String body;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "subject_id")
-    private MediaEntity subject;
+    @JoinColumn(name = "media_id")
+    private MediaEntity media;
 
     private double rating;
 
@@ -40,11 +51,13 @@ public class ReviewEntity {
     @Column(name = "down_votes")
     private int downVotes;
 
+    @NotNull
     @Column(name = "start_date")
-    private String startDate;
+    private LocalDateTime startDate;
 
+    @NotNull
     @Column(name = "end_date")
-    private String endDate;
+    private LocalDateTime endDate;
 
     @Override
     public String toString() {
@@ -54,7 +67,7 @@ public class ReviewEntity {
 //                ", comments=" + comments +
                 ", dateCreated='" + dateCreated + '\'' +
                 ", reviewBody='" + body + '\'' +
-                ", reviewSubject=" + subject +
+                ", reviewSubject=" + media +
                 ", rating=" + rating +
                 ", upvotes=" + upVotes +
                 ", downvotes=" + downVotes +

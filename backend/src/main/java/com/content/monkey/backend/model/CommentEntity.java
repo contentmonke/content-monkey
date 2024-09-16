@@ -13,6 +13,12 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String body;
+
+    @ManyToOne
+    @JoinColumn(name = "author", referencedColumnName = "id")
+    private UserEntity user;
+
     @Override
     public String toString() {
         return "CommentEntity{" + "id=" + id +'}';
