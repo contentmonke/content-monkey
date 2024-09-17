@@ -1,13 +1,13 @@
 package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.model.ReviewEntity;
-import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.service.ReviewService;
 import com.content.monkey.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,35 +20,48 @@ public class ReviewController {
     private UserService userService;
 
     @GetMapping()
-    public List<ReviewEntity> getAllReviews() {
+    public ResponseEntity<List<ReviewEntity>> getAllReviews() {
         List<ReviewEntity> reviews = reviewService.getAllReviews();
-        return reviews;
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewEntity> getReviewsById(@PathVariable("reviewId") Long reviewId) {
-        ResponseEntity<ReviewEntity> response = reviewService.getReviewById(reviewId);
-        return response;
+        ReviewEntity review = reviewService.getReviewById(reviewId);
+        return ResponseEntity.ok().body(review);
     }
 
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<ReviewEntity>> getReviewsByUserId(@PathVariable Long userId) {
-        ResponseEntity<UserEntity> response = userService.getUser(userId);
+        List<Long> reviewIds = userService.getUser(userId).getReviewIds();
 
-        List<Long> reviewIds = response.getBody().getReviewIds();
-
-        ResponseEntity<List<ReviewEntity>> reviewsResponse = reviewService.getListOfReviews(reviewIds);
-        return reviewsResponse;
+        List<ReviewEntity> userReviews = reviewService.getListOfReviews(reviewIds);
+        return ResponseEntity.ok().body(userReviews);
     }
 
     @PostMapping()
-    public ResponseEntity<ReviewEntity> createReview(@RequestBody ReviewEntity reviewEntityDTO) {
-        return reviewService.createReview(reviewEntityDTO);
+    public ResponseEntity<ReviewEntity> createReview(@RequestBody ReviewEntity reviewEntity) {
+        ReviewEntity newEntity = reviewService.createReview(reviewEntity);
+        URI uri = URI.create("/api/reviews/" + newEntity.getId());
+        return ResponseEntity.created(uri).body(newEntity);
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewEntity> editReview(@PathVariable Long reviewId, @RequestBody ReviewEntity newReviewEntity) {
-        return reviewService.editReview(reviewId, newReviewEntity);
+        ReviewEntity reviewEntity = reviewService.editReview(reviewId, newReviewEntity);
+        // Successfully updated
+        if (reviewEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
+        // Created new object
+        URI uri = URI.create("/api/reviews/" + reviewEntity.getId());
+        return ResponseEntity.created(uri).body(reviewEntity);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
     }
 
 

@@ -1,15 +1,15 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
+import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewService {
@@ -22,41 +22,44 @@ public class ReviewService {
         return reviews;
     }
 
-    public ResponseEntity<ReviewEntity> getReviewById(Long reviewId) {
+    public ReviewEntity getReviewById(Long reviewId) {
         ReviewEntity review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException());
-        return new ResponseEntity<>(review, HttpStatus.FOUND);
+        return review;
     }
 
-    public ResponseEntity<List<ReviewEntity>> getListOfReviews(List<Long> reviewIds) {
-        List<ReviewEntity> reviews = reviewRepository.findAllById(reviewIds);
-        return new ResponseEntity<List<ReviewEntity>>(reviews, HttpStatus.FOUND);
+    public List<ReviewEntity> getListOfReviews(List<Long> reviewIds) {
+        return reviewRepository.findAllById(reviewIds);
     }
 
-    public ResponseEntity<ReviewEntity> createReview(ReviewEntity review) {
-        ReviewEntity savedReview = reviewRepository.save(review);
-        return new ResponseEntity<>(savedReview, HttpStatus.CREATED);
+    public ReviewEntity createReview(ReviewEntity review) {
+        return reviewRepository.save(review);
     }
 
-    public ResponseEntity<ReviewEntity> editReview(Long reviewId, ReviewEntity newReviewEntity) {
-        return reviewRepository.findById(reviewId)
-                .map(reviewEntity -> {
-                    reviewEntity.setUserId(newReviewEntity.getUserId());
-                    reviewEntity.setCommentIds(new ArrayList<>(newReviewEntity.getCommentIds()));
-                    reviewEntity.setDateCreated(newReviewEntity.getDateCreated());
-                    reviewEntity.setBody(newReviewEntity.getBody());
-                    reviewEntity.setMediaId(newReviewEntity.getMediaId());
-                    reviewEntity.setRating(newReviewEntity.getRating());
-                    reviewEntity.setUpVotes(newReviewEntity.getUpVotes());
-                    reviewEntity.setDownVotes(newReviewEntity.getDownVotes());
-                    reviewEntity = reviewRepository.save(reviewEntity);
-                    return new ResponseEntity<ReviewEntity>(reviewEntity, HttpStatus.OK);
-                })
-                .orElseGet(() -> {
-                    ReviewEntity reviewEntity = reviewRepository.save(newReviewEntity);
-                    return new ResponseEntity<ReviewEntity>(reviewEntity, HttpStatus.OK);
-                });
+    public ReviewEntity editReview(Long reviewId, ReviewEntity newReviewEntity) {
+        Optional<ReviewEntity> optionalReviewEntity = reviewRepository.findById(reviewId);
+        if (optionalReviewEntity.isPresent()) {
+            ReviewEntity reviewEntity = optionalReviewEntity.get();
+            reviewEntity.setUserId(newReviewEntity.getUserId());
+            reviewEntity.setCommentIds(new ArrayList<>(newReviewEntity.getCommentIds()));
+            reviewEntity.setDateCreated(newReviewEntity.getDateCreated());
+            reviewEntity.setBody(newReviewEntity.getBody());
+            reviewEntity.setMediaId(newReviewEntity.getMediaId());
+            reviewEntity.setRating(newReviewEntity.getRating());
+            reviewEntity.setUpVotes(newReviewEntity.getUpVotes());
+            reviewEntity.setDownVotes(newReviewEntity.getDownVotes());
+            reviewRepository.save(reviewEntity);
+            return null;
+        }
+        return reviewRepository.save(newReviewEntity);
+    }
 
+    public void deleteReview(Long reviewId) throws UserNotFoundException{
+        try {
+            reviewRepository.deleteById(reviewId);
+        } catch (Exception e) {
+            throw new UserNotFoundException();
+        }
     }
 
 }
