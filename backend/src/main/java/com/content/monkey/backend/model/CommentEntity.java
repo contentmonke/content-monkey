@@ -1,6 +1,8 @@
 package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,11 +15,14 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @NotEmpty
     private String body;
 
-    @ManyToOne
-    @JoinColumn(name = "author", referencedColumnName = "id")
-    private UserEntity user;
+    private Long userId;
+
+    //TODO - Add fields
+
 
     @Override
     public String toString() {

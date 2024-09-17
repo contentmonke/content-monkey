@@ -1,14 +1,12 @@
 package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -21,16 +19,14 @@ public class ReviewEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @NotNull
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    private List<CommentEntity> comments;
+    @Column(name = "comments")
+    private List<Long> commentIds;
 
     @NotNull
-    @NotEmpty
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
@@ -39,23 +35,22 @@ public class ReviewEntity {
     private String body;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "media_id")
-    private MediaEntity media;
+    @Column(name = "media_id")
+    private Long mediaId;
 
     private double rating;
 
+    @Min(0)
     @Column(name = "up_votes")
     private int upVotes;
 
+    @Min(0)
     @Column(name = "down_votes")
     private int downVotes;
 
-    @NotNull
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @NotNull
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
@@ -63,11 +58,11 @@ public class ReviewEntity {
     public String toString() {
         return "ReviewEntity{" +
                 "id=" + id +
-//                ", user=" + user.getName() +
-//                ", comments=" + comments +
+                ", user=" + userId +
+                ", comments=" + commentIds +
                 ", dateCreated='" + dateCreated + '\'' +
                 ", reviewBody='" + body + '\'' +
-                ", reviewSubject=" + media +
+                ", reviewSubject=" + mediaId +
                 ", rating=" + rating +
                 ", upvotes=" + upVotes +
                 ", downvotes=" + downVotes +

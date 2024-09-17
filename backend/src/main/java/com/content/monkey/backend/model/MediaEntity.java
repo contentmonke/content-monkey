@@ -13,6 +13,8 @@ public class MediaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //TODO - Add fields
+
     @Override
     public String toString() {
         return "MediaEntity{" + "id=" + id + '}';

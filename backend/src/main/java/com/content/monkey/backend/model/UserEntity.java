@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -14,8 +16,17 @@ public class UserEntity {
     private Long id;
     private String name;
 
+    @Column(name = "review_ids")
+    private List<Long> reviewIds;
+
+    //TODO - Add fields
+
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + '}';
+        return "UserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", reviewIds=" + reviewIds +
+                '}';
     }
 }
