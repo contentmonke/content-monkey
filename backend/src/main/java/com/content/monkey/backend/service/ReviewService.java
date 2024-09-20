@@ -3,6 +3,7 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.repository.CommentRepository;
 import com.content.monkey.backend.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,10 @@ public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private UserService userService;
 
     public List<ReviewEntity> getAllReviews() {
         List<ReviewEntity> reviews = reviewRepository.findAll();
@@ -29,6 +34,11 @@ public class ReviewService {
     }
 
     public List<ReviewEntity> getListOfReviews(List<Long> reviewIds) {
+        return reviewRepository.findAllById(reviewIds);
+    }
+
+    public List<ReviewEntity>getReviewsByUserId(Long userId) {
+        List<Long> reviewIds = userService.getUser(userId).getReviewIds();
         return reviewRepository.findAllById(reviewIds);
     }
 
@@ -54,11 +64,14 @@ public class ReviewService {
         return reviewRepository.save(newReviewEntity);
     }
 
-    public void deleteReview(Long reviewId) throws UserNotFoundException{
+    public void deleteReview(Long reviewId) throws ReviewNotFoundException {
+        ReviewEntity reviewEntity = getReviewById(reviewId);
         try {
+            commentService.deleteListOfComments(reviewEntity.getCommentIds());
+//            commentRepository.deleteAllByIdInBatch(reviewEntity.getCommentIds());
             reviewRepository.deleteById(reviewId);
         } catch (Exception e) {
-            throw new UserNotFoundException();
+            throw new ReviewNotFoundException();
         }
     }
 
