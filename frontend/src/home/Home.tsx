@@ -1,13 +1,11 @@
-import './App.css';
+import '../App.css';
 
 import { useState } from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import cmLogo from '/monkey.svg'
-import ExampleList from './example/ExampleList'
-import LoginButton from './LoginButton/LoginButton';
-import LogoutButton from './LogoutButton/LogoutButton';
-import Profile from './Profile/Profile';
-import AccountPage from './AccountPage/AccountPage';
+import cmLogo from '../assets/monkey.svg'
+import ExampleList from '../example/ExampleList'
+import LoginButton from '../pages/home/LoginButton/LoginButton';
+import LogoutButton from '../pages/home/LogoutButton/LogoutButton';
+import Profile from '../pages/profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
 
 function Home() {
