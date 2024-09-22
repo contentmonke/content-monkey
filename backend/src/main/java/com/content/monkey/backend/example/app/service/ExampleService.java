@@ -15,4 +15,8 @@ public class ExampleService {
     public List<ExampleEntity> getAllExamples() {
         return exampleRepository.findAll();
     }
+
+    public ExampleEntity createExampleEntity (ExampleEntity example) {
+        return exampleRepository.save(example);
+    }
 }

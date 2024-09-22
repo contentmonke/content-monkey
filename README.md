@@ -8,6 +8,9 @@ Java 21
 Install dependencies <br>
 `npm install` <br>
 
+ENV Variables: <br>
+Create a .env file in the frontend directory (same level as package.json). Paste the values from the Google Doc from the shared folder. <br>
+
 Start development server <br>
 `npm run dev` <br>
 
