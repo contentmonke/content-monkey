@@ -1,5 +1,7 @@
 import React from 'react';
 import CreateReviewButton from '../reviews/CreateReviewButton';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
+import { Loading } from '../../components/Loading';
 
 const AccountPage = () => {
   const userData = {
@@ -76,4 +78,7 @@ const AccountPage = () => {
   );
 }
 
-export default AccountPage;
+// export default AccountPage;
+export default withAuthenticationRequired(AccountPage, {
+  onRedirecting: () => <Loading />,
+});
