@@ -7,6 +7,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/home/Home';
 import ExampleList from './example/ExampleList';
 import CreateReviewPage from './pages/reviews/CreateReviewPage';
+import SearchPage from './pages/search/SearchPage'
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -18,6 +19,7 @@ function App() {
         <Route path="/account" element={<AccountPage />} />
         <Route path="/createReview" element={<CreateReviewPage />} />
         <Route path="/examples" element={<ExampleList />} />
+        <Route path="/search" element={<SearchPage/>} />
       </Routes>
     </Router>
   )
