@@ -1,7 +1,7 @@
 
 export type Review = {
   userId: number,
-  comments: number[],
+  commentIds: number[],
   dateCreated: Date,
   body: String,
   mediaId: number,
