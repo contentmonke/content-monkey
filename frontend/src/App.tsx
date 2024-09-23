@@ -3,6 +3,7 @@ import './App.css';
 import { useState } from 'react'
 import cmLogo from '/monkey.svg'
 import ExampleList from './example/ExampleList'
+import SearchPage from './searchPage/searchPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +30,9 @@ function App() {
 
       <div className="card">
         <ExampleList />
+      </div>
+      <div>
+        <SearchPage/>
       </div>
     </>
   )
