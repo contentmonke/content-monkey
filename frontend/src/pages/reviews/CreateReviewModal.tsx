@@ -1,4 +1,4 @@
-import { Dialog, Rating, DialogTitle, styled, Card, Stack, Select, MenuItem, InputLabel, FormControl, TextField, Typography, IconButton, Checkbox, FormControlLabel, Button, ListItemButton, List, ListItem } from "@mui/material";
+import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List } from "@mui/material";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import Grid from '@mui/material/Grid2';
 import { Dayjs } from 'dayjs';
@@ -10,8 +10,9 @@ import ConfirmButton from "../../components/ConfirmButton";
 import DatePickerField from "../../components/DatePickerField";
 import { handleMediaFields, loadMedia } from "./review-utils";
 import RatingStars from "../../components/RatingStars";
-import { api } from "../../api/requests";
 import { createReview } from "../../api/objects";
+import MediaDropdown from "../../components/MediaDropdown";
+import { useNavigate } from "react-router-dom";
 
 const dialogSx = {
   py: 5,
@@ -33,6 +34,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   // TODO - pull from API
   const [results, setResults] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setModalOpen(false);
@@ -51,18 +53,26 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleResults = () => {
-    console.log("handleResults")
     setResults(loadMedia())
-    console.log(results)
   }
 
   const handleRatingChange = (value: any) => {
     setRating(parseFloat(value));
   }
 
-
   const handleCreateReviewClick = async () => {
-    createReview({ body, mediaType, rating, startDate, endDate });
+    createReview({ body, mediaType, rating, startDate, endDate })
+      .then((response) => {
+        console.log("Successfully stored your new review!");
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  const handleExpandScreenClick = () => {
+    navigate("/createReview");
   }
 
 
@@ -73,31 +83,16 @@ function CreateReviewModal({ open, setModalOpen }: any) {
           ...dialogSx
         }} scroll="paper" fullScreen>
           <Grid sx={{ textAlign: 'right', mx: 1, mt: 1 }}>
-            <IconButton>
+            <IconButton onClick={handleExpandScreenClick}>
               <OpenInFullIcon />
             </IconButton>
           </Grid>
           <DialogTitle mb={2}>Create A New Review</DialogTitle>
           <Stack spacing={2} px={10} pb={3}>
-            {/* {(mediaType === MediaType.UNSELECTED) ? */}
             {(mediaType === MediaType.UNSELECTED || media === null) ?
               <>
                 <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }}>
-                  <FormControl sx={{ m: 1, minWidth: 95 }}>
-                    <InputLabel id="media-field-id">Media Type</InputLabel>
-                    <Select
-                      value={mediaType}
-                      label={"Media Type"}
-                      labelId="media-field-id"
-                      onChange={(event) => handleMediaChange(event.target.value)}
-                    >
-                      <MenuItem value={MediaType.UNSELECTED}>-----</MenuItem>
-                      <MenuItem value={MediaType.BOOK}>Book</MenuItem>
-                      <MenuItem value={MediaType.MOVIE}>Movie</MenuItem>
-                      <MenuItem value={MediaType.TV_SHOW}>TV Show</MenuItem>
-                      <MenuItem value={MediaType.VIDEO_GAME}>Video Game</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <MediaDropdown mediaType={mediaType} onChange={handleMediaChange} />
                   <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }} justifyContent={'space-between'}>
                     <TextField id="outlined-search" label="Search field" type="search" />
                     <ConfirmButton title={"Search"} onClick={handleResults} />
@@ -117,7 +112,6 @@ function CreateReviewModal({ open, setModalOpen }: any) {
               <>
                 {handleMediaFields(mediaType)}
                 < Stack direction={'row'} justifyContent={'end'} spacing={2}>
-                  {/* <TextField label={"Review Title"} sx={{ width: '50%' }} /> */}
                   <Typography sx={{ pt: 0.5 }}>Rating: </Typography>
                   <RatingStars value={rating} setValue={(event: any) => handleRatingChange(event.target.value)} />
                 </Stack>
@@ -128,7 +122,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   value={body}
                   onChange={(event) => setBody(event.target.value)} />
                 <FormControlLabel
-                  label="I have started this {media}"
+                  label={`I have started this ${mediaType.toLowerCase()}`}
                   control={
                     <Checkbox
                       checked={startedMedia}
@@ -141,7 +135,9 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                     <DatePickerField label={"Start Date"} value={startDate} setValue={setStartDate} />
                     <DatePickerField label={"End Date"} value={endDate} setValue={setEndDate} />
                   </Stack>
-                  : <></>}
+                  :
+                  <></>
+                }
                 <Stack direction={'row'} justifyContent={'flex-end'} py={5} >
                   <CancelButton onClick={handleCancelClick} />
                   <ConfirmButton title={'Create Review'} onClick={handleCreateReviewClick} />
