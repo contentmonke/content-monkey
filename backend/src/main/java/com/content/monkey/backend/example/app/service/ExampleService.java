@@ -16,4 +16,7 @@ public class ExampleService {
         return exampleRepository.findAll();
     }
 
+    public ExampleEntity createExampleEntity (ExampleEntity example) {
+        return exampleRepository.save(example);
+    }
 }

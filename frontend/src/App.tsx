@@ -1,40 +1,27 @@
 import './App.css';
 
 import { useState } from 'react'
-import cmLogo from '/monkey.svg'
-import ExampleList from './example/ExampleList'
-import SearchPage from './searchPage/searchPage'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import AccountPage from './pages/accounts/AccountPage';
+import { useAuth0 } from '@auth0/auth0-react';
+import Home from './pages/home/Home';
+import ExampleList from './example/ExampleList';
+import CreateReviewPage from './pages/reviews/CreateReviewPage';
+import SearchPage from './pages/search/SearchPage'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  // const { isLoading, error } = useAuth0();
   return (
-    <>
-      <div>
-        <a href="https://purdue.edu" target="_blank">
-          <img src={cmLogo} className="logo" alt="CM logo" />
-        </a>
-      </div>
-      <h1>Content Monkey</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-
-      <div className="card">
-        <ExampleList />
-      </div>
-      <div>
-        <SearchPage/>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        {/* Define the route for /account */}
+        <Route path="/" element={<Home />} />
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/createReview" element={<CreateReviewPage />} />
+        <Route path="/examples" element={<ExampleList />} />
+        <Route path="/search" element={<SearchPage/>} />
+      </Routes>
+    </Router>
   )
 }
 
