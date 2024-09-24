@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 
 
-function ConfirmButton({ title, onClick }: any) {
+function ConfirmButton({ title, disabled, onClick }: any) {
   return (
     <Button variant="contained"
       size='large'
@@ -11,7 +11,8 @@ function ConfirmButton({ title, onClick }: any) {
         borderRadius: 0,
         ml: 2
       }}
-      onClick={onClick}>
+      onClick={onClick}
+      disabled={disabled}>
       {title}
     </Button>
   );

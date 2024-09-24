@@ -6,15 +6,25 @@ const URL = 'http://localhost:8080/api';
 export const api = {
   reviews: {
 
-    getReview() {
+    fetchReview() {
       console.log("api.reviews.get()")
     },
 
     async createReview(review: Review) {
       return (
-        axios.post(URL + "/reviews", review)
+        await axios.post(`${URL}/reviews`, review)
       );
 
     },
   },
+  search: {
+    async fetchSearch({ title }: any) {
+      return (
+        await axios.get(`${URL}/search`, {
+          params: { bookTitle: title }
+        })
+      );
+    }
+  },
+
 }

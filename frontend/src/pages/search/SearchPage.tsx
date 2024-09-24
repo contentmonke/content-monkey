@@ -1,34 +1,19 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { Loading } from "../../components/Loading";
+import { Loading, SmallLoading } from "../../components/Loading";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-
-interface VolumeInfo {
-  title: string;
-  authors: string[];
-  publisher: string;
-  publishedDate: string;
-  thumbnail: string;
-  pageCount: string;
-}
+import { MediaType, VolumeInfo } from "../../models/Models";
+import { loadSearchResults } from "./search-utils";
 
 
 function SearchPage() {
   const [title, setTitle] = useState("");
   const [results, setResults] = useState<VolumeInfo[]>([]);
+  const [isLoading, setIsLoading] = useState("");
 
 
   async function fetchData(e: React.FormEvent<HTMLFormElement>) {
-    try {
-      e.preventDefault();
-      console.log( title );
-      const response = await axios.get(`http://localhost:8080/api/search`, {
-        params: { bookTitle: title }
-      });
-      setResults(response.data);
-    } catch (error) {
-      console.error('Error fetching data', error);
-    }
+    e.preventDefault();
+    loadSearchResults(MediaType.BOOK, title, setResults, setIsLoading)
   }
 
 
@@ -44,6 +29,7 @@ function SearchPage() {
         />
         <button type="submit">Search</button>
       </form>
+      {isLoading && <SmallLoading />}
 
       <ul>
         {results.map((book, index) => (

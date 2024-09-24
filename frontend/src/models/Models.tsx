@@ -12,6 +12,15 @@ export type Review = {
   endDate: Date | null,
 }
 
+export type VolumeInfo = {
+  title: string;
+  authors: string[];
+  publisher: string;
+  publishedDate: string;
+  thumbnail: string;
+  pageCount: string;
+}
+
 export enum MediaType {
   BOOK = "Book",
   MOVIE = "Movie",

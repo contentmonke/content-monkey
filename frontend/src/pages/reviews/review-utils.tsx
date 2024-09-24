@@ -2,19 +2,9 @@ import { Stack, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { MediaType } from "../../models/Models";
 
-const exampleBook = {
-  title: "Harry Potter and the Sorcerer's Stone",
-  author: "J.K. Rowling",
-  published: "1997"
-}
-
-export function loadMedia() {
-  return [exampleBook];
-}
-
 const selectedSx = {
   flexGrow: 1,
-  pt: 2,
+  pt: 1,
   pr: 2,
   pl: 3
 }
@@ -26,52 +16,62 @@ const listSx = {
   pl: 3
 }
 
-export function handleMediaFields(mediaType: MediaType, location = "") {
+const bookFields = [
+  "Title",
+  "Authors",
+  "Publisher",
+  "Published",
+  "Page Count"
+];
+
+export function handleSearchFields(mediaType: MediaType, searchEntity: any, location = "") {
 
   let imgSize, sx, py, fontSize, width;
 
   if (location == "list") {
-    imgSize = 75;
+    imgSize = 90;
     sx = listSx;
-    fontSize = 12;
+    fontSize = 14;
     width = 100;
-    ;
+    py = 0;
   } else {
     imgSize = 150;
-    py = 1;
+    py = 0.5;
     sx = selectedSx;
     fontSize = 15;
     width = 110;
   }
 
-  if (mediaType !== MediaType.BOOK) {
-    return <></>
+  if (mediaType === MediaType.BOOK) {
+
+    const fieldValues = [
+      searchEntity.title,
+      searchEntity.authors,
+      searchEntity.publisher,
+      searchEntity.publishedDate,
+      searchEntity.pageCount
+    ];
+
+    return (
+      <>
+        <Stack direction={'row'}>
+          <Grid sx={{ width: imgSize }}>
+            <img src={searchEntity.thumbnail} style={{ width: '100%', height: 'auto' }}></img>
+          </Grid>
+          <Stack direction={'column'} sx={{ ...sx }} my={2}>
+            {bookFields.map((field, index) => (
+              <Stack key={index} direction={'row'} py={py}>
+                <Typography fontSize={fontSize} minWidth={width} textAlign={'right'} fontWeight={'bold'} pr={2}>{field}</Typography>
+                <Typography
+                  fontSize={fontSize}
+                  textOverflow={'ellipse'}>{fieldValues[index]}</Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </Stack>
+      </>
+    );
   }
 
-  return (
-    <Stack direction={'row'}>
-      <Grid sx={{ width: imgSize }}>
-        <img src="https://ew.com/thmb/RNSjDY3vXsAmYPgvzNG-SbZibYo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/minalima_hp1_flat_compressed-f9e6bda269a545a28f8bd9e50ed5f70b.jpg" style={{ width: '100%', height: 'auto' }}></img>
-      </Grid>
-      <Stack direction={'column'} sx={{ ...sx }}>
-        <Stack direction={'row'} py={py}>
-          <Typography fontSize={fontSize} width={width} textAlign={'right'} fontWeight={'bold'} pr={2}>Title:</Typography>
-          <Typography fontSize={fontSize}>{exampleBook.title}</Typography>
-        </Stack>
-        <Stack direction={'row'} py={py}>
-          <Typography fontSize={fontSize} width={width} textAlign={'right'} fontWeight={'bold'} pr={2}>Media:</Typography>
-          <Typography fontSize={fontSize}>{mediaType}</Typography>
-        </Stack>
-        <Stack direction={'row'} py={py}>
-          <Typography fontSize={fontSize} width={width} textAlign={'right'} fontWeight={'bold'} pr={2}>Author(s):</Typography>
-          <Typography fontSize={fontSize}>{exampleBook.author}</Typography>
-        </Stack>
-        <Stack direction={'row'} py={py}>
-          <Typography fontSize={fontSize} width={width} textAlign={'right'} fontWeight={'bold'} pr={2}>Published:</Typography>
-          <Typography fontSize={fontSize}>{exampleBook.published}</Typography>
-        </Stack>
-      </Stack>
-    </Stack>
-
-  );
+  return <></>
 }

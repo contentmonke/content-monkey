@@ -1,18 +1,23 @@
-import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List } from "@mui/material";
+import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button } from "@mui/material";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import Grid from '@mui/material/Grid2';
 import { Dayjs } from 'dayjs';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 import { useState } from "react";
 import { MediaType } from "../../models/Models";
 import CancelButton from "../../components/CancelButton";
 import ConfirmButton from "../../components/ConfirmButton";
 import DatePickerField from "../../components/DatePickerField";
-import { handleMediaFields, loadMedia } from "./review-utils";
+import { handleSearchFields } from "./review-utils";
 import RatingStars from "../../components/RatingStars";
 import { createReview } from "../../api/objects";
 import MediaDropdown from "../../components/MediaDropdown";
 import { useNavigate } from "react-router-dom";
+import { loadSearchResults } from "../search/search-utils";
+import { SmallLoading } from "../../components/Loading";
+import WarningModal from "../../components/WarningModal";
+import { Close } from "@mui/icons-material";
 
 const dialogSx = {
   py: 5,
@@ -32,8 +37,10 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [startedMedia, setStartedMedia] = useState(false);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  // TODO - pull from API
+  const [title, setTitle] = useState("");
   const [results, setResults] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -44,23 +51,30 @@ function CreateReviewModal({ open, setModalOpen }: any) {
     setMediaType(value);
   }
 
-  const handleCheckClick = (value: any) => {
+  const handleCheckClick = () => {
     setStartedMedia(!startedMedia);
   }
 
-  const handleCancelClick = (value: any) => {
-    setModalOpen(false);
-  }
-
-  const handleResults = () => {
-    setResults(loadMedia())
+  const handleSearchClick = () => {
+    loadSearchResults(mediaType, title, setResults, setIsLoading)
   }
 
   const handleRatingChange = (value: any) => {
     setRating(parseFloat(value));
   }
 
+  const handleBackArrowClick = () => {
+    setMedia(null);
+    setBody("")
+    setRating(0);
+    setStartDate(null);
+    setEndDate(null);
+    setStartedMedia(false)
+    setShowWarning(false);
+  }
+
   const handleCreateReviewClick = async () => {
+    setIsLoading(true);
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
@@ -68,6 +82,9 @@ function CreateReviewModal({ open, setModalOpen }: any) {
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
@@ -82,36 +99,76 @@ function CreateReviewModal({ open, setModalOpen }: any) {
         <Dialog open={open} onClose={handleClose} sx={{
           ...dialogSx
         }} scroll="paper" fullScreen>
-          <Grid sx={{ textAlign: 'right', mx: 1, mt: 1 }}>
+          <Stack direction={'row'}
+            justifyContent={'space-between'} sx={{ mx: 1, mt: 1 }}>
+            {media === null ?
+              <IconButton onClick={() => setModalOpen(false)}>
+                <Close />
+              </IconButton>
+              :
+              <IconButton onClick={() => setShowWarning(true)}>
+                <ArrowBackIosNewIcon />
+              </IconButton>
+            }
             <IconButton onClick={handleExpandScreenClick}>
               <OpenInFullIcon />
             </IconButton>
-          </Grid>
+          </Stack>
           <DialogTitle mb={2}>Create A New Review</DialogTitle>
-          <Stack spacing={2} px={10} pb={3}>
-            {(mediaType === MediaType.UNSELECTED || media === null) ?
+          <Stack spacing={1} px={10} pb={3}>
+            {/* {(mediaType === MediaType.UNSELECTED || media === null) ? */}
+            {(media === null) ?
               <>
                 <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }}>
                   <MediaDropdown mediaType={mediaType} onChange={handleMediaChange} />
                   <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }} justifyContent={'space-between'}>
-                    <TextField id="outlined-search" label="Search field" type="search" />
-                    <ConfirmButton title={"Search"} onClick={handleResults} />
+                    <TextField
+                      id="outlined-search"
+                      label="Search field"
+                      type="search"
+                      value={title}
+                      onChange={(event) => setTitle(event.target.value)} />
+                    <Button variant="contained"
+                      size='large'
+                      sx={{
+                        bgcolor: '#99d2ff', color: 'black', borderRadius: 0, ml: 2, height: 55
+                      }}
+                      startIcon={<SearchIcon />}
+                      onClick={handleSearchClick}
+                      disabled={mediaType === MediaType.UNSELECTED || title === ""}>
+                      Search
+                    </Button>
                   </Stack>
                   {/* <Typography>images of most popular books...</Typography> */}
                 </Stack>
-                <List>
-                  {results.map((element) => (
-                    <ListItemButton key={element.title}
-                      onClick={() => setMedia(element)}>
-                      {handleMediaFields(mediaType, "list")}
-                    </ListItemButton>
+                <br />
+                {isLoading && <SmallLoading />}
+                {results.length > 0 &&
+                  <Typography
+                    variant={'body2'}
+                    textAlign={'left'}
+                  >{results.length} Results for {title}
+                  </Typography>
+                }
+                <List sx={{ padding: 0 }}>
+                  {results.length > 0 && results.map((result, index) => (
+                    <div key={index}>
+                      <Divider component="li" />
+                      <ListItemButton
+                        onClick={() => setMedia(result)}
+                      >
+                        {handleSearchFields(mediaType, result, "list")}
+                      </ListItemButton>
+                    </div>
+
                   ))}
                 </List>
+                {/* </Paper> */}
               </>
               :
               <>
-                {handleMediaFields(mediaType)}
-                < Stack direction={'row'} justifyContent={'end'} spacing={2}>
+                {handleSearchFields(mediaType, media)}
+                < Stack direction={'row'} justifyContent={'end'} spacing={2} mt={0}>
                   <Typography sx={{ pt: 0.5 }}>Rating: </Typography>
                   <RatingStars value={rating} setValue={(event: any) => handleRatingChange(event.target.value)} />
                 </Stack>
@@ -139,9 +196,10 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   <></>
                 }
                 <Stack direction={'row'} justifyContent={'flex-end'} py={5} >
-                  <CancelButton onClick={handleCancelClick} />
+                  <CancelButton onClick={() => setShowWarning(true)} />
                   <ConfirmButton title={'Create Review'} onClick={handleCreateReviewClick} />
                 </Stack>
+                <WarningModal open={showWarning} setOpen={setShowWarning} handleConfirm={handleBackArrowClick} />
               </>
             }
           </Stack>
