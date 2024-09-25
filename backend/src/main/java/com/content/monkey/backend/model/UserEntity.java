@@ -2,15 +2,16 @@ package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.catalina.User;
 
 import java.util.List;
 
-@Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Entity
+@Builder
+//@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class UserEntity {
     @Id
@@ -22,6 +23,15 @@ public class UserEntity {
     private List<Long> reviewIds;
 
     //TODO - Add fields
+    public UserEntity() {
+    }
+
+    public UserEntity(String name, List<Long> reviewIds) {
+        this.name = name;
+        this.reviewIds = reviewIds;
+    }
+
+
 
     @Override
     public String toString() {

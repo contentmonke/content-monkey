@@ -1,17 +1,41 @@
 import '../../App.css';
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cmLogo from '/monkey.svg'
 import ExampleList from '../../example/ExampleList'
 import LoginButton from './LoginButton/LoginButton';
 import LogoutButton from './LogoutButton/LogoutButton';
 import Profile from '../profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
+import { Loading } from '../../components/Loading';
 
 function Home() {
   const [count, setCount] = useState(0)
-  const { isLoading, error } = useAuth0();
-  return (
+  const { user, isLoading, error } = useAuth0();
+  const [userData, setUserData] = useState();
+  
+  useEffect(() => {
+      async function fetchData() {
+        try {
+          if (!isLoading && user?.name) {
+            console.log("Here")
+            // console.log(user?.name);
+            const response = await axios.post('http://localhost:8080/api/user/', {name: user?.name});
+            setUserData(response.data);
+            console.log(response.data)
+          }
+          
+        } catch (error) {
+          console.error('Error fetching data', error);
+        }
+      }
+  
+      fetchData();
+    }, [user?.name]);
+    // console.log(user);
+
+  return ( isLoading ? <Loading /> : (
      <>
       <div>
         <a href="https://purdue.edu" target="_blank">
@@ -41,10 +65,12 @@ function Home() {
             <LogoutButton />
             <Profile />
           </>
+          
         )}
         <ExampleList />
       </div>
     </>
+    )
   )
 }
 

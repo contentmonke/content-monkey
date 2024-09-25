@@ -1,5 +1,6 @@
 package com.content.monkey.backend.service;
 
+import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
@@ -18,6 +19,19 @@ public class UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException());
         return user;
+    }
+
+    public List<UserEntity> getAllExamples() {
+        return userRepository.findAll();
+    }
+
+    public UserEntity createUserEntity (UserEntity created) {
+//        created.setId(null);
+        return userRepository.save(created);
+    }
+
+    public List<UserEntity> getSingleUser(String username) {
+        return userRepository.findByName(username);
     }
 
 }
