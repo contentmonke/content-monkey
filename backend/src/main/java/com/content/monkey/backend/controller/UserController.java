@@ -25,6 +25,9 @@ public class UserController {
         System.out.println("HERE");
         System.out.println(user);
         List<UserEntity> users = userService.getSingleUser(user.getName());
+        if (users.isEmpty()) {
+            users.add(createExampleEntity(user));
+        }
         System.out.println(users);
         return users;
     }
