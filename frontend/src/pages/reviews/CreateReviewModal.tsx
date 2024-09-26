@@ -1,10 +1,10 @@
-import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button } from "@mui/material";
+import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button, Pagination, Box } from "@mui/material";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { Dayjs } from 'dayjs';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MediaType } from "../../models/Models";
 import CancelButton from "../../components/CancelButton";
 import ConfirmButton from "../../components/ConfirmButton";
@@ -13,7 +13,7 @@ import { handleSearchFields } from "./review-utils";
 import RatingStars from "../../components/RatingStars";
 import { createReview } from "../../api/objects";
 import MediaDropdown from "../../components/MediaDropdown";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadSearchResults } from "../search/search-utils";
 import { SmallLoading } from "../../components/Loading";
 import WarningModal from "../../components/WarningModal";
@@ -41,6 +41,8 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [page, setPage] = useState(1);
+  const [prevSearch, setPrevSearch] = useState("");
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -56,6 +58,8 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleSearchClick = () => {
+    setPrevSearch(title)
+    setResults([])
     loadSearchResults(mediaType, title, setResults, setIsLoading)
   }
 
@@ -90,6 +94,10 @@ function CreateReviewModal({ open, setModalOpen }: any) {
 
   const handleExpandScreenClick = () => {
     navigate("/createReview");
+  }
+
+  const handlePageChange = (value: any) => {
+    setPage(value);
   }
 
 
@@ -147,21 +155,29 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   <Typography
                     variant={'body2'}
                     textAlign={'left'}
-                  >{results.length} Results for {title}
+                  >Showing Results for '{prevSearch}'
                   </Typography>
                 }
                 <List sx={{ padding: 0 }}>
-                  {results.length > 0 && results.map((result, index) => (
-                    <div key={index}>
-                      <Divider component="li" />
-                      <ListItemButton
-                        onClick={() => setMedia(result)}
-                      >
-                        {handleSearchFields(mediaType, result, "list")}
-                      </ListItemButton>
-                    </div>
-
-                  ))}
+                  {results.length > 0 &&
+                    <>
+                      {
+                        results.map((result, index) => (
+                          <div key={index}>
+                            <Divider component="li" />
+                            <ListItemButton
+                              onClick={() => setMedia(result)}
+                            >
+                              {handleSearchFields(mediaType, result, "list")}
+                            </ListItemButton>
+                          </div>
+                        ))
+                      }
+                      < Box my={2} display={'flex'} justifyContent={'center'}>
+                        <Pagination count={4} page={page} onChange={(event, pageCount) => handlePageChange(pageCount)} />
+                      </Box>
+                    </>
+                  }
                 </List>
                 {/* </Paper> */}
               </>
@@ -202,7 +218,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                 <WarningModal open={showWarning} setOpen={setShowWarning} handleConfirm={handleBackArrowClick} />
               </>
             }
-          </Stack>
+          </Stack >
 
         </Dialog >
         // </Container>

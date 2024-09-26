@@ -1,5 +1,4 @@
 import { Stack, Typography } from "@mui/material";
-import Grid from '@mui/material/Grid2';
 import { MediaType } from "../../models/Models";
 
 const selectedSx = {
@@ -29,7 +28,7 @@ export function handleSearchFields(mediaType: MediaType, searchEntity: any, loca
   let imgSize, sx, py, fontSize, width;
 
   if (location == "list") {
-    imgSize = 90;
+    imgSize = 100;
     sx = listSx;
     fontSize = 14;
     width = 100;
@@ -55,20 +54,33 @@ export function handleSearchFields(mediaType: MediaType, searchEntity: any, loca
     return (
       <>
         <Stack direction={'row'}>
-          <Grid sx={{ width: imgSize }}>
-            <img src={searchEntity.thumbnail} style={{ width: '100%', height: 'auto' }}></img>
-          </Grid>
+          <div style={{ alignContent: 'center', width: 'auto' }}>
+            <img src={searchEntity.thumbnail} style={{ width: '80%', height: 'auto', minWidth: imgSize }}></img>
+          </div>
           <Stack direction={'column'} sx={{ ...sx }} my={2}>
             {bookFields.map((field, index) => (
               <Stack key={index} direction={'row'} py={py}>
                 <Typography fontSize={fontSize} minWidth={width} textAlign={'right'} fontWeight={'bold'} pr={2}>{field}</Typography>
-                <Typography
-                  fontSize={fontSize}
-                  textOverflow={'ellipse'}>{fieldValues[index]}</Typography>
+                {Array.isArray(fieldValues[index]) ?
+                  <>
+                    {fieldValues[index].map((fieldValue, i) => (
+                      <Typography
+                        key={i}
+                        fontSize={fontSize}>
+                        {fieldValue}{(i !== fieldValues[index].length - 1) ? ',\u00A0' : ""}
+                      </Typography>
+                    ))}
+
+                  </>
+                  :
+                  <Typography
+                    fontSize={fontSize}
+                    textOverflow={'ellipse'}>{fieldValues[index]}</Typography>
+                }
               </Stack>
             ))}
           </Stack>
-        </Stack>
+        </Stack >
       </>
     );
   }
