@@ -44,6 +44,12 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [page, setPage] = useState(1);
   const [prevSearch, setPrevSearch] = useState("");
   const navigate = useNavigate();
+  const {state} = useLocation();
+  
+  useEffect(() => {
+    console.log("Modal page")
+    console.log(state)
+  },[])
 
   const handleClose = () => {
     setModalOpen(false);
@@ -93,7 +99,23 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleExpandScreenClick = () => {
-    navigate("/createReview");
+    navigate("/createReview",
+      {
+        state:
+        {
+          reviewDraft: {
+            title: title,
+            results: results,
+            media: media,
+            mediaType: mediaType,
+            body: body,
+            rating: rating,
+            startedMedia: startedMedia,
+            startDate: startDate,
+            endDate: endDate
+          }
+        }
+      });
   }
 
   const handlePageChange = (value: any) => {

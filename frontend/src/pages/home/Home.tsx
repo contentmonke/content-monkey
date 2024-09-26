@@ -9,11 +9,19 @@ import Profile from '../profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
+import { useLocation } from 'react-router-dom';
 
 function Home() {
   const [count, setCount] = useState(0)
   const { user, isLoading, error } = useAuth0();
   const [userData, setUserData] = useState();
+  const {state} = useLocation();
+
+  useEffect(() => {
+    console.log("Home page")
+    console.log(state)
+  },[])
+
   
   useEffect(() => {
       async function fetchData() {
