@@ -25,6 +25,7 @@ public class SearchService {
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
                         "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle)
+                .queryParam("maxResults", 30)
                 .queryParam("key", apiKey)
                 .build()
                 .toUri();
