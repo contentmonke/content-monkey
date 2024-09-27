@@ -18,6 +18,8 @@ import { loadSearchResults } from "../search/search-utils";
 import { SmallLoading } from "../../components/Loading";
 import WarningModal from "../../components/WarningModal";
 import { Close } from "@mui/icons-material";
+import SuccessAlert from "../../components/SuccessAlert";
+import ErrorAlert from "../../components/ErrorAlert";
 
 const dialogSx = {
   py: 5,
@@ -43,13 +45,16 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [showWarning, setShowWarning] = useState(false);
   const [page, setPage] = useState(1);
   const [prevSearch, setPrevSearch] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const navigate = useNavigate();
-  const {state} = useLocation();
-  
+  const { state } = useLocation();
+
   useEffect(() => {
     console.log("Modal page")
     console.log(state)
-  },[])
+  }, [])
 
   const handleClose = () => {
     setModalOpen(false);
@@ -83,18 +88,32 @@ function CreateReviewModal({ open, setModalOpen }: any) {
     setShowWarning(false);
   }
 
+  const isInvalidArguments = () => {
+    if (body === "") {
+      setIsInvalidArgs(true)
+      return true;
+    }
+    setIsInvalidArgs(false)
+    return false;
+
+  }
+
   const handleCreateReviewClick = async () => {
+    if (isInvalidArguments()) {
+      return;
+    }
     setIsLoading(true);
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
         console.log(response);
+        setIsLoading(false);
+        handleBackArrowClick();
+        setIsSuccess(true)
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
+        setIsError(true)
       });
   }
 
@@ -216,6 +235,9 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   rows={8}
                   value={body}
                   onChange={(event) => setBody(event.target.value)} />
+                {isInvalidArgs &&
+                  <Typography color="error">Please enter a valid rating and description</Typography>
+                }
                 <FormControlLabel
                   label={`I have started this ${mediaType.toLowerCase()}`}
                   control={
@@ -241,7 +263,14 @@ function CreateReviewModal({ open, setModalOpen }: any) {
               </>
             }
           </Stack >
-
+          <SuccessAlert
+            message={"Review successfully created"}
+            showAlert={isSuccess}
+            setShowAlert={setIsSuccess} />
+          <ErrorAlert
+            message={"Error creating the review"}
+            showAlert={isError}
+            setShowAlert={setIsError} />
         </Dialog >
         // </Container>
         :

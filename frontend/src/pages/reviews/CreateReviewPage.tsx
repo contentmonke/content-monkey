@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loadSearchResults } from "../search/search-utils";
 import { createReview } from "../../api/objects";
-import { AppBar, Box, Button, Checkbox, DialogTitle, Divider, FormControlLabel, IconButton, List, ListItemButton, Pagination, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import { Alert, AppBar, Box, Button, Checkbox, DialogTitle, Divider, FormControlLabel, IconButton, List, ListItemButton, Pagination, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import MediaDropdown from "../../components/MediaDropdown";
 import SearchIcon from '@mui/icons-material/Search';
 import { MediaType } from "../../models/Models";
@@ -15,6 +15,8 @@ import CancelButton from "../../components/CancelButton";
 import ConfirmButton from "../../components/ConfirmButton";
 import WarningModal from "../../components/WarningModal";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import SuccessAlert from "../../components/SuccessAlert";
+import ErrorAlert from "../../components/ErrorAlert";
 
 
 function CreateReviewPage() {
@@ -33,12 +35,10 @@ function CreateReviewPage() {
   const [showWarning, setShowWarning] = useState(false);
   const [page, setPage] = useState(1);
   const [prevSearch, setPrevSearch] = useState(reviewDraft?.title ?? "");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log("Modal page")
-    console.log(state)
-  }, []);
 
   const handleMediaChange = (value: any) => {
     setMediaType(value);
@@ -68,20 +68,33 @@ function CreateReviewPage() {
     setShowWarning(false);
   }
 
+  const isInvalidArguments = () => {
+    if (body === "") {
+      setIsInvalidArgs(true)
+      return true;
+    }
+    setIsInvalidArgs(false)
+    return false;
+
+  }
+
   const handleCreateReviewClick = async () => {
+    if (isInvalidArguments()) {
+      return;
+    }
     setIsLoading(true);
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
         console.log(response);
         setIsLoading(false);
+        handleBackArrowClick();
         navigate("/createReview", { state: null });
+        setIsSuccess(true)
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
-        // setIsLoading(false);
+        setIsError(true)
       });
   }
 
@@ -92,16 +105,12 @@ function CreateReviewPage() {
 
   return (
     <>
-      {/* <AppBar position={'absolute'}>
-        <Toolbar></Toolbar>
-      </AppBar> */}
       <Stack direction={'column'} sx={{ mx: 1, mt: 1 }}>
         {media !== null &&
           <Box textAlign={'left'}>
-            <IconButton onClick={() => setShowWarning(true)}>
-              <ArrowBackIosNewIcon />
-            </IconButton>
-            Back to Search
+            <Button startIcon={<ArrowBackIosNewIcon />} onClick={() => setShowWarning(true)} sx={{ color: '#99d2ff' }}>
+              Back to Search
+            </Button>
           </Box>
         }
         <Typography mb={2}>Create A New Review</Typography>
@@ -175,6 +184,9 @@ function CreateReviewPage() {
                 rows={8}
                 value={body}
                 onChange={(event) => setBody(event.target.value)} />
+              {isInvalidArgs &&
+                <Typography color="error">Please enter a valid rating and description</Typography>
+              }
               <FormControlLabel
                 label={`I have started this ${mediaType.toLowerCase()}`}
                 control={
@@ -201,6 +213,16 @@ function CreateReviewPage() {
           }
         </Stack >
       </Stack>
+      {/* <Button onClick={() => setIsSuccess(true)}>Success</Button>
+      <Button onClick={() => setIsError(true)}>Error</Button> */}
+      <SuccessAlert
+        message={"Review successfully created"}
+        showAlert={isSuccess}
+        setShowAlert={setIsSuccess} />
+      <ErrorAlert
+        message={"Error creating the review"}
+        showAlert={isError}
+        setShowAlert={setIsError} />
     </>
   );
 
