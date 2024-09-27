@@ -7,6 +7,7 @@ export async function loadSearchResults(mediaType: MediaType, title: String, set
   if (mediaType === MediaType.BOOK) {
     api.search.fetchSearch({ title })
       .then((response) => {
+        console.log(response.data)
         setResults(response.data)
       })
       .catch(() => {

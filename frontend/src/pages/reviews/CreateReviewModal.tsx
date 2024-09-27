@@ -69,9 +69,10 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleSearchClick = () => {
-    setPrevSearch(title)
-    setResults([])
-    loadSearchResults(mediaType, title, setResults, setIsLoading)
+    setPrevSearch(title);
+    setResults([]);
+    loadSearchResults(mediaType, title, setResults, setIsLoading);
+    setPage(1);
   }
 
   const handleRatingChange = (value: any) => {
@@ -80,11 +81,11 @@ function CreateReviewModal({ open, setModalOpen }: any) {
 
   const handleBackArrowClick = () => {
     setMedia(null);
-    setBody("")
+    setBody("");
     setRating(0);
     setStartDate(null);
     setEndDate(null);
-    setStartedMedia(false)
+    setStartedMedia(false);
     setShowWarning(false);
   }
 
@@ -203,7 +204,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   {results.length > 0 &&
                     <>
                       {
-                        results.map((result, index) => (
+                        results.slice((page - 1) * 10, (page * 10)).map((result, index) => (
                           <div key={index}>
                             <Divider component="li" />
                             <ListItemButton
@@ -215,7 +216,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                         ))
                       }
                       < Box my={2} display={'flex'} justifyContent={'center'}>
-                        <Pagination count={4} page={page} onChange={(event, pageCount) => handlePageChange(pageCount)} />
+                        <Pagination count={Math.ceil(results.length / 10)} page={page} onChange={(event, pageCount) => handlePageChange(pageCount)} />
                       </Box>
                     </>
                   }

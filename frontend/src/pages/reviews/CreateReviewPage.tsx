@@ -49,9 +49,10 @@ function CreateReviewPage() {
   }
 
   const handleSearchClick = () => {
-    setPrevSearch(title)
-    setResults([])
-    loadSearchResults(mediaType, title, setResults, setIsLoading)
+    setPrevSearch(title);
+    setResults([]);
+    loadSearchResults(mediaType, title, setResults, setIsLoading);
+    setPage(1);
   }
 
   const handleRatingChange = (value: any) => {
@@ -60,20 +61,20 @@ function CreateReviewPage() {
 
   const handleBackArrowClick = () => {
     setMedia(null);
-    setBody("")
+    setBody("");
     setRating(0);
     setStartDate(null);
     setEndDate(null);
-    setStartedMedia(false)
+    setStartedMedia(false);
     setShowWarning(false);
   }
 
   const isInvalidArguments = () => {
     if (body === "") {
-      setIsInvalidArgs(true)
+      setIsInvalidArgs(true);
       return true;
     }
-    setIsInvalidArgs(false)
+    setIsInvalidArgs(false);
     return false;
 
   }
@@ -152,7 +153,7 @@ function CreateReviewPage() {
                 {results.length > 0 &&
                   <>
                     {
-                      results.map((result, index) => (
+                      results.slice((page - 1) * 10, (page * 10)).map((result, index) => (
                         <div key={index}>
                           <Divider component="li" />
                           <ListItemButton
