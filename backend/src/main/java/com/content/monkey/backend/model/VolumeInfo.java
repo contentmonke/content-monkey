@@ -9,6 +9,7 @@ public class VolumeInfo {
     private String publishedDate;
     private String pageCount;
     private ImageLinks imageLinks;
+    private String description;
 
     // Getters and setters
     public String getTitle() {
@@ -57,6 +58,14 @@ public class VolumeInfo {
 
     public void setPageCount(String pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 
