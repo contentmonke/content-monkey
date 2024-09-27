@@ -39,6 +39,7 @@ public class SearchService {
                     entity.setPublishedDate(item.getVolumeInfo().getPublishedDate());
                     entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());
                     entity.setPageCount(item.getVolumeInfo().getPageCount());
+                    entity.setDescription(item.getVolumeInfo().getDescription());
                     return entity;
                 })
                 .collect(Collectors.toList());

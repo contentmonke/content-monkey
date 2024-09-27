@@ -19,6 +19,7 @@ export type VolumeInfo = {
   publishedDate: string;
   thumbnail: string;
   pageCount: string;
+  description: string
 }
 
 export enum MediaType {
