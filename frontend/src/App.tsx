@@ -8,6 +8,7 @@ import Home from './pages/home/Home';
 import ExampleList from './example/ExampleList';
 import CreateReviewPage from './pages/reviews/CreateReviewPage';
 import SearchPage from './pages/search/SearchPage'
+import MediaPage from './pages/media/MediaPage'
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -20,6 +21,7 @@ function App() {
         <Route path="/createReview" element={<CreateReviewPage />} />
         <Route path="/examples" element={<ExampleList />} />
         <Route path="/search" element={<SearchPage/>} />
+        <Route path="/media/:id" element={<MediaPage/>} />
       </Routes>
     </Router>
   )

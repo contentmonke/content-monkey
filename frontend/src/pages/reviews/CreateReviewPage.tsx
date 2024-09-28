@@ -38,6 +38,7 @@ function CreateReviewPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isInvalidArgs, setIsInvalidArgs] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleMediaChange = (value: any) => {
@@ -51,7 +52,8 @@ function CreateReviewPage() {
   const handleSearchClick = () => {
     setPrevSearch(title);
     setResults([]);
-    loadSearchResults(mediaType, title, setResults, setIsLoading);
+    setErrorMessage(`Error searching for '${title}'`);
+    loadSearchResults(mediaType, title, setResults, setIsLoading, setIsError);
     setPage(1);
   }
 
@@ -84,6 +86,7 @@ function CreateReviewPage() {
       return;
     }
     setIsLoading(true);
+    setErrorMessage("Error creating the review");
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
@@ -95,7 +98,7 @@ function CreateReviewPage() {
       })
       .catch((error) => {
         console.error(error);
-        setIsError(true)
+        setIsError(true);
       });
   }
 
@@ -221,7 +224,7 @@ function CreateReviewPage() {
         showAlert={isSuccess}
         setShowAlert={setIsSuccess} />
       <ErrorAlert
-        message={"Error creating the review"}
+        message={errorMessage}
         showAlert={isError}
         setShowAlert={setIsError} />
     </>

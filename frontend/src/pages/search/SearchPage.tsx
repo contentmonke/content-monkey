@@ -7,6 +7,7 @@ import { Stack, TextField, Typography, ListItemButton, List, Divider, Button, Bo
 import SearchIcon from '@mui/icons-material/Search';
 import { handleSearchFields } from "../reviews/review-utils";
 import MediaDropdown from "../../components/MediaDropdown";
+import ErrorAlert from "../../components/ErrorAlert";
 
 
 
@@ -19,6 +20,7 @@ function SearchPage() {
   const [mediaType, setMediaType] = useState(MediaType.BOOK);
   const [media, setMedia] = useState<VolumeInfo | null>(null);
   const [page, setPage] = useState(1);
+  const [isError, setIsError] = useState(false);
 
 
   const handleMediaChange = (value: any) => {
@@ -26,7 +28,7 @@ function SearchPage() {
   }
 
   const handleSearchClick = () => {
-    loadSearchResults(mediaType, title, setResults, setIsLoading)
+    loadSearchResults(mediaType, title, setResults, setIsLoading, setIsError)
   }
 
   const handlePageChange = (value: any) => {
@@ -91,6 +93,10 @@ function SearchPage() {
                 </>
               }
             </List>
+            <ErrorAlert
+              message={`Error searching for '${title}'`}
+              showAlert={isError}
+              setShowAlert={setIsError} />
           </>
           :
           <>

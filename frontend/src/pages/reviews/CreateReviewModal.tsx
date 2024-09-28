@@ -47,6 +47,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [prevSearch, setPrevSearch] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -71,7 +72,8 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const handleSearchClick = () => {
     setPrevSearch(title);
     setResults([]);
-    loadSearchResults(mediaType, title, setResults, setIsLoading);
+    setErrorMessage(`Error searching for '${title}'`);
+    loadSearchResults(mediaType, title, setResults, setIsLoading, setIsError);
     setPage(1);
   }
 
@@ -104,6 +106,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
       return;
     }
     setIsLoading(true);
+    setErrorMessage("Error creating the review");
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
@@ -114,8 +117,8 @@ function CreateReviewModal({ open, setModalOpen }: any) {
       })
       .catch((error) => {
         console.error(error);
-        setIsError(true)
-      });
+        setIsError(true);
+      })
   }
 
   const handleExpandScreenClick = () => {
@@ -269,7 +272,7 @@ function CreateReviewModal({ open, setModalOpen }: any) {
             showAlert={isSuccess}
             setShowAlert={setIsSuccess} />
           <ErrorAlert
-            message={"Error creating the review"}
+            message={errorMessage}
             showAlert={isError}
             setShowAlert={setIsError} />
         </Dialog >
