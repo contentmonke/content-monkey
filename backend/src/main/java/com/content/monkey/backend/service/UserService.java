@@ -6,6 +6,7 @@ import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.NoSuchElementException;
 
 import java.util.List;
 
@@ -32,6 +33,14 @@ public class UserService {
 
     public List<UserEntity> getSingleUser(String username) {
         return userRepository.findByName(username);
+    }
+
+    public void deleteUserById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        } else {
+            throw new NoSuchElementException("User not found");
+        }
     }
 
 }

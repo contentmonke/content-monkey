@@ -9,6 +9,9 @@ import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
+
 
 import java.net.URI;
 import java.util.List;
@@ -42,6 +45,16 @@ public class UserController {
     public UserEntity createExampleEntity(@RequestBody UserEntity example) {
         UserEntity created = userService.createUserEntity(example);
         return created;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUserById(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 
 }
