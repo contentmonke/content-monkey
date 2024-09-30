@@ -22,6 +22,17 @@ export type VolumeInfo = {
   description: string
 }
 
+export type Media = {
+  title: string;
+  type: string;
+  author: string;
+  duration: number;
+  genre: string;
+  description: string;
+  averageRating: number;
+  totalRatings: number;
+}
+
 export enum MediaType {
   BOOK = "Book",
   MOVIE = "Movie",
