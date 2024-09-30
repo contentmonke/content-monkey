@@ -10,6 +10,7 @@ import { Loading } from '../../components/Loading';
 import DeleteAccount from '../../components/DeleteAccount';
 import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar } from '@mui/material';
 import ExampleList from '../../example/ExampleList';
+import CreateReviewButton from '../reviews/CreateReviewButton';
 
 // Dummy Data for favorite media, liked posts, and recent reviews
 const favoriteMedia = ['Book: The Great Gatsby', 'Movie: Inception', 'Show: Breaking Bad'];
@@ -141,6 +142,7 @@ function AccountPage() {
           </Grid>
         </Grid>
       </Box>
+      <CreateReviewButton />
     </>
   );
 }
