@@ -8,7 +8,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
 import DeleteAccount from '../../components/DeleteAccount';
-import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import ExampleList from '../../example/ExampleList';
 
 // Dummy Data for favorite media, liked posts, and recent reviews
@@ -20,13 +21,12 @@ function AccountPage() {
   const [count, setCount] = useState(0);
   const { user, isLoading, error } = useAuth0();
   const [userData, setUserData] = useState();
+  const [bio, setBio] = useState('No biography available.');
 
   const handleDeleteAccount = async () => {
     try {
       // Replace with your API call to delete the account
       console.log('Account deletion process initiated.');
-      // You could use an axios call or any other method here:
-      // await axios.delete('http://localhost:8080/api/user/delete');
       alert('Account successfully deleted.');
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -34,13 +34,46 @@ function AccountPage() {
     }
   };
 
+  const getBio = async () => {
+      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+      return userEdit.data[3];
+  }
+
+  const handleEditBio = async () => {
+      const newBio = prompt('Please enter your new biography:', bio);
+      if (newBio !== null && newBio !== '') {
+        try {
+          // PUT request to update the biography
+          // TODO Make get current userID endpoint to handle dynamic ID update call
+          //console.log('http://localhost:8080/api/user/name/' + user.name)
+          const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+          //console.log(userEdit)
+          //console.log(userEdit.data[0].id)
+          //console.log('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography')
+          const response = await axios.put('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography', { biography: newBio });
+
+          // Update bio locally if the request is successful
+          if (response.status === 200) {
+            setBio(newBio);
+            alert('Biography updated successfully!');
+          }
+        } catch (error) {
+          console.error('Error updating biography:', error);
+          alert('Failed to update biography.');
+        }
+      }
+    };
+
   useEffect(() => {
     async function fetchData() {
       try {
         if (!isLoading && user?.name) {
           const response = await axios.post('http://localhost:8080/api/user/', { name: user?.name });
           setUserData(response.data);
-          console.log(response.data);
+          const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+          const biography = userBio.data[0].bio
+          //const biographyTrim = JSON.parse(biography)
+          setBio(JSON.parse(biography).biography || 'No biography available.');
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -75,8 +108,19 @@ function AccountPage() {
                     <>
                       <Avatar src={user.picture} alt={user.name} sx={{ width: 150, height: 150, marginBottom: 2 }} />
                       <Typography variant="h5">{user.name}</Typography>
+
+                      {/* Biography Section with Edit Icon */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2, width: '100%' }}>
+                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                          Biography
+                        </Typography>
+                        <IconButton onClick={handleEditBio} size="small" aria-label="edit biography">
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
+
                       <Typography variant="body1" sx={{ marginTop: 2 }}>
-                        {userData?.bio || 'No biography available.'}
+                        {bio}
                       </Typography>
                       {/* Delete Account Button under profile info */}
                       <DeleteAccount onDelete={handleDeleteAccount} />

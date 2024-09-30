@@ -57,4 +57,18 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{id}/biography")
+    public UserEntity updateBiography(@PathVariable Long id, @RequestBody String biography) {
+        return userService.updateBiography(id, biography);
+    }
+
+    @PostMapping("/name/{name}")
+    public List<UserEntity> getUserbyName(@PathVariable String name) {
+        List<UserEntity> users = userService.getSingleUser(name);
+        if (users.isEmpty()) {
+            return null;
+        }
+        return users;
+    }
+
 }

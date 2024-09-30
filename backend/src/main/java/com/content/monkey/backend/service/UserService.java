@@ -43,4 +43,12 @@ public class UserService {
         }
     }
 
+    public UserEntity updateBiography(Long id, String biography) {
+        UserEntity user = getUser(id);
+        user.setBiography(biography);
+
+        // Save the updated user
+        return userRepository.save(user);
+    }
+
 }

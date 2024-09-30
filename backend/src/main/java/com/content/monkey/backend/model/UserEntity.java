@@ -22,6 +22,13 @@ public class UserEntity {
     @Column(name = "review_ids")
     private List<Long> reviewIds;
 
+    @Column(name = "biography")
+    private String bio;
+
+    public void setBiography(String biography) {
+        this.bio = biography;
+    }
+
     //TODO - Add fields
     public UserEntity() {
     }
