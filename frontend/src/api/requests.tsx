@@ -27,8 +27,10 @@ export const api = {
   },
   media: {
     async fetchMedia({ mediaId }: any) {
+
       return (
         // await axios.get(`${URL}/media`, mediaId)
+        // await axios.get(`${URL}/reviews`, mediaId)
         {
           data: {
             mediaType: MediaType.BOOK,

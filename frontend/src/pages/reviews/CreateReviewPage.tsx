@@ -1,11 +1,9 @@
 import { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loadSearchResults } from "../search/search-utils";
 import { createReview } from "../../api/objects";
-import { Alert, AppBar, Box, Button, Checkbox, DialogTitle, Divider, FormControlLabel, IconButton, List, ListItemButton, Pagination, Stack, TextField, Toolbar, Typography } from "@mui/material";
-import MediaDropdown from "../../components/MediaDropdown";
-import SearchIcon from '@mui/icons-material/Search';
+import { Box, Button, Checkbox, Container, FormControlLabel, Stack, TextField, Typography } from "@mui/material";
 import { MediaType } from "../../models/Models";
 import { SmallLoading } from "../../components/Loading";
 import { handleSearchFields } from "./review-utils";
@@ -17,6 +15,9 @@ import WarningModal from "../../components/WarningModal";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SuccessAlert from "../../components/SuccessAlert";
 import ErrorAlert from "../../components/ErrorAlert";
+import MediaSearchBar from "./MediaSearchBar";
+import SearchResults from "../search/SearchResults";
+import { fullpageContainer } from "../../style/review-page";
 
 
 function CreateReviewPage() {
@@ -39,6 +40,7 @@ function CreateReviewPage() {
   const [isError, setIsError] = useState(false);
   const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const dialogTitleRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleMediaChange = (value: any) => {
@@ -109,116 +111,120 @@ function CreateReviewPage() {
 
   return (
     <>
-      <Stack direction={'column'} sx={{ mx: 1, mt: 1 }}>
+      <Container
+        disableGutters
+        maxWidth={false}
+        sx={{ ...fullpageContainer }}
+      >
         {media !== null &&
           <Box textAlign={'left'}>
-            <Button startIcon={<ArrowBackIosNewIcon />} onClick={() => setShowWarning(true)} sx={{ color: '#99d2ff' }}>
+            <Button
+              startIcon={<ArrowBackIosNewIcon />}
+              onClick={() => setShowWarning(true)}
+              sx={{ color: '#99d2ff' }}
+            >
               Back to Search
             </Button>
           </Box>
         }
-        <Typography mb={2}>Create A New Review</Typography>
-        <Stack spacing={1} px={10} pb={3}>
+        <Typography
+          variant={'caption'}
+          fontSize={22}
+        >
+          Create A New Review
+        </Typography>
+        <br />
+        <br />
+        <Container disableGutters sx={{ width: '90%' }}>
           {(media === null) ?
             <>
-              <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }}>
-                <MediaDropdown mediaType={mediaType} onChange={handleMediaChange} />
-                <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }} justifyContent={'space-between'}>
-                  <TextField
-                    id="outlined-search"
-                    label="Search field"
-                    type="search"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)} />
-                  <Button variant="contained"
-                    size='large'
-                    sx={{
-                      bgcolor: '#99d2ff', color: 'black', borderRadius: 0, ml: 2, height: 55
-                    }}
-                    startIcon={<SearchIcon />}
-                    onClick={handleSearchClick}
-                    disabled={mediaType === MediaType.UNSELECTED || title === ""}>
-                    Search
-                  </Button>
-                </Stack>
-                {/* <Typography>images of most popular books...</Typography> */}
-              </Stack>
+              <MediaSearchBar
+                mediaType={mediaType}
+                handleMediaChange={handleMediaChange}
+                title={title}
+                setTitle={setTitle}
+                handleSearchClick={handleSearchClick}
+              />
               <br />
               {isLoading && <SmallLoading />}
               {results.length > 0 &&
                 <Typography
                   variant={'body2'}
-                  textAlign={'left'}
-                >Showing Results for '{prevSearch}'
+                  textAlign={'left'}>
+                  Showing Results for '{prevSearch}'
                 </Typography>
               }
-              <List sx={{ padding: 0 }}>
-                {results.length > 0 &&
-                  <>
-                    {
-                      results.slice((page - 1) * 10, (page * 10)).map((result, index) => (
-                        <div key={index}>
-                          <Divider component="li" />
-                          <ListItemButton
-                            onClick={() => setMedia(result)}
-                          >
-                            {handleSearchFields(mediaType, result, "list")}
-                          </ListItemButton>
-                        </div>
-                      ))
-                    }
-                    < Box my={2} display={'flex'} justifyContent={'center'}>
-                      <Pagination count={4} page={page} onChange={(event, pageCount) => handlePageChange(pageCount)} />
-                    </Box>
-                  </>
-                }
-              </List>
-              {/* </Paper> */}
+              <SearchResults
+                results={results}
+                page={page}
+                mediaType={mediaType}
+                setMedia={setMedia}
+                handlePageChange={handlePageChange}
+                scrollRef={dialogTitleRef}
+                location={'page'}
+              />
             </>
             :
             <>
               {handleSearchFields(mediaType, media)}
-              < Stack direction={'row'} justifyContent={'end'} spacing={2} mt={0}>
+              < Stack
+                direction={'row'}
+                justifyContent={'end'}
+                spacing={2}
+                mt={0}
+              >
                 <Typography sx={{ pt: 0.5 }}>Rating: </Typography>
-                <RatingStars value={rating} setValue={(event: any) => handleRatingChange(event.target.value)} />
+                <RatingStars
+                  value={rating}
+                  setValue={(event: any) => handleRatingChange(event.target.value)} />
               </Stack>
-              <TextField
-                label={"What are your thoughts?"}
-                multiline
-                rows={8}
-                value={body}
-                onChange={(event) => setBody(event.target.value)} />
-              {isInvalidArgs &&
-                <Typography color="error">Please enter a valid rating and description</Typography>
-              }
-              <FormControlLabel
-                label={`I have started this ${mediaType.toLowerCase()}`}
-                control={
-                  <Checkbox
-                    checked={startedMedia}
-                    onChange={handleCheckClick}
-                  />
+              <Stack>
+                <TextField
+                  label={"What are your thoughts?"}
+                  multiline
+                  rows={8}
+                  value={body}
+                  onChange={(event) => setBody(event.target.value)} />
+                {isInvalidArgs &&
+                  <Typography color="error">Please enter a valid rating and description</Typography>
                 }
-              />
+                <FormControlLabel
+                  label={`I have started this ${mediaType.toLowerCase()}`}
+                  control={
+                    <Checkbox
+                      checked={startedMedia}
+                      onChange={handleCheckClick}
+                    />
+                  }
+                />
+              </Stack>
               {startedMedia ?
-                <Stack direction={'row'} alignContent={'center'} spacing={2}>
+                <Stack
+                  direction={'row'}
+                  alignContent={'center'}
+                  spacing={2}
+                >
                   <DatePickerField label={"Start Date"} value={startDate} setValue={setStartDate} />
                   <DatePickerField label={"End Date"} value={endDate} setValue={setEndDate} />
                 </Stack>
                 :
                 <></>
               }
-              <Stack direction={'row'} justifyContent={'flex-end'} py={5} >
+              <Stack
+                direction={'row'}
+                justifyContent={'flex-end'}
+                py={5} >
                 <CancelButton onClick={() => setShowWarning(true)} />
                 <ConfirmButton title={'Create Review'} onClick={handleCreateReviewClick} />
               </Stack>
-              <WarningModal open={showWarning} setOpen={setShowWarning} handleConfirm={handleBackArrowClick} />
+              <WarningModal
+                open={showWarning}
+                setOpen={setShowWarning}
+                handleConfirm={handleBackArrowClick} />
             </>
           }
-        </Stack >
-      </Stack>
-      {/* <Button onClick={() => setIsSuccess(true)}>Success</Button>
-      <Button onClick={() => setIsError(true)}>Error</Button> */}
+        </Container>
+      </Container>
       <SuccessAlert
         message={"Review successfully created"}
         showAlert={isSuccess}

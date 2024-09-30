@@ -1,24 +1,20 @@
 import { SxProps, Theme } from "@mui/material";
 
 export const mediaPageContainer: SxProps<Theme> = {
-  display: 'flex',
   width: '100%',
-  minWidth: 200,
-  maxWidth: 1000,
-  // height: '100vh',
-  // bgcolor: 'yellow',
+  minWidth: 400,
+  maxWidth: 800,
 }
 
 export const leftColumn: SxProps<Theme> = {
-  // bgcolor: 'red',
   width: '30%',
   py: 5
 }
 
 export const rightColumn: SxProps<Theme> = {
-  // bgcolor: 'yellow',
   width: '60%',
   py: 5,
+  textAlign: 'left'
 }
 
 export const mediaImage = {
@@ -30,6 +26,42 @@ export const mediaImage = {
 
 export const buttonGroup: SxProps<Theme> = {
   flexGrow: 1,
-  width: '100%',
+  width: '90%',
   my: 1
+}
+
+export const rateField = {
+  marginTop: 15,
+  marginBottom: 0
+}
+
+export const mediaDetails: SxProps<Theme> = {
+  height: 'auto',
+  minHeight: '70vh'
+}
+
+export const mediaRatings: SxProps<Theme> = {
+  display: 'flex',
+  flexWrap: 'wrap'
+}
+
+export const mediaReviews: SxProps<Theme> = {
+  justifyContent: 'center',
+  textAlign: 'left'
+}
+
+export const userAccount: SxProps<Theme> = {
+  display: 'inline-flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: "center",
+  width: 'auto',
+  minWidth: 75,
+  mr: 2
+}
+
+export const reviewDetail: SxProps<Theme> = {
+  display: 'flex',
+  flexDirection: 'column'
 }

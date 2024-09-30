@@ -20,8 +20,8 @@ function App() {
         <Route path="/account" element={<AccountPage />} />
         <Route path="/createReview" element={<CreateReviewPage />} />
         <Route path="/examples" element={<ExampleList />} />
-        <Route path="/search" element={<SearchPage/>} />
-        <Route path="/media/:id" element={<MediaPage/>} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/media/:id" element={<MediaPage />} />
       </Routes>
     </Router>
   )

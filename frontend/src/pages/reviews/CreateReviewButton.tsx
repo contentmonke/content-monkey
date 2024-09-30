@@ -1,40 +1,32 @@
-import { Fab } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Fab, Typography } from "@mui/material";
 import { useState } from "react";
 import CreateIcon from '@mui/icons-material/Create';
 import CreateReviewModal from './CreateReviewModal';
-
-const fabButtonSx = {
-  position: 'fixed',
-  bottom: 30,
-  right: 30,
-  backgroundColor: '#99d2ff',
-  '&:hover': {
-    bgcolor: '#5db8ff',
-  },
-}
-
+import { fabButton } from "../../style/review-page";
 
 function CreateReviewButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   function handleClick() {
-    console.log("modal open")
     setModalOpen(true);
   }
 
   return (
     <>
       <Fab variant="extended"
-        sx={{ ...fabButtonSx }}
+        sx={{ ...fabButton }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => handleClick()}>
         {isHovered ?
           <>
             <CreateIcon sx={{ mr: 1 }} />
-            Create A Review
+            <Typography
+              variant={'caption'}
+              fontSize={15}>
+              Create A Review
+            </Typography>
           </>
           :
           <CreateIcon />

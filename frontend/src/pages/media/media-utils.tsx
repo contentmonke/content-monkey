@@ -1,7 +1,7 @@
 import { api } from "../../api/requests";
 import { MediaLabel, MediaType } from "../../models/Models";
 
-export async function fetchMedia(idString: string, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any) {
+export async function fetchMedia(idString: string, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
   setIsLoading(true);
   let mediaId = parseInt(idString);
   api.media.fetchMedia({ mediaId })
@@ -12,16 +12,18 @@ export async function fetchMedia(idString: string, setMedia: any, setLabels: any
       setIsError(false);
     })
     .catch((error) => {
+      setMedia(null);
       console.log(error)
       setIsError(true);
     })
     .finally(() => {
       setIsLoading(false)
+      setDoneSearching(true)
     });
 }
 
 export const getLabels = (mediaType: MediaType): MediaLabel | null => {
-  if (MediaType.BOOK) {
+  if (mediaType === MediaType.BOOK) {
     const mediaLabel: MediaLabel = {
       createdByLabel: "Written by:",
       creatorsLabel: "Authors:",
