@@ -13,13 +13,29 @@ export type Review = {
 }
 
 export type VolumeInfo = {
-  title: string;
-  authors: string[];
-  publisher: string;
-  publishedDate: string;
-  thumbnail: string;
-  pageCount: string;
-  description: string
+  title: string,
+  authors: string[],
+  publisher: string,
+  publishedDate: string,
+  thumbnail: string,
+  pageCount: string,
+  description: string,
+}
+
+export type Media = {
+  title: string,
+  authors: string[],
+  publisher: string,
+  publishedDate: string,
+  thumbnail: string,
+  pageCount: string,
+  description: string,
+}
+
+export type MediaLabel = {
+  createdByLabel: string,
+  creatorsLabel: string,
+  creationDate: string,
 }
 
 export type Media = {

@@ -3,7 +3,7 @@ import { MediaType } from "../models/Models";
 
 function MediaDropdown({ mediaType, onChange }: any) {
   return (
-    <FormControl sx={{ m: 1, minWidth: 95 }}>
+    <FormControl sx={{ minWidth: 95, mr: 1 }}>
       <InputLabel id="media-field-id">Media Type</InputLabel>
       <Select
         value={mediaType}
