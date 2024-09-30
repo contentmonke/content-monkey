@@ -19,7 +19,7 @@ const recentReviews = ['Review 1: This book was a masterpiece!', 'Review 2: The 
 
 function AccountPage() {
   const [count, setCount] = useState(0);
-  const { user, isLoading, error } = useAuth0();
+  const { user, isLoading, error, logout } = useAuth0();
   const [userData, setUserData] = useState();
   const [bio, setBio] = useState('No biography available.');
 
@@ -27,7 +27,11 @@ function AccountPage() {
     try {
       // Replace with your API call to delete the account
       console.log('Account deletion process initiated.');
+      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+      const userDel = await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id);
+      console.log('localhost:8080/api/user/' + userEdit.data[0].id)
       alert('Account successfully deleted.');
+      logout();
     } catch (error) {
       console.error('Error deleting account:', error);
       alert('Failed to delete account.');

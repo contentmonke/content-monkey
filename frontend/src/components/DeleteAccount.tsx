@@ -2,11 +2,12 @@ import React from 'react';
 import { Button } from '@mui/material';
 
 // Define the component
-const DeleteAccount = () => {
+const DeleteAccount = ({ onDelete }) => {
   // Function to handle delete confirmation and click
   const handleDelete = () => {
     const confirmation = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
     if (confirmation) {
+      onDelete(); // Call the passed in delete function
     }
   };
 
