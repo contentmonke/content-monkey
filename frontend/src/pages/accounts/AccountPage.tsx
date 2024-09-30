@@ -1,7 +1,7 @@
 import '../../App.css';
 import { useEffect, useState } from 'react';
 import cmLogo from '/monkey.svg';
-import LoginButton from '../home/LoginButton/LoginButton';
+import LoginButton from '../home/SignUpButton/SignUpButton';
 import LogoutButton from '../home/LogoutButton/LogoutButton';
 import Profile from '../profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
