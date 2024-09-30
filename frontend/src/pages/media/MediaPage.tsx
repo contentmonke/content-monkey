@@ -13,7 +13,7 @@ import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
 
 function MediaPage() {
-  const { id } = useParams();
+  const { title } = useParams();
   const [media, setMedia] = useState<Media | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [doneSearching, setDoneSearching] = useState(false);
@@ -24,11 +24,11 @@ function MediaPage() {
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (id === undefined) {
+    if (title === undefined) {
       return;
     }
-    fetchMedia(id, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
-  }, [id])
+    fetchMedia(title, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
+  }, [title])
 
   const handleStatusClick = (value: any) => {
   }
@@ -70,18 +70,18 @@ function MediaPage() {
               <Divider orientation="vertical" sx={{ height: 'auto' }} />
               <Container sx={{ ...rightColumn }}>
                 <Container disableGutters sx={{ ...mediaDetails }}>
-                  <h3 style={{ flexGrow: 1 }}> {media?.title}</h3>
-                  <h6 style={{ color: 'grey' }}>{media?.publishedDate}</h6>
-                  <h6>{labels?.createdByLabel} {media?.authors}</h6>
+                  <h3 style={{ flexGrow: 1 }}> {media?.mediaTitle}</h3>
+                  {/* <h6 style={{ color: 'grey' }}>{media?.publishedDate}</h6> */}
+                  <h6>{labels?.createdByLabel} {media?.author}</h6>
                   <Container disableGutters sx={{ ...mediaRatings }}>
                     <Rating
                       sx={{ my: 0, mr: 1 }}
-                      value={4}
+                      value={media?.averageRating}
                       precision={0.5}
                       readOnly
                     />
-                    <h5 style={{ marginRight: 10 }}>5.0</h5>
-                    <div >{(10000).toLocaleString()} Ratings • {(2000).toLocaleString()} Reviews</div>
+                    <h5 style={{ marginRight: 10 }}> {media?.averageRating} </h5>
+                    <div >{media?.totalRatings} Ratings • {(2000).toLocaleString()} Reviews</div>
                     <Typography
                       variant={'caption'}
                       fontSize={14}

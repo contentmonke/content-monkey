@@ -20,6 +20,24 @@ public class MediaEntity {
     @Column(name = "media_duration")
     private int mediaDuration;
 
+    @Column(name = "media_author")
+    private String author;
+
+    @Column(name = "media_genre")
+    private String genre;
+
+    @Column(name = "media_description")
+    private String description;
+
+    @Column(name = "average_rating")
+    private float averageRating;
+
+    @Column(name = "total_ratings")
+    private int totalRatings;
+
+    @Column(name = "media_thumbnail")
+    private String thumbnail;
+
 
     public String getMediaTitle() {
         return mediaTitle;
@@ -35,6 +53,54 @@ public class MediaEntity {
 
     public void setMediaDuration(int duration) {
         this.mediaDuration = duration;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public float getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     @Override

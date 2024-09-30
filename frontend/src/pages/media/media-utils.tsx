@@ -1,10 +1,10 @@
 import { api } from "../../api/requests";
 import { MediaLabel, MediaType } from "../../models/Models";
 
-export async function fetchMedia(idString: string, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
+export async function fetchMedia(mediaTitle: string, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
   setIsLoading(true);
-  let mediaId = parseInt(idString);
-  api.media.fetchMedia({ mediaId })
+  // let mediaId = parseInt(idString);
+  api.media.fetchMedia( mediaTitle )
     .then((response) => {
       console.log(response.data);
       setMedia(response.data);

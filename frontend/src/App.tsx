@@ -25,7 +25,7 @@ function App() {
           <Route path="/createReview" element={<CreateReviewPage />} />
           <Route path="/examples" element={<ExampleList />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/media/:id" element={<MediaPage />} />
+          <Route path="/media/:title" element={<MediaPage />} />
         </Routes>
       </Container>
     </Router>
