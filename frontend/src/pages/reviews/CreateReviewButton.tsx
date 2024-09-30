@@ -1,7 +1,7 @@
 import { Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
-
+import CreateIcon from '@mui/icons-material/Create';
 import CreateReviewModal from './CreateReviewModal';
 
 const fabButtonSx = {
@@ -13,7 +13,6 @@ const fabButtonSx = {
     bgcolor: '#5db8ff',
   },
 }
-
 
 
 function CreateReviewButton() {
@@ -32,8 +31,14 @@ function CreateReviewButton() {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => handleClick()}>
-        <AddIcon />
-        {isHovered ? "Create New Review" : ""}
+        {isHovered ?
+          <>
+            <CreateIcon sx={{ mr: 1 }} />
+            Create A Review
+          </>
+          :
+          <CreateIcon />
+        }
       </Fab>
       <CreateReviewModal open={modalOpen} setModalOpen={setModalOpen} />
     </>

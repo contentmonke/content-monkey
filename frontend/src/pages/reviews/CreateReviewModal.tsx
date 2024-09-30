@@ -1,10 +1,10 @@
-import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button } from "@mui/material";
+import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button, Pagination, Box } from "@mui/material";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { Dayjs } from 'dayjs';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MediaType } from "../../models/Models";
 import CancelButton from "../../components/CancelButton";
 import ConfirmButton from "../../components/ConfirmButton";
@@ -13,11 +13,13 @@ import { handleSearchFields } from "./review-utils";
 import RatingStars from "../../components/RatingStars";
 import { createReview } from "../../api/objects";
 import MediaDropdown from "../../components/MediaDropdown";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadSearchResults } from "../search/search-utils";
 import { SmallLoading } from "../../components/Loading";
 import WarningModal from "../../components/WarningModal";
 import { Close } from "@mui/icons-material";
+import SuccessAlert from "../../components/SuccessAlert";
+import ErrorAlert from "../../components/ErrorAlert";
 
 const dialogSx = {
   py: 5,
@@ -41,7 +43,18 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [page, setPage] = useState(1);
+  const [prevSearch, setPrevSearch] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const navigate = useNavigate();
+  const { state } = useLocation();
+
+  useEffect(() => {
+    console.log("Modal page")
+    console.log(state)
+  }, [])
 
   const handleClose = () => {
     setModalOpen(false);
@@ -56,7 +69,10 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleSearchClick = () => {
-    loadSearchResults(mediaType, title, setResults, setIsLoading)
+    setPrevSearch(title);
+    setResults([]);
+    loadSearchResults(mediaType, title, setResults, setIsLoading);
+    setPage(1);
   }
 
   const handleRatingChange = (value: any) => {
@@ -65,31 +81,65 @@ function CreateReviewModal({ open, setModalOpen }: any) {
 
   const handleBackArrowClick = () => {
     setMedia(null);
-    setBody("")
+    setBody("");
     setRating(0);
     setStartDate(null);
     setEndDate(null);
-    setStartedMedia(false)
+    setStartedMedia(false);
     setShowWarning(false);
   }
 
+  const isInvalidArguments = () => {
+    if (body === "") {
+      setIsInvalidArgs(true)
+      return true;
+    }
+    setIsInvalidArgs(false)
+    return false;
+
+  }
+
   const handleCreateReviewClick = async () => {
+    if (isInvalidArguments()) {
+      return;
+    }
     setIsLoading(true);
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
         console.log(response);
+        setIsLoading(false);
+        handleBackArrowClick();
+        setIsSuccess(true)
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
+        setIsError(true)
       });
   }
 
   const handleExpandScreenClick = () => {
-    navigate("/createReview");
+    navigate("/createReview",
+      {
+        state:
+        {
+          reviewDraft: {
+            title: title,
+            results: results,
+            media: media,
+            mediaType: mediaType,
+            body: body,
+            rating: rating,
+            startedMedia: startedMedia,
+            startDate: startDate,
+            endDate: endDate
+          }
+        }
+      });
+  }
+
+  const handlePageChange = (value: any) => {
+    setPage(value);
   }
 
 
@@ -147,21 +197,29 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   <Typography
                     variant={'body2'}
                     textAlign={'left'}
-                  >{results.length} Results for {title}
+                  >Showing Results for '{prevSearch}'
                   </Typography>
                 }
                 <List sx={{ padding: 0 }}>
-                  {results.length > 0 && results.map((result, index) => (
-                    <div key={index}>
-                      <Divider component="li" />
-                      <ListItemButton
-                        onClick={() => setMedia(result)}
-                      >
-                        {handleSearchFields(mediaType, result, "list")}
-                      </ListItemButton>
-                    </div>
-
-                  ))}
+                  {results.length > 0 &&
+                    <>
+                      {
+                        results.slice((page - 1) * 10, (page * 10)).map((result, index) => (
+                          <div key={index}>
+                            <Divider component="li" />
+                            <ListItemButton
+                              onClick={() => setMedia(result)}
+                            >
+                              {handleSearchFields(mediaType, result, "list")}
+                            </ListItemButton>
+                          </div>
+                        ))
+                      }
+                      < Box my={2} display={'flex'} justifyContent={'center'}>
+                        <Pagination count={Math.ceil(results.length / 10)} page={page} onChange={(event, pageCount) => handlePageChange(pageCount)} />
+                      </Box>
+                    </>
+                  }
                 </List>
                 {/* </Paper> */}
               </>
@@ -178,6 +236,9 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                   rows={8}
                   value={body}
                   onChange={(event) => setBody(event.target.value)} />
+                {isInvalidArgs &&
+                  <Typography color="error">Please enter a valid rating and description</Typography>
+                }
                 <FormControlLabel
                   label={`I have started this ${mediaType.toLowerCase()}`}
                   control={
@@ -202,8 +263,15 @@ function CreateReviewModal({ open, setModalOpen }: any) {
                 <WarningModal open={showWarning} setOpen={setShowWarning} handleConfirm={handleBackArrowClick} />
               </>
             }
-          </Stack>
-
+          </Stack >
+          <SuccessAlert
+            message={"Review successfully created"}
+            showAlert={isSuccess}
+            setShowAlert={setIsSuccess} />
+          <ErrorAlert
+            message={"Error creating the review"}
+            showAlert={isError}
+            setShowAlert={setIsError} />
         </Dialog >
         // </Container>
         :

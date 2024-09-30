@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CreateReviewButton from '../reviews/CreateReviewButton';
 import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { Loading } from '../../components/Loading';
+import { useLocation } from 'react-router-dom';
+
+
 
 const AccountPage = () => {
   const userData = {
@@ -26,6 +29,13 @@ const AccountPage = () => {
       { id: 2, content: "I had the same issue, glad it’s resolved." },
     ],
   };
+
+  const {state} = useLocation();
+  
+  useEffect(() => {
+    console.log("Account page")
+    console.log(state)
+  },[])
 
   return (
     <>
