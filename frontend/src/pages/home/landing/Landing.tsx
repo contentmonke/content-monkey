@@ -10,7 +10,7 @@ import { Suspense } from 'react';
 
 function Landing() {
 
-  return <>
+  return <div className="landing-page">
     <div className="fiber">
       <Canvas
         camera={{
@@ -41,7 +41,7 @@ function Landing() {
     <div className="signUp">
       <SignUpButton />
     </div>
-  </>;
+  </div>;
 }
 
 export default Landing;

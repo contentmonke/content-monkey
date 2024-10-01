@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <Container sx={{ mt: 15 }}>
+      <Container sx={{ mt: 5 }}>
         <Routes>
           {/* Define the route for /account */}
           <Route path="/" element={<Home />} />

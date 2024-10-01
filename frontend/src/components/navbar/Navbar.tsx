@@ -48,49 +48,51 @@ const Navbar = () => {
   const { isAuthenticated } = useAuth0();
 
   return isAuthenticated && (
-    <div className="bar">
-      <div className="gradient"></div>
-      <nav>
-        <ul className="desktop-nav">
-          <li>
-            <a href="/" className="nav-logo">
-            </a>
-          </li>
-          <li>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search content"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-          <li>
-            Item
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <>
+      <div className="nav-gradient"></div>
+      <div className="bar">
+        <nav>
+          <ul className="desktop-nav">
+            <li>
+              <a href="/" className="nav-logo">
+              </a>
+            </li>
+            <li>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search content"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+            <li>
+              Item
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </>
   );
 };
 

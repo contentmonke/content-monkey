@@ -2,13 +2,14 @@
   background: #d5e5f3;
   height: 65px;
   z-index: 300;
-  position: fixed;
+  position: relative;
   left: 0;
   top: 0;
   right: 0;
-  border-color: red;
-  border-width: 0 0 10px 0;
-  padding: 0, 32px, 0, 32px;
+  border: solid;
+  border-color: rgb(203, 203, 203);
+  border-width: 0 0 1px 0;
+  margin-bottom: 20px;
 }
 
 .bar nav {
@@ -33,17 +34,4 @@
   width: 45px;
   background-repeat: no-repeat;
   user-select: none;
-}
-
-.gradient {
-  position: absolute;
-  left: 12.5%;
-  pointer-events: none;
-  top: -200px;
-  z-index: -1;
-  width: 80vw;
-  min-height: 300px;
-  max-height: 300px;
-  filter: blur(100px);
-  background: radial-gradient(circle,#eff9ff 100%,#effaff 0);
 }
