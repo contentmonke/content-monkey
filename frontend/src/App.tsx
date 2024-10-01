@@ -7,7 +7,7 @@ import ExampleList from './example/ExampleList';
 import CreateReviewPage from './pages/reviews/CreateReviewPage';
 import SearchPage from './pages/search/SearchPage'
 import MediaPage from './pages/media/MediaPage'
-import { AppBar, Container, Toolbar, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 
 function App() {
   // const { isLoading, error } = useAuth0();
