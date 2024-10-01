@@ -43,7 +43,6 @@ public class SearchService {
                     return entity;
                 })
                 .collect(Collectors.toList());
-//        return response;
     }
 }
 
