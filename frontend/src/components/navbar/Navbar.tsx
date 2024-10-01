@@ -4,6 +4,8 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -24,10 +26,11 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
-  pointerEvents: 'none',
+  cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  zIndex: 1
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -45,7 +48,35 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth0();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  //const mediaType = MediaType.BOOK;
+  // const [results, setResults] = useState<VolumeInfo[]>([]);
+  // const [isError, setIsError] = useState(false);
+  // const [isLoading, setIsLoading] = useState("");
+
+
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    navigate('/search', {
+      state: {
+        searchQuery: searchQuery,
+      },
+    });
+    setSearchQuery("");
+  }
+
+  const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchSubmit();
+    }
+  };
+
 
   return isAuthenticated && (
     <>
@@ -59,12 +90,15 @@ const Navbar = () => {
             </li>
             <li>
               <Search>
-                <SearchIconWrapper>
+                <SearchIconWrapper onClick={handleSearchSubmit}>
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
                   placeholder="Search content"
                   inputProps={{ 'aria-label': 'search' }}
+                  value={searchQuery}
+                  onChange={handleSearchInputChange}
+                  onKeyDown={handleSearchSubmitOnEnter}
                 />
               </Search>
             </li>
