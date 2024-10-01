@@ -38,6 +38,9 @@ public class MediaEntity {
     @Column(name = "media_thumbnail")
     private String thumbnail;
 
+    @Column(name = "media_type")
+    private String mediaType;
+
 
     public String getMediaTitle() {
         return mediaTitle;
@@ -101,6 +104,14 @@ public class MediaEntity {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
     }
 
     @Override

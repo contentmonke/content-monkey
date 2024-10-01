@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { fetchMedia } from "./media-utils";
 import { Media, MediaLabel } from "../../models/Models";
 import { SmallLoading } from "../../components/Loading";
@@ -11,9 +10,10 @@ import RatingStars from "../../components/RatingStars";
 import ReviewSubsection from "./ReviewSubsection";
 import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
+import { useLocation } from 'react-router-dom';
+
 
 function MediaPage() {
-  const { title } = useParams();
   const [media, setMedia] = useState<Media | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [doneSearching, setDoneSearching] = useState(false);
@@ -22,13 +22,15 @@ function MediaPage() {
   const [labels, setLabels] = useState<MediaLabel | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
+  const location = useLocation(); // Accessing the state passed from the navbar
+
 
   useEffect(() => {
-    if (title === undefined) {
-      return;
+    if (location && location.state && location.state.result) {
+      fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
-    fetchMedia(title, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
-  }, [title])
+  }, []);
+
 
   const handleStatusClick = (value: any) => {
   }

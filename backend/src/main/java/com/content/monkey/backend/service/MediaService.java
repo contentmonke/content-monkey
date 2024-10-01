@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 public class MediaService {
 
@@ -13,9 +15,11 @@ public class MediaService {
     private MediaRepository mediaRepository;
 
     public MediaEntity getMediaByTitle(String title) {
-        MediaEntity mediaEntity = mediaRepository.findByMediaTitle(title);
-
-        return mediaEntity;
+        List<MediaEntity> mediaEntity = mediaRepository.findByMediaTitle(title);
+        if (mediaEntity.isEmpty()) {
+            return null;
+        }
+        return mediaEntity.getFirst();
     }
 
     public MediaEntity createMediaEntity(MediaEntity mediaEntity) {

@@ -20,8 +20,14 @@ public class MediaController {
     }
 
     @PostMapping("/")
-    public MediaEntity createMediaEntity(@RequestBody MediaEntity mediaEntity) {
-        return mediaService.createMediaEntity(mediaEntity);
+    public MediaEntity getMediaByTitle(@RequestBody MediaEntity mediaEntity) {
+        MediaEntity result = mediaService.getMediaByTitle(mediaEntity.getMediaTitle());
+        if (result == null) {
+            mediaEntity.setTotalRatings(0);
+            mediaEntity.setAverageRating(0);
+            result = mediaService.createMediaEntity(mediaEntity);
+        }
+        return result;
     }
 
 }
