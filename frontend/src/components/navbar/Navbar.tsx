@@ -49,6 +49,7 @@ const Navbar = () => {
 
   return isAuthenticated && (
     <div className="bar">
+      <div className="gradient"></div>
       <nav>
         <ul className="desktop-nav">
           <li>
@@ -65,6 +66,9 @@ const Navbar = () => {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </Search>
+          </li>
+          <li>
+            Item
           </li>
           <li>
             Item

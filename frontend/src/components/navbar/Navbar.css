@@ -34,3 +34,16 @@
   background-repeat: no-repeat;
   user-select: none;
 }
+
+.gradient {
+  position: absolute;
+  left: 12.5%;
+  pointer-events: none;
+  top: -200px;
+  z-index: -1;
+  width: 80vw;
+  min-height: 300px;
+  max-height: 300px;
+  filter: blur(100px);
+  background: radial-gradient(circle,#eff9ff 100%,#effaff 0);
+}
