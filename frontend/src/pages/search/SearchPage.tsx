@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Loading, SmallLoading } from "../../components/Loading";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { MediaType, VolumeInfo } from "../../models/Models";
@@ -10,10 +10,13 @@ import SearchResults from "./SearchResults";
 import MediaSearchBar from "../reviews/MediaSearchBar";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { fullpageContainer } from "../../style/review-page";
+import { useLocation } from 'react-router-dom';
 
 
 function SearchPage() {
-  const [title, setTitle] = useState("");
+  const location = useLocation(); // Accessing the state passed from the navbar
+
+  const [title, setTitle] = useState((location && location.state) ? location.state.searchQuery : "");
   const [results, setResults] = useState<VolumeInfo[]>([]);
   const [isLoading, setIsLoading] = useState("");
   const [mediaType, setMediaType] = useState(MediaType.BOOK);
@@ -41,6 +44,13 @@ function SearchPage() {
     setMedia(null);
   }
 
+  useEffect(() => {
+    if (location && location.state && location.state.searchQuery) {
+      setTitle(location.state.searchQuery);
+      setPrevSearch(location.state.searchQuery);
+      loadSearchResults(mediaType, location.state.searchQuery, setResults, setIsLoading, setIsError)
+    }
+  }, [location.state]);
 
   return (
     <>

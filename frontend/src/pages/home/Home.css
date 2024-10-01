@@ -1,0 +1,20 @@
+.card, .loader {
+  text-align: center;
+}
+
+.logButton {
+  z-index: 2;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: #31628F;
+  width: 200px;
+  height: 45px;
+  border: 1px solid #D1D1D1;
+  border-radius: 3px;
+  transition: .2s ease-in-out;
+}
+
+.logButton:hover {
+  background-color: #295680;
+  transition: .2s ease-in-out;
+}
