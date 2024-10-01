@@ -1,0 +1,37 @@
+.bar {
+  background: #d5e5f3;
+  height: 65px;
+  z-index: 300;
+  position: relative;
+  left: 0;
+  top: 0;
+  right: 0;
+  border: solid;
+  border-color: rgb(203, 203, 203);
+  border-width: 0 0 1px 0;
+  margin-bottom: 20px;
+}
+
+.bar nav {
+  width: 1000px;
+  margin: 0 auto;
+  padding: 0 8px;
+  height: 100%;
+}
+
+.desktop-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-logo {
+  background: url("/monkey.svg");
+  display: block;
+  background-position: center;
+  height: 65px;
+  width: 45px;
+  background-repeat: no-repeat;
+  user-select: none;
+}

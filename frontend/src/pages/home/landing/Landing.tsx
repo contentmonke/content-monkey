@@ -10,20 +10,23 @@ import { Suspense } from 'react';
 
 function Landing() {
 
-  return <>
-    <Canvas
-      camera={{
-        fov: 45,
-        near: 0.1,
-        far: 200,
-      }}
-      style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
-    >
-      <Suspense fallback={null}>
-        <ModelView />
-      </Suspense>
-    </Canvas>
-    <Loader />
+  return <div className="landing-page">
+    <div className="fiber">
+      <Canvas
+        camera={{
+          fov: 20,
+          near: 0.1,
+          far: 200,
+          position: [0,0,15]
+        }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 0 }}
+      >
+        <Suspense fallback={null}>
+          <ModelView />
+        </Suspense>
+      </Canvas>
+      <Loader />
+    </div>
 
     <div className="gradient"></div>
 
@@ -35,8 +38,10 @@ function Landing() {
       </div>
     </div>
 
-    <SignUpButton />
-  </>;
+    <div className="signUp">
+      <SignUpButton />
+    </div>
+  </div>;
 }
 
 export default Landing;
