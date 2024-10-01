@@ -42,7 +42,7 @@ function ModelView() {
       booksRef.current.rotation.y = -Math.PI / 24 + (-mouse.x * Math.PI * rotationMult);
     }
     if (vgRef.current) {
-      vgRef.current.rotation.y = -Math.PI / 12 + mouse.x * Math.PI * rotationMult;
+      vgRef.current.rotation.y = -Math.PI / 8 + mouse.x * Math.PI * rotationMult;
     }
     if (mvtvRef.current) {
       mvtvRef.current.rotation.y = Math.PI / 12 + mouse.x * Math.PI * rotationMult;
@@ -63,13 +63,13 @@ function ModelView() {
     }
     if (slateRef.current) {
       slateRef.current.rotation.x = Math.PI / 2 - mouse.y * Math.PI * rotationMult;
-      slateRef.current.rotation.z = mouse.x * Math.PI * rotationMult;
+      slateRef.current.rotation.z = Math.PI / 24 + mouse.x * Math.PI * rotationMult;
 
       slateRef.current.position.x = -1 + mouse.x * positionMult;
       slateRef.current.position.y = -1 + mouse.y * positionMult;
     }
     if (trackRef.current) {
-      trackRef.current.rotation.x = mouse.y * Math.PI * .1;
+      trackRef.current.rotation.x = -mouse.y * Math.PI * rotationMult;
       trackRef.current.position.y = 1 + height/2000;
     }
   });

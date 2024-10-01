@@ -3,6 +3,7 @@
 }
 
 .logButton {
+  z-index: 2;
   font-size: 18px;
   font-weight: 600;
   background-color: #31628F;

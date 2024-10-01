@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react';
 import { Loading } from '../../components/Loading';
 import { useLocation } from 'react-router-dom';
-import Profile from '../profile/Profile';
 import Landing from './landing/Landing';
 import Secured from './secured/Secured';
 
@@ -19,26 +18,23 @@ function Home() {
   }, []);
 
   return (isLoading ? <Loading /> : (
-    <>
-      <div className="card">
-        {error && <p>Authentication Error</p>}
-        {!error && isLoading && <p>Loading...</p>}
-        {!error && !isLoading && (
-          <>
-            {!isAuthenticated ? (
-              <>
-                <Landing />
-              </>
-            ) : (
-              <>
-                <Secured />
-                <Profile />
-              </>
-            )}
-          </>
-        )}
-      </div>
-    </>
+    <div className="card">
+      {error && <h1>Authentication Error</h1>}
+      {!error && isLoading && <h1>Loading...</h1>}
+      {!error && !isLoading && (
+        <>
+          {!isAuthenticated ? (
+            <>
+              <Landing />
+            </>
+          ) : (
+            <>
+              <Secured />
+            </>
+          )}
+        </>
+      )}
+    </div>
   )
   )
 }
