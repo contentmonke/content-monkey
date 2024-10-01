@@ -17,7 +17,7 @@ function Home() {
     console.log(state)
   }, []);
 
-  return (isLoading ? <Loading /> : (
+  return (isLoading ? <div className="loader"><Loading /></div> : (
     <div className="card">
       {error && <h1>Authentication Error</h1>}
       {!error && isLoading && <h1>Loading...</h1>}

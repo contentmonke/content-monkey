@@ -8,11 +8,13 @@ import CreateReviewPage from './pages/reviews/CreateReviewPage';
 import SearchPage from './pages/search/SearchPage'
 import MediaPage from './pages/media/MediaPage'
 import { Container } from '@mui/material';
+import Navbar from "./components/navbar/Navbar"
 
 function App() {
   // const { isLoading, error } = useAuth0();
   return (
     <Router>
+      <Navbar />
       <Container sx={{ mt: 5 }}>
         <Routes>
           {/* Define the route for /account */}

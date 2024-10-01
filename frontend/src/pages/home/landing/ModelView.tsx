@@ -77,7 +77,7 @@ function ModelView() {
   return (<>
     <Environment preset="city" />
     <ambientLight intensity={.75} />
-    <directionalLight position={[0, 10, 5]} />
+    <directionalLight position={[0, 15, 5]} />
 
     <primitive
       object={vg.scene}
