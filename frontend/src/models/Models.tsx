@@ -22,20 +22,32 @@ export type VolumeInfo = {
   description: string,
 }
 
-export type Media = {
-  title: string,
-  authors: string[],
-  publisher: string,
-  publishedDate: string,
-  thumbnail: string,
-  pageCount: string,
-  description: string,
-}
+// export type Media = {
+//   title: string,
+//   authors: string[],
+//   publisher: string,
+//   publishedDate: string,
+//   thumbnail: string,
+//   pageCount: string,
+//   description: string,
+// }
 
 export type MediaLabel = {
   createdByLabel: string,
   creatorsLabel: string,
   creationDate: string,
+}
+
+export type Media = {
+  mediaTitle: string;
+  type: string;
+  author: string;
+  mediaDuration: number;
+  genre: string;
+  description: string;
+  averageRating: number;
+  totalRatings: number;
+  thumbnail: string;
 }
 
 export enum MediaType {

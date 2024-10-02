@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { fetchMedia } from "./media-utils";
 import { Media, MediaLabel } from "../../models/Models";
 import { SmallLoading } from "../../components/Loading";
@@ -11,9 +10,10 @@ import RatingStars from "../../components/RatingStars";
 import ReviewSubsection from "./ReviewSubsection";
 import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
+import { useLocation } from 'react-router-dom';
+
 
 function MediaPage() {
-  const { id } = useParams();
   const [media, setMedia] = useState<Media | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [doneSearching, setDoneSearching] = useState(false);
@@ -22,13 +22,15 @@ function MediaPage() {
   const [labels, setLabels] = useState<MediaLabel | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
+  const location = useLocation(); // Accessing the state passed from the navbar
+
 
   useEffect(() => {
-    if (id === undefined) {
-      return;
+    if (location && location.state && location.state.result) {
+      fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
-    fetchMedia(id, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
-  }, [id])
+  }, []);
+
 
   const handleStatusClick = (value: any) => {
   }
@@ -70,18 +72,18 @@ function MediaPage() {
               <Divider orientation="vertical" sx={{ height: 'auto' }} />
               <Container sx={{ ...rightColumn }}>
                 <Container disableGutters sx={{ ...mediaDetails }}>
-                  <h3 style={{ flexGrow: 1 }}> {media?.title}</h3>
-                  <h6 style={{ color: 'grey' }}>{media?.publishedDate}</h6>
-                  <h6>{labels?.createdByLabel} {media?.authors}</h6>
+                  <h3 style={{ flexGrow: 1 }}> {media?.mediaTitle}</h3>
+                  {/* <h6 style={{ color: 'grey' }}>{media?.publishedDate}</h6> */}
+                  <h6>{labels?.createdByLabel} {media?.author}</h6>
                   <Container disableGutters sx={{ ...mediaRatings }}>
                     <Rating
                       sx={{ my: 0, mr: 1 }}
-                      value={4}
+                      value={media?.averageRating}
                       precision={0.5}
                       readOnly
                     />
-                    <h5 style={{ marginRight: 10 }}>5.0</h5>
-                    <div >{(10000).toLocaleString()} Ratings • {(2000).toLocaleString()} Reviews</div>
+                    <h5 style={{ marginRight: 10 }}> {media?.averageRating} </h5>
+                    <div >{media?.totalRatings} Ratings • {(2000).toLocaleString()} Reviews</div>
                     <Typography
                       variant={'caption'}
                       fontSize={14}

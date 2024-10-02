@@ -2,6 +2,7 @@ import { Container, Divider, List, ListItemButton, Pagination } from "@mui/mater
 import { handleSearchFields } from "../reviews/review-utils";
 import { pagination } from "../../style/review-page";
 import { RefObject } from "react";
+import { useNavigate } from 'react-router-dom';
 
 type customParams = {
   results: any[],
@@ -31,6 +32,16 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleClick = (result: any) => {
+    navigate(`/media/${result.title}`, {
+      state: {
+        result: result
+      }
+    });
+  };
+
   const handlePageChangeLocal = (pageCount: any) => {
     handlePageChange(pageCount);
     scrollToTop();
@@ -44,7 +55,7 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
             <div key={index}>
               <Divider component="li" />
               <ListItemButton
-                onClick={() => setMedia(result)}
+                onClick={() => handleClick(result)}
               >
                 {handleSearchFields(mediaType, result, location)}
               </ListItemButton>
