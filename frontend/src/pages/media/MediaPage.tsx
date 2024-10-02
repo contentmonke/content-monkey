@@ -11,6 +11,7 @@ import ReviewSubsection from "./ReviewSubsection";
 import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
 import { useLocation } from 'react-router-dom';
+import CreateReviewButton from "../reviews/CreateReviewButton";
 
 
 function MediaPage() {
@@ -28,6 +29,7 @@ function MediaPage() {
   useEffect(() => {
     if (location && location.state && location.state.result) {
       fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
+      // fetchMedia(null, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
   }, []);
 
@@ -83,7 +85,7 @@ function MediaPage() {
                       readOnly
                     />
                     <h5 style={{ marginRight: 10 }}> {media?.averageRating} </h5>
-                    <div >{media?.totalRatings} Ratings • {(2000).toLocaleString()} Reviews</div>
+                    <div >{media?.totalRatings} Ratings • {(media?.numTotalReviews).toLocaleString()} Reviews</div>
                     <Typography
                       variant={'caption'}
                       fontSize={14}
@@ -96,9 +98,13 @@ function MediaPage() {
             </Container >
             <Container sx={{ ...mediaReviews }}>
               <h6>Reviews</h6>
-              <ReviewSubsection />
+              <ReviewSubsection reviews={media?.reviews} />
+              {media?.reviews.length === 0 &&
+                <Typography variant="caption">No reviews yet</Typography>
+              }
             </Container>
           </Container>
+          <CreateReviewButton media={media} />
           <ErrorAlert
             message={"Error loading this review"}
             showAlert={isError}

@@ -6,7 +6,6 @@ const URL = 'http://localhost:8080/api';
 
 export const api = {
   reviews: {
-
     fetchReview() {
       console.log("api.reviews.get()")
     },
@@ -29,18 +28,33 @@ export const api = {
   media: {
     async fetchMedia(media: any) {
       const mediaEntity = {
-          mediaTitle: media.title,
-          mediaDuration: media.pageCount,
-          author: media.authors[0],
-          description: media.description,
-          thumbnail: media.thumbnail,
-          mediaType: "Book"
+        mediaTitle: media.title,
+        mediaDuration: media.pageCount,
+        author: media.authors[0],
+        description: media.description,
+        thumbnail: media.thumbnail,
+        mediaType: "Book"
       }
-
+      // const mediaEntity = {
+      //   mediaTitle: "superLongAndNotRealMedia",
+      //   mediaDuration: 100,
+      //   author: "Jane Doe",
+      //   description: "This is the description",
+      //   thumbnail: null,
+      //   mediaType: "Book"
+      // }
       return (
         await axios.post(`${URL}/media/`, mediaEntity)
 
       );
+    }
+  },
+  user: {
+    async fetchUser(username: any) {
+      return (await axios.post(`${URL}/user/`,
+        {
+          name: username
+        }));
     }
   }
 

@@ -142,7 +142,6 @@ function AccountPage() {
           </Grid>
         </Grid>
       </Box>
-      <CreateReviewButton />
     </>
   );
 }
