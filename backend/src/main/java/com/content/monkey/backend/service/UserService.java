@@ -51,4 +51,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserEntity updateGenres(Long id, String genres) {
+        UserEntity user = getUser(id);
+        user.setGenres(genres);
+
+        // Save the updated user
+        return userRepository.save(user);
+    }
+
+    public String getGenres(Long id) {
+        UserEntity user = getUser(id);
+        return user.getGenres();
+    }
+
 }

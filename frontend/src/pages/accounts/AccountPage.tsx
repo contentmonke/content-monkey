@@ -11,21 +11,24 @@ import DeleteAccount from '../../components/DeleteAccount';
 import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExampleList from '../../example/ExampleList';
+import EditGenresModal from './EditGenresModal'; // Import the modal
 
-// Dummy Data for favorite media, liked posts, and recent reviews
+// Dummy Data for favorite media, liked posts, recent reviews, and genres
 const favoriteMedia = ['Book: The Great Gatsby', 'Movie: Inception', 'Show: Breaking Bad'];
 const likedPosts = ['Post 1: Awesome day!', 'Post 2: React is amazing!', 'Post 3: Beautiful sunset.'];
 const recentReviews = ['Review 1: This book was a masterpiece!', 'Review 2: The movie had a fantastic plot!', 'Review 3: A must-watch series!'];
+const dummyGenres = []; // Initial dummy data for genres
 
 function AccountPage() {
   const [count, setCount] = useState(0);
   const { user, isLoading, error, logout } = useAuth0();
   const [userData, setUserData] = useState();
   const [bio, setBio] = useState('No biography available.');
+  const [favoriteGenres, setFavoriteGenres] = useState(dummyGenres); // New state for genres
+  const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
 
   const handleDeleteAccount = async () => {
     try {
-      // Replace with your API call to delete the account
       console.log('Account deletion process initiated.');
       const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
       const userDel = await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id);
@@ -39,34 +42,35 @@ function AccountPage() {
   };
 
   const getBio = async () => {
-      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-      return userEdit.data[3];
+    const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+    return userEdit.data[3];
   }
 
   const handleEditBio = async () => {
-      const newBio = prompt('Please enter your new biography:', bio);
-      if (newBio !== null && newBio !== '') {
-        try {
-          // PUT request to update the biography
-          // TODO Make get current userID endpoint to handle dynamic ID update call
-          //console.log('http://localhost:8080/api/user/name/' + user.name)
-          const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-          //console.log(userEdit)
-          //console.log(userEdit.data[0].id)
-          //console.log('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography')
-          const response = await axios.put('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography', { biography: newBio });
+    const newBio = prompt('Please enter your new biography:', bio);
+    if (newBio !== null && newBio !== '') {
+      try {
+        const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+        const response = await axios.put('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography', { biography: newBio });
 
-          // Update bio locally if the request is successful
-          if (response.status === 200) {
-            setBio(newBio);
-            alert('Biography updated successfully!');
-          }
-        } catch (error) {
-          console.error('Error updating biography:', error);
-          alert('Failed to update biography.');
+        if (response.status === 200) {
+          setBio(newBio);
+          alert('Biography updated successfully!');
         }
+      } catch (error) {
+        console.error('Error updating biography:', error);
+        alert('Failed to update biography.');
       }
-    };
+    }
+  };
+
+  const handleOpenGenresModal = () => {
+    setModalOpen(true); // Open the modal
+  };
+
+  const handleCloseGenresModal = () => {
+    setModalOpen(false); // Close the modal
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -75,9 +79,10 @@ function AccountPage() {
           const response = await axios.post('http://localhost:8080/api/user/', { name: user?.name });
           setUserData(response.data);
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-          const biography = userBio.data[0].bio
-          //const biographyTrim = JSON.parse(biography)
+          const biography = userBio.data[0].bio;
+          const genres = userBio.data[0].genres;
           setBio(JSON.parse(biography).biography || 'No biography available.');
+          setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -93,14 +98,6 @@ function AccountPage() {
 
   return (
     <>
-      {/* Navbar */}
-      <AppBar position="fixed" sx={{ bgcolor: 'lightblue' }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6">Profile Page</Typography>
-        </Toolbar>
-      </AppBar>
-
-      {/* Adding padding to prevent content from being hidden behind navbar */}
       <Box sx={{ paddingTop: '64px', paddingLeft: 4, paddingRight: 4 }}>
         <Grid container spacing={4}>
           {/* Left Section: User Info */}
@@ -131,6 +128,25 @@ function AccountPage() {
                     </>
                   )}
                 </Box>
+              </CardContent>
+            </Card>
+
+            {/* New Card for Favorite Genres */}
+            <Card sx={{ marginTop: 2 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2, width: '100%' }}>
+                  <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    Favorite Genres
+                  </Typography>
+                  <IconButton onClick={handleOpenGenresModal} size="small" aria-label="edit genres">
+                    <EditIcon />
+                  </IconButton>
+                </Box>
+                <ul>
+                  {favoriteGenres.map((genre, index) => (
+                    <li key={index}>{genre}</li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           </Grid>
@@ -189,6 +205,14 @@ function AccountPage() {
           </Grid>
         </Grid>
       </Box>
+
+      {/* Edit Genres Modal */}
+      <EditGenresModal
+        open={modalOpen}
+        handleClose={handleCloseGenresModal}
+        favoriteGenres={favoriteGenres}
+        setFavoriteGenres={setFavoriteGenres}
+      />
     </>
   );
 }

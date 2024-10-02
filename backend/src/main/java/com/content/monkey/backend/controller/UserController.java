@@ -71,4 +71,9 @@ public class UserController {
         return users;
     }
 
+    @PutMapping("genres/{id}")
+    public UserEntity updateGenres(@PathVariable Long id, @RequestBody String genres) {
+        return userService.updateGenres(id, genres);
+    }
+
 }

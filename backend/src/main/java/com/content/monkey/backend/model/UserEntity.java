@@ -29,6 +29,17 @@ public class UserEntity {
         this.bio = biography;
     }
 
+    @Column(name = "favorite_genres")
+    private String genres;
+
+    public void setGenres(String genres) {
+        this.genres = genres;
+    }
+
+    public String getGenres() {
+        return this.genres;
+    }
+
     //TODO - Add fields
     public UserEntity() {
     }
