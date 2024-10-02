@@ -1,3 +1,5 @@
+import './Secured.css';
+
 import { useAuth0 } from '@auth0/auth0-react';
 
 import LogoutButton from '../LogoutButton/LogoutButton';

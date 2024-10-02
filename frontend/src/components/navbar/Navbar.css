@@ -7,7 +7,7 @@
   top: 0;
   right: 0;
   border: solid;
-  border-color: rgb(203, 203, 203);
+  border-color: rgb(181, 181, 181);
   border-width: 0 0 1px 0;
   margin-bottom: 20px;
 }
@@ -34,4 +34,16 @@
   width: 45px;
   background-repeat: no-repeat;
   user-select: none;
+}
+
+.nav-gradient {
+  position: absolute;
+  pointer-events: none;
+  top: -200px;
+  z-index: 0;
+  width: 100vw;
+  min-height: 200px;
+  max-height: 200px;
+  filter: blur(100px);
+  background: radial-gradient(circle,#ff7474 100%,#f09393 0);
 }

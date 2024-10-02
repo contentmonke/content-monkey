@@ -15,6 +15,7 @@ function App() {
   return (
     <Router>
       <Navbar />
+      <div className="pages">
       <Container sx={{ mt: 5 }}>
         <Routes>
           {/* Define the route for /account */}
@@ -26,6 +27,7 @@ function App() {
           <Route path="/media/:id" element={<MediaPage />} />
         </Routes>
       </Container>
+      </div>
     </Router>
   )
 }
