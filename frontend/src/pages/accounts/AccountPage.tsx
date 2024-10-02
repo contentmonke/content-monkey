@@ -1,7 +1,7 @@
 import '../../App.css';
 import { useEffect, useState } from 'react';
 import cmLogo from '/monkey.svg';
-import LoginButton from '../home/LoginButton/LoginButton';
+import LoginButton from '../home/SignUpButton/SignUpButton';
 import LogoutButton from '../home/LogoutButton/LogoutButton';
 import Profile from '../profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -11,6 +11,7 @@ import DeleteAccount from '../../components/DeleteAccount';
 import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExampleList from '../../example/ExampleList';
+import CreateReviewButton from '../reviews/CreateReviewButton';
 import EditGenresModal from './EditGenresModal'; // Import the modal
 
 // Dummy Data for favorite media, liked posts, recent reviews, and genres
@@ -224,6 +225,7 @@ function AccountPage() {
         favoriteGenres={favoriteGenres}
         setFavoriteGenres={setFavoriteGenres}
       />
+      <CreateReviewButton />
     </>
   );
 }

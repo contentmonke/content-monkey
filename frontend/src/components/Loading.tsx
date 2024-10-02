@@ -5,7 +5,7 @@ export const Loading = () => {
     <div>
       <h1>Loading....</h1>
       <br />
-      <img src={monkey} alt='Should be a monkey here' />
+      <img width={200} src={monkey} alt='Should be a monkey here' />
     </div>
   )
 }

@@ -13,6 +13,8 @@ public class SearchEntity {
     private String publishedDate;
     private String thumbnail;
     private String pageCount;
+    private String description;
+
 
     // Getters and Setters
     public String getTitle() {
@@ -61,6 +63,14 @@ public class SearchEntity {
 
     public void setPageCount(String pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 

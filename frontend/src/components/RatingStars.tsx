@@ -1,10 +1,10 @@
 import { Rating } from "@mui/material";
 
-function RatingStars({ value, setValue }: any) {
+function RatingStars({ value, setValue, size = "medium" }: any) {
   return (
     <Rating
+      size={size}
       sx={{ my: 1 }}
-      name="half-rating"
       value={value}
       onChange={setValue}
       precision={0.5}

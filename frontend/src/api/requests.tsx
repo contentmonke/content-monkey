@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Review } from "../models/Models";
+import { MediaType, Review } from "../models/Models";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const URL = 'http://localhost:8080/api';
 
@@ -14,7 +15,6 @@ export const api = {
       return (
         await axios.post(`${URL}/reviews`, review)
       );
-
     },
   },
   search: {
@@ -26,5 +26,22 @@ export const api = {
       );
     }
   },
+  media: {
+    async fetchMedia(media: any) {
+      const mediaEntity = {
+          mediaTitle: media.title,
+          mediaDuration: media.pageCount,
+          author: media.authors[0],
+          description: media.description,
+          thumbnail: media.thumbnail,
+          mediaType: "Book"
+      }
+
+      return (
+        await axios.post(`${URL}/media/`, mediaEntity)
+
+      );
+    }
+  }
 
 }

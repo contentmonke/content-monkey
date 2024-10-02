@@ -1,10 +1,7 @@
-import { Dialog, DialogTitle, Stack, TextField, Typography, IconButton, Checkbox, FormControlLabel, ListItemButton, List, Divider, Button } from "@mui/material";
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import { Dialog, DialogTitle, Stack, TextField, Typography, Checkbox, FormControlLabel, Container } from "@mui/material";
 import { Dayjs } from 'dayjs';
-import SearchIcon from '@mui/icons-material/Search';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MediaType } from "../../models/Models";
 import CancelButton from "../../components/CancelButton";
 import ConfirmButton from "../../components/ConfirmButton";
@@ -12,22 +9,16 @@ import DatePickerField from "../../components/DatePickerField";
 import { handleSearchFields } from "./review-utils";
 import RatingStars from "../../components/RatingStars";
 import { createReview } from "../../api/objects";
-import MediaDropdown from "../../components/MediaDropdown";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadSearchResults } from "../search/search-utils";
 import { SmallLoading } from "../../components/Loading";
 import WarningModal from "../../components/WarningModal";
-import { Close } from "@mui/icons-material";
-
-const dialogSx = {
-  py: 5,
-  px: 10,
-  minWidth: 500,
-  maxWidth: 1000,
-  margin: 'auto',
-  textAlign: 'center'
-
-}
+import SuccessAlert from "../../components/SuccessAlert";
+import ErrorAlert from "../../components/ErrorAlert";
+import { modal } from "../../style/review-page";
+import ModalHeader from "./ModalHeader";
+import MediaSearchBar from "./MediaSearchBar";
+import SearchResults from "../search/SearchResults";
 
 function CreateReviewModal({ open, setModalOpen }: any) {
   const [mediaType, setMediaType] = useState(MediaType.UNSELECTED);
@@ -41,7 +32,20 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [page, setPage] = useState(1);
+  const [prevSearch, setPrevSearch] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const navigate = useNavigate();
+  const dialogTitleRef = useRef<HTMLDivElement>(null);
+  // const { state } = useLocation();
+
+  // useEffect(() => {
+  //   console.log("Modal page")
+  //   console.log(state)
+  // }, [])
 
   const handleClose = () => {
     setModalOpen(false);
@@ -56,7 +60,11 @@ function CreateReviewModal({ open, setModalOpen }: any) {
   }
 
   const handleSearchClick = () => {
-    loadSearchResults(mediaType, title, setResults, setIsLoading)
+    setPrevSearch(title);
+    setResults([]);
+    setErrorMessage(`Error searching for '${title}'`);
+    loadSearchResults(mediaType, title, setResults, setIsLoading, setIsError);
+    setPage(1);
   }
 
   const handleRatingChange = (value: any) => {
@@ -65,147 +73,189 @@ function CreateReviewModal({ open, setModalOpen }: any) {
 
   const handleBackArrowClick = () => {
     setMedia(null);
-    setBody("")
+    setBody("");
     setRating(0);
     setStartDate(null);
     setEndDate(null);
-    setStartedMedia(false)
+    setStartedMedia(false);
     setShowWarning(false);
   }
 
+  const isInvalidArguments = () => {
+    if (body === "") {
+      setIsInvalidArgs(true)
+      return true;
+    }
+    setIsInvalidArgs(false)
+    return false;
+
+  }
+
   const handleCreateReviewClick = async () => {
+    if (isInvalidArguments()) {
+      return;
+    }
     setIsLoading(true);
+    setErrorMessage("Error creating the review");
     createReview({ body, mediaType, rating, startDate, endDate })
       .then((response) => {
         console.log("Successfully stored your new review!");
         console.log(response);
+        setIsLoading(false);
+        handleBackArrowClick();
+        setIsSuccess(true)
       })
       .catch((error) => {
         console.error(error);
+        setIsError(true);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
   }
 
   const handleExpandScreenClick = () => {
-    navigate("/createReview");
+    navigate("/createReview",
+      {
+        state:
+        {
+          reviewDraft: {
+            title: title,
+            results: results,
+            media: media,
+            mediaType: mediaType,
+            body: body,
+            rating: rating,
+            startedMedia: startedMedia,
+            startDate: startDate,
+            endDate: endDate
+          }
+        }
+      });
+  }
+
+  const handlePageChange = (value: any) => {
+    setPage(value);
   }
 
 
   return (
     <>
       {open ?
-        <Dialog open={open} onClose={handleClose} sx={{
-          ...dialogSx
-        }} scroll="paper" fullScreen>
-          <Stack direction={'row'}
-            justifyContent={'space-between'} sx={{ mx: 1, mt: 1 }}>
-            {media === null ?
-              <IconButton onClick={() => setModalOpen(false)}>
-                <Close />
-              </IconButton>
-              :
-              <IconButton onClick={() => setShowWarning(true)}>
-                <ArrowBackIosNewIcon />
-              </IconButton>
-            }
-            <IconButton onClick={handleExpandScreenClick}>
-              <OpenInFullIcon />
-            </IconButton>
-          </Stack>
-          <DialogTitle mb={2}>Create A New Review</DialogTitle>
-          <Stack spacing={1} px={10} pb={3}>
-            {/* {(mediaType === MediaType.UNSELECTED || media === null) ? */}
+        <Dialog open={open}
+          onClose={handleClose}
+          sx={{ ...modal }}
+          scroll="paper"
+          PaperProps={{
+            ref: dialogTitleRef, // Attach the ref to the paper element
+          }}
+          fullScreen
+        >
+          <ModalHeader
+            media={media}
+            setModalOpen={setModalOpen}
+            setShowWarning={setShowWarning}
+            handleExpandScreenClick={handleExpandScreenClick}
+          />
+          <DialogTitle mb={1}>Create A New Review</DialogTitle>
+          <Container disableGutters sx={{ width: '80%' }}>
             {(media === null) ?
               <>
-                <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }}>
-                  <MediaDropdown mediaType={mediaType} onChange={handleMediaChange} />
-                  <Stack direction={'row'} sx={{ pt: 1, flexGrow: 1 }} justifyContent={'space-between'}>
-                    <TextField
-                      id="outlined-search"
-                      label="Search field"
-                      type="search"
-                      value={title}
-                      onChange={(event) => setTitle(event.target.value)} />
-                    <Button variant="contained"
-                      size='large'
-                      sx={{
-                        bgcolor: '#99d2ff', color: 'black', borderRadius: 0, ml: 2, height: 55
-                      }}
-                      startIcon={<SearchIcon />}
-                      onClick={handleSearchClick}
-                      disabled={mediaType === MediaType.UNSELECTED || title === ""}>
-                      Search
-                    </Button>
-                  </Stack>
-                  {/* <Typography>images of most popular books...</Typography> */}
-                </Stack>
+                <MediaSearchBar
+                  mediaType={mediaType}
+                  handleMediaChange={handleMediaChange}
+                  title={title}
+                  setTitle={setTitle}
+                  handleSearchClick={handleSearchClick}
+                />
+                {/* <div>images of most popular books...</div> */}
                 <br />
                 {isLoading && <SmallLoading />}
                 {results.length > 0 &&
                   <Typography
                     variant={'body2'}
-                    textAlign={'left'}
-                  >{results.length} Results for {title}
+                    textAlign={'left'}>
+                    Showing Results for '{prevSearch}'
                   </Typography>
                 }
-                <List sx={{ padding: 0 }}>
-                  {results.length > 0 && results.map((result, index) => (
-                    <div key={index}>
-                      <Divider component="li" />
-                      <ListItemButton
-                        onClick={() => setMedia(result)}
-                      >
-                        {handleSearchFields(mediaType, result, "list")}
-                      </ListItemButton>
-                    </div>
-
-                  ))}
-                </List>
-                {/* </Paper> */}
+                <SearchResults
+                  results={results}
+                  page={page}
+                  mediaType={mediaType}
+                  setMedia={setMedia}
+                  handlePageChange={handlePageChange}
+                  scrollRef={dialogTitleRef}
+                  location={'list'}
+                />
               </>
               :
               <>
                 {handleSearchFields(mediaType, media)}
-                < Stack direction={'row'} justifyContent={'end'} spacing={2} mt={0}>
+                <Stack
+                  direction={'row'}
+                  justifyContent={'end'}
+                  spacing={2}
+                  mt={0}
+                >
                   <Typography sx={{ pt: 0.5 }}>Rating: </Typography>
-                  <RatingStars value={rating} setValue={(event: any) => handleRatingChange(event.target.value)} />
+                  <RatingStars
+                    value={rating}
+                    setValue={(event: any) => handleRatingChange(event.target.value)} />
                 </Stack>
-                <TextField
-                  label={"What are your thoughts?"}
-                  multiline
-                  rows={8}
-                  value={body}
-                  onChange={(event) => setBody(event.target.value)} />
-                <FormControlLabel
-                  label={`I have started this ${mediaType.toLowerCase()}`}
-                  control={
-                    <Checkbox
-                      checked={startedMedia}
-                      onChange={handleCheckClick}
-                    />
+                <Stack>
+                  <TextField
+                    label={"What are your thoughts?"}
+                    multiline
+                    rows={8}
+                    value={body}
+                    onChange={(event) => setBody(event.target.value)} />
+                  {isInvalidArgs &&
+                    <Typography color="error">Please enter a valid rating and description</Typography>
                   }
-                />
+                  <FormControlLabel
+                    label={`I have started this ${mediaType.toLowerCase()}`}
+                    control={
+                      <Checkbox
+                        checked={startedMedia}
+                        onChange={handleCheckClick}
+                      />
+                    }
+                  />
+                </Stack>
                 {startedMedia ?
-                  <Stack direction={'row'} alignContent={'center'} spacing={2}>
+                  <Stack
+                    direction={'row'}
+                    alignContent={'center'}
+                    spacing={2}
+                  >
                     <DatePickerField label={"Start Date"} value={startDate} setValue={setStartDate} />
                     <DatePickerField label={"End Date"} value={endDate} setValue={setEndDate} />
                   </Stack>
                   :
                   <></>
                 }
-                <Stack direction={'row'} justifyContent={'flex-end'} py={5} >
+                <Stack
+                  direction={'row'}
+                  justifyContent={'flex-end'}
+                  py={5} >
                   <CancelButton onClick={() => setShowWarning(true)} />
-                  <ConfirmButton title={'Create Review'} onClick={handleCreateReviewClick} />
+                  <ConfirmButton
+                    title={'Create Review'}
+                    onClick={handleCreateReviewClick} />
                 </Stack>
-                <WarningModal open={showWarning} setOpen={setShowWarning} handleConfirm={handleBackArrowClick} />
+                <WarningModal
+                  open={showWarning}
+                  setOpen={setShowWarning}
+                  handleConfirm={handleBackArrowClick} />
               </>
             }
-          </Stack>
-
+          </Container>
+          <SuccessAlert
+            message={"Review successfully created"}
+            showAlert={isSuccess}
+            setShowAlert={setIsSuccess} />
+          <ErrorAlert
+            message={errorMessage}
+            showAlert={isError}
+            setShowAlert={setIsError} />
         </Dialog >
-        // </Container>
         :
         <></>
       }
