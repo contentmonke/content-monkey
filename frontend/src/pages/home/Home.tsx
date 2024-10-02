@@ -22,6 +22,8 @@ function Home() {
             console.log("Here")
             // console.log(user?.name);
             const response = await axios.post('http://localhost:8080/api/user/', {name: user?.name});
+            const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+            const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, {email: user?.email});
             setUserData(response.data);
             console.log(response.data)
           }

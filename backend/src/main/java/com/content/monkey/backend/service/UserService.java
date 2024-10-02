@@ -64,4 +64,13 @@ public class UserService {
         return user.getGenres();
     }
 
+    public UserEntity updateEmail(Long id, String email) {
+        UserEntity user = getUser(id);
+        if(user.getEmail() == null) {
+            user.setEmail(email);
+        }
+        return userRepository.save(user);
+    }
+
+
 }

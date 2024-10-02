@@ -5,12 +5,14 @@ import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import com.content.monkey.backend.service.UserService;
+import com.content.monkey.backend.service.Auth0Service;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
+import java.util.Map;
 
 
 import java.net.URI;
@@ -23,6 +25,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private Auth0Service auth0Service;
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
         System.out.println("HERE");
@@ -47,10 +51,11 @@ public class UserController {
         return created;
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{id}/{authID}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id, @PathVariable String authID) {
         try {
             userService.deleteUserById(id);
+            auth0Service.deleteUser(authID);
             return ResponseEntity.ok("User deleted successfully");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -74,6 +79,12 @@ public class UserController {
     @PutMapping("genres/{id}")
     public UserEntity updateGenres(@PathVariable Long id, @RequestBody String genres) {
         return userService.updateGenres(id, genres);
+    }
+
+    @PutMapping("email/{id}")
+    public UserEntity updateEmail(@PathVariable Long id, @RequestBody Map<String, String> email) {
+        String emailAdd = email.get("email");
+        return userService.updateEmail(id, emailAdd);
     }
 
 }

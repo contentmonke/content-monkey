@@ -14,24 +14,26 @@ import ExampleList from '../../example/ExampleList';
 import EditGenresModal from './EditGenresModal'; // Import the modal
 
 // Dummy Data for favorite media, liked posts, recent reviews, and genres
-const favoriteMedia = ['Book: The Great Gatsby', 'Movie: Inception', 'Show: Breaking Bad'];
-const likedPosts = ['Post 1: Awesome day!', 'Post 2: React is amazing!', 'Post 3: Beautiful sunset.'];
-const recentReviews = ['Review 1: This book was a masterpiece!', 'Review 2: The movie had a fantastic plot!', 'Review 3: A must-watch series!'];
-const dummyGenres = []; // Initial dummy data for genres
+const favoriteMedia = [];
+const likedPosts = [];
+const recentReviews = [];
+const dummyGenres = [];
 
 function AccountPage() {
   const [count, setCount] = useState(0);
   const { user, isLoading, error, logout } = useAuth0();
   const [userData, setUserData] = useState();
   const [bio, setBio] = useState('No biography available.');
-  const [favoriteGenres, setFavoriteGenres] = useState(dummyGenres); // New state for genres
-  const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
+  const [favoriteGenres, setFavoriteGenres] = useState(dummyGenres);
+  const [email, setEmail] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
       console.log('Account deletion process initiated.');
       const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-      const userDel = await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id);
+      console.log(user.sub);
+      const userDel = await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id + '/' + user.sub);
       console.log('localhost:8080/api/user/' + userEdit.data[0].id)
       alert('Account successfully deleted.');
       logout();
@@ -45,6 +47,11 @@ function AccountPage() {
     const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
     return userEdit.data[3];
   }
+
+  const getEmail = async () => {
+      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+      return userEdit.data[5];
+    }
 
   const handleEditBio = async () => {
     const newBio = prompt('Please enter your new biography:', bio);
@@ -81,8 +88,11 @@ function AccountPage() {
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;
+          const email = userBio.data[0].email;
+          console.log(userBio.data[0])
           setBio(JSON.parse(biography).biography || 'No biography available.');
           setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
+          setEmail((email) || 'No Email On File.');
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -108,7 +118,8 @@ function AccountPage() {
                   {user && (
                     <>
                       <Avatar src={user.picture} alt={user.name} sx={{ width: 150, height: 150, marginBottom: 2 }} />
-                      <Typography variant="h5">{user.name}</Typography>
+                      <Typography variant="h5">{user.nickname}</Typography>
+                      <Typography variant="h7">{email}</Typography>
 
                       {/* Biography Section with Edit Icon */}
                       <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2, width: '100%' }}>
