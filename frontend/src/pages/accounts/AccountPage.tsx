@@ -12,7 +12,6 @@ import DeleteAccount from '../../components/DeleteAccount';
 import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton, Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExampleList from '../../example/ExampleList';
-import CreateReviewButton from '../reviews/CreateReviewButton';
 import EditGenresModal from './EditGenresModal'; // Import the modal
 
 // Dummy Data for favorite media, liked posts, recent reviews, and genres
@@ -53,9 +52,9 @@ function AccountPage() {
   }
 
   const getEmail = async () => {
-      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-      return userEdit.data[5];
-    }
+    const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+    return userEdit.data[5];
+  }
 
   const handleEditBio = async () => {
     const newBio = prompt('Please enter your new biography:', bio);
@@ -90,7 +89,7 @@ function AccountPage() {
           const response = await axios.post('http://localhost:8080/api/user/', { name: user?.name });
           setUserData(response.data);
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-          const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, {email: user?.email});
+          const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
           const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
 
@@ -283,7 +282,6 @@ function AccountPage() {
         favoriteGenres={favoriteGenres}
         setFavoriteGenres={setFavoriteGenres}
       />
-      <CreateReviewButton />
     </>
   );
 }

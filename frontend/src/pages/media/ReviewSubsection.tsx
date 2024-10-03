@@ -1,10 +1,17 @@
-import { AccountCircle } from "@mui/icons-material";
-import { Container, Divider, Rating, Typography } from "@mui/material";
+import { AccountCircle, ThumbDown, ThumbUp } from "@mui/icons-material";
+import { Button, Container, Divider, IconButton, Rating, Typography } from "@mui/material";
 import { reviewDetail, userAccount } from "../../style/media-page";
+import { ReviewDTO } from "../../models/Models";
+import { useEffect } from "react";
 
-const reviews = [1, 2, 3, 4]
+// const reviews = [1, 2, 3, 4]
+type params = {
+  reviews: ReviewDTO[];
+}
 
-function ReviewSubsection({ }: any) {
+function ReviewSubsection({ reviews }: params) {
+
+
   return (
     <>
       {reviews.map((review, index) => (
@@ -13,17 +20,27 @@ function ReviewSubsection({ }: any) {
           <Container disableGutters sx={{ display: 'flex', my: 1 }}>
             <Container disableGutters sx={{ ...userAccount }}>
               <AccountCircle fontSize="large" />
-              <Typography variant="caption">{(index + 2) ** 10}</Typography>
+              <Typography variant="caption">{review.username}</Typography>
             </Container>
             <Container disableGutters sx={{ ...reviewDetail }}>
               <Rating
                 size={'small'}
                 sx={{ my: 0, mr: 1, mb: 0.5 }}
-                value={4 - index}
+                value={review.rating}
                 precision={0.5}
                 readOnly
               />
-              <Typography variant="caption">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vestibulum, libero eget ultrices dignissim, justo mauris porttitor tortor, a suscipit risus ipsum et leo. Fusce sit amet ex enim. Nulla facilisi. Ut faucibus elit in odio hendrerit, at finibus lacus dapibus.</Typography>
+              <Typography variant="caption">{review.body}</Typography>
+              <Container disableGutters>
+                <IconButton size={'small'}>
+                  <ThumbUp sx={{ width: 15 }} />
+                </IconButton>
+                <Typography variant="caption">{review.upVotes}</Typography>
+                <IconButton >
+                  <ThumbDown sx={{ width: 15 }} />
+                </IconButton>
+                <Typography variant="caption">{review.downVotes}</Typography>
+              </Container>
             </Container>
           </Container>
         </div>

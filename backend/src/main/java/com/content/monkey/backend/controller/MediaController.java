@@ -1,6 +1,7 @@
 package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.model.MediaEntity;
+import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,11 @@ public class MediaController {
     MediaService mediaService;
 
     @GetMapping("/{mediaTitle}")
-    public MediaEntity getMediaByTitle(@PathVariable("mediaTitle") String mediaTitle) {
-        return mediaService.getMediaByTitle(mediaTitle);
+    public MediaEntityDTO getMediaByTitle(
+            @PathVariable("mediaTitle") String mediaTitle,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        return mediaService.getMediaByTitle(mediaTitle, pageNumber, pageSize);
     }
 
     @GetMapping("/id/{mediaID}")
@@ -25,8 +29,10 @@ public class MediaController {
     }
 
     @PostMapping("/")
-    public MediaEntity getMediaByTitle(@RequestBody MediaEntity mediaEntity) {
-        MediaEntity result = mediaService.getMediaByTitle(mediaEntity.getMediaTitle());
+    public MediaEntityDTO getMediaByTitle(@RequestBody MediaEntity mediaEntity,
+                                          @RequestParam(defaultValue = "0") int pageNumber,
+                                          @RequestParam(defaultValue = "10") int pageSize) {
+        MediaEntityDTO result = mediaService.getMediaByTitle(mediaEntity.getMediaTitle(), pageNumber, pageSize);
         if (result == null) {
             mediaEntity.setTotalRatings(0);
             mediaEntity.setAverageRating(0);
