@@ -81,7 +81,6 @@ const Navbar = () => {
 
   return isAuthenticated && (
     <>
-      <div className="nav-gradient"></div>
       <div className="bar">
         <nav>
           <ul className="desktop-nav">
@@ -127,6 +126,7 @@ const Navbar = () => {
           </ul>
         </nav>
       </div>
+      <div className="nav-gradient"></div>
     </>
   );
 };

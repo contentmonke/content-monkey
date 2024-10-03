@@ -7,10 +7,11 @@ import { Typography, Button, Box, Container } from "@mui/material";
 import { handleSearchFields } from "../reviews/review-utils";
 import ErrorAlert from "../../components/ErrorAlert";
 import SearchResults from "./SearchResults";
-import MediaSearchBar from "../reviews/MediaSearchBar";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { fullpageContainer } from "../../style/review-page";
+import { newFullpageContainer } from "../../style/review-page";
 import { useLocation } from 'react-router-dom';
+
+import MediaSearchBar from "../reviews/MediaSearchBar";
 
 
 function SearchPage() {
@@ -56,28 +57,22 @@ function SearchPage() {
     <>
       <Container
         disableGutters
-        maxWidth={false}
-        sx={{ ...fullpageContainer }}
+        maxWidth={true}
+        sx={{ ...newFullpageContainer }}
       >
         {media !== null &&
           <Box textAlign={'left'}>
             <Button
               startIcon={<ArrowBackIosNewIcon />}
               onClick={() => handleBackArrowClick()}
-              sx={{ color: '#99d2ff' }}
+              sx={{ color: '#000000' }}
             >
               Back to Search
             </Button>
           </Box>
         }
-        <Typography
-          variant={'caption'}
-          fontSize={22}
-        >
-          Search
-        </Typography>
         <br />
-        <Container disableGutters sx={{ width: '90%', maxWidth: '750px' }}>
+        <Container disableGutters sx={{ width: '100%', maxWidth: '1000px' }}>
           {(media === null) ?
             <>
               <MediaSearchBar

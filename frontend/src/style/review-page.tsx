@@ -77,6 +77,12 @@ export const fullpageContainer: SxProps<Theme> = {
   height: 'auto'
 }
 
+export const newFullpageContainer: SxProps<Theme> = {
+  minWidth: '600px',
+  maxWidth: '1000px',
+  minHeight: '90vh',
+  height: 'auto'
+
 export const createReviewContainer: SxProps<Theme> = {
   height: '100%',
   display: 'flex',

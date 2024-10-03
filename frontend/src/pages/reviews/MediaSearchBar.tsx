@@ -6,7 +6,7 @@ import { searchButton } from "../../style/review-page";
 
 function MediaSearchBar({ mediaType, handleMediaChange, title, setTitle, handleSearchClick }: any) {
   return (
-    <Container disableGutters sx={{ display: 'flex', flexGrow: 1, m: 1 }}>
+    <Container disableGutters sx={{ display: 'flex', flexGrow: 1 }}>
       <MediaDropdown
         mediaType={mediaType}
         onChange={handleMediaChange}
