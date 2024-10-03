@@ -72,8 +72,6 @@ public class MediaService {
         return mediaEntity.getFirst();
     }
 
-    public MediaEntity createMediaEntity(MediaEntity mediaEntity) {
-        return mediaRepository.save(mediaEntity);
     public MediaEntityDTO createMediaEntity(MediaEntity mediaEntity) {
         MediaEntity savedMediaEntity = mediaRepository.save(mediaEntity);
         return MediaEntityDTO.convertMediaEntityToDTO(savedMediaEntity, new ArrayList<>(), 0, 0);
