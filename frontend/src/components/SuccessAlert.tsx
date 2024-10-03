@@ -10,8 +10,8 @@ function SuccessAlert({ message, showAlert, setShowAlert }: any) {
   return (
     <>
       {showAlert &&
-        <Box sx={{ mx: 10, mb: 5, position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 'tooltip' }}>
-          <Alert severity={"success"}>{message}</Alert>
+        <Box sx={{ mx: 10, mb: 5, position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 'tooltip', bgcolor: '#ddffdd', borderRadius: 1 }}>
+          <Alert severity={"success"} variant="outlined">{message}</Alert>
         </Box >
       }
     </>

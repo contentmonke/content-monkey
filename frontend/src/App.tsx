@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AccountPage from './pages/accounts/AccountPage';
 import Home from './pages/home/Home';
 import ExampleList from './example/ExampleList';
-import CreateReviewPage from './pages/reviews/CreateReviewPage';
 import SearchPage from './pages/search/SearchPage'
 import MediaPage from './pages/media/MediaPage'
 import { Container } from '@mui/material';
@@ -20,7 +19,6 @@ function App() {
           {/* Define the route for /account */}
           <Route path="/" element={<Home />} />
           <Route path="/account" element={<AccountPage />} />
-          <Route path="/createReview" element={<CreateReviewPage />} />
           <Route path="/examples" element={<ExampleList />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/media/:title" element={<MediaPage />} />

@@ -4,7 +4,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import CreateReviewModal from './CreateReviewModal';
 import { fabButton } from "../../style/review-page";
 
-function CreateReviewButton() {
+function CreateReviewButton({ media }: any) {
   const [isHovered, setIsHovered] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -32,7 +32,7 @@ function CreateReviewButton() {
           <CreateIcon />
         }
       </Fab>
-      <CreateReviewModal open={modalOpen} setModalOpen={setModalOpen} />
+      <CreateReviewModal open={modalOpen} setModalOpen={setModalOpen} media={media} />
     </>
   );
 }

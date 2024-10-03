@@ -12,6 +12,18 @@ export type Review = {
   endDate: Date | null,
 }
 
+export type ReviewDTO = {
+  userId: number,
+  username: string,
+  commentIds: number[],
+  dateCreated: Date,
+  body: String,
+  mediaId: number,
+  rating: number,
+  upVotes: number,
+  downVotes: number,
+}
+
 export type VolumeInfo = {
   title: string,
   authors: string[],
@@ -22,16 +34,6 @@ export type VolumeInfo = {
   description: string,
 }
 
-// export type Media = {
-//   title: string,
-//   authors: string[],
-//   publisher: string,
-//   publishedDate: string,
-//   thumbnail: string,
-//   pageCount: string,
-//   description: string,
-// }
-
 export type MediaLabel = {
   createdByLabel: string,
   creatorsLabel: string,
@@ -39,8 +41,9 @@ export type MediaLabel = {
 }
 
 export type Media = {
+  id: number;
   mediaTitle: string;
-  type: string;
+  mediaType: string;
   author: string;
   mediaDuration: number;
   genre: string;
@@ -48,6 +51,8 @@ export type Media = {
   averageRating: number;
   totalRatings: number;
   thumbnail: string;
+  reviews: ReviewDTO[];
+  numTotalReviews: number
 }
 
 export enum MediaType {

@@ -1,6 +1,7 @@
 import { Container, Stack, Typography } from "@mui/material";
 import { MediaType } from "../../models/Models";
 import { fieldContent, fieldLabel, resultImage, resultImageContainer } from "../../style/review-page";
+import { api } from "../../api/requests";
 
 const bookFields = [
   "Title",
@@ -10,7 +11,7 @@ const bookFields = [
   "Page Count"
 ];
 
-export function handleSearchFields(mediaType: MediaType, searchEntity: any, location = "") {
+export function handleSearchFields(mediaType: string, searchEntity: any, location = "") {
 
   let minImgSize, maxImgSize, py, fontSize, width;
 
@@ -88,6 +89,12 @@ export function handleSearchFields(mediaType: MediaType, searchEntity: any, loca
   return <></>
 }
 
-export function getStartIndex() {
-
+export async function loadUser(username: string, setUser: any) {
+  api.user.fetchUser(username)
+    .then((response) => {
+      setUser(response.data[0])
+    })
+    .catch(() => {
+      console.error("Error retrieving user information")
+    })
 }
