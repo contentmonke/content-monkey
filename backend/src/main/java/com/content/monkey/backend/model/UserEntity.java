@@ -22,6 +22,37 @@ public class UserEntity {
     @Column(name = "review_ids")
     private List<Long> reviewIds;
 
+    @Column(name = "biography")
+    private String bio;
+
+    public void setBiography(String biography) {
+        this.bio = biography;
+    }
+
+    @Column(name = "favorite_genres")
+    private String genres;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "posts_liked_by_user")
+    private List<Long> posts_liked;
+
+    @Column(name = "comments_liked_by_user")
+    private List<Long> comments_liked;
+
+    public void setGenres(String genres) {
+        this.genres = genres;
+    }
+
+    public String getGenres() {
+        return this.genres;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
     //TODO - Add fields
     public UserEntity() {
     }
