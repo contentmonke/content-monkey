@@ -1,5 +1,6 @@
 import '../../App.css';
 import { useEffect, useState } from 'react';
+import React from 'react';
 import cmLogo from '/monkey.svg';
 import LoginButton from '../home/SignUpButton/SignUpButton';
 import LogoutButton from '../home/LogoutButton/LogoutButton';
@@ -8,7 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
 import DeleteAccount from '../../components/DeleteAccount';
-import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton, Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExampleList from '../../example/ExampleList';
 import EditGenresModal from './EditGenresModal'; // Import the modal
@@ -16,8 +17,8 @@ import EditGenresModal from './EditGenresModal'; // Import the modal
 // Dummy Data for favorite media, liked posts, recent reviews, and genres
 const favoriteMedia = [];
 const likedPosts = [];
-const recentReviews = [];
 const dummyGenres = [];
+const recentReviews = [];
 
 function AccountPage() {
   const [count, setCount] = useState(0);
@@ -27,6 +28,8 @@ function AccountPage() {
   const [favoriteGenres, setFavoriteGenres] = useState(dummyGenres);
   const [email, setEmail] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
 
   const handleDeleteAccount = async () => {
     try {
@@ -88,13 +91,31 @@ function AccountPage() {
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
           const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+          const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
+
+          const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/210`);
+          console.log(mediaResponse);
+
+          const reviewsWithMediaTitles = await Promise.all(
+                              recentReviews.data.map(async (review) => {
+                                  const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
+                                  return {
+                                      ...review,
+                                      mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
+                                  };
+                              })
+                          );
+
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;
           const email = userBio.data[0].email;
-          console.log(userBio.data[0])
+
+          console.log(userBio.data[0]);
           setBio(JSON.parse(biography).biography || 'No biography available.');
           setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
           setEmail((email) || 'No Email On File.');
+          setReviews(reviewsWithMediaTitles);
+          console.log(reviewsWithMediaTitles);
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -206,14 +227,49 @@ function AccountPage() {
                     <Typography variant="h6" gutterBottom>
                       Recent Reviews
                     </Typography>
-                    <ul>
-                      {recentReviews.map((review, index) => (
-                        <li key={index}>{review}</li>
-                      ))}
-                    </ul>
+                    {Array.isArray(reviews) && reviews.length > 0 ? (
+                      <ul>
+                        {reviews.map((review, index) => (
+                          <React.Fragment key={index}>
+                            <li>
+                              {/* Display media title */}
+                              <Typography variant="body1">
+                                {review.mediaTitle}
+                              </Typography>
+
+                              {/* Display review body */}
+                              <Typography variant="body1">
+                                {review.body}
+                              </Typography>
+
+                              {/* Display review date */}
+                              <Typography variant="caption">
+                                Created on: {new Date(review.dateCreated).toLocaleDateString()}
+                              </Typography>
+
+                              {/* Display review rating */}
+                              <Typography variant="body2">
+                                Rating: {review.rating} / 5
+                              </Typography>
+
+                              {/* Optionally, display other fields */}
+                              <Typography variant="caption">
+                                Upvotes: {review.upVotes} | Downvotes: {review.downVotes}
+                              </Typography>
+                            </li>
+
+                            {/* Add a Divider between each review */}
+                            {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+                          </React.Fragment>
+                        ))}
+                      </ul>
+                    ) : (
+                      <Typography>No recent reviews available.</Typography>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>
+
             </Grid>
           </Grid>
         </Grid>

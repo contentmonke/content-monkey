@@ -23,6 +23,11 @@ public class MediaController {
         return mediaService.getMediaByTitle(mediaTitle, pageNumber, pageSize);
     }
 
+    @GetMapping("/id/{mediaID}")
+    public MediaEntity getMediaByID(@PathVariable("mediaID") Long mediaID) {
+        return mediaService.getMediaByID(mediaID);
+    }
+
     @PostMapping("/")
     public MediaEntityDTO getMediaByTitle(@RequestBody MediaEntity mediaEntity,
                                           @RequestParam(defaultValue = "0") int pageNumber,

@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -121,7 +122,7 @@ const Navbar = () => {
               Item
             </li>
             <li>
-              Item
+              <AccountCircleIcon style={{ cursor: 'pointer' }} onClick={() => navigate('/account')} />
             </li>
           </ul>
         </nav>

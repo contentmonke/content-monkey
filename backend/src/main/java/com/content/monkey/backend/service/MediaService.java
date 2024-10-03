@@ -64,6 +64,14 @@ public class MediaService {
         return mediaEntityDTO;
     }
 
+    public MediaEntity getMediaByID(Long mediaID) {
+        List<MediaEntity> mediaEntity = mediaRepository.findByid(mediaID);
+        if (mediaEntity.isEmpty()) {
+            return null;
+        }
+        return mediaEntity.getFirst();
+    }
+
     public MediaEntityDTO createMediaEntity(MediaEntity mediaEntity) {
         MediaEntity savedMediaEntity = mediaRepository.save(mediaEntity);
         return MediaEntityDTO.convertMediaEntityToDTO(savedMediaEntity, new ArrayList<>(), 0, 0);
