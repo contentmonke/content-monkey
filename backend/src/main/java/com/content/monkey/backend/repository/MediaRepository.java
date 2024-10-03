@@ -11,4 +11,6 @@ public interface MediaRepository extends JpaRepository<MediaEntity, Long> {
     List<MediaEntity> findByMediaTitle(String mediaTitle);
 
     List<MediaEntity> findByMediaDurationLessThan(int duration);
+
+    List<MediaEntity> findByid(Long id);
 }

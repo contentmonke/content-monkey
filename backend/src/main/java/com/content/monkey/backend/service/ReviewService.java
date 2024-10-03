@@ -38,8 +38,12 @@ public class ReviewService {
     }
 
     public List<ReviewEntity>getReviewsByUserId(Long userId) {
-        List<Long> reviewIds = userService.getUser(userId).getReviewIds();
-        return reviewRepository.findAllById(reviewIds);
+        try {
+            List<Long> reviewIds = userService.getUser(userId).getReviewIds();
+            return reviewRepository.findAllById(reviewIds);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ReviewEntity createReview(ReviewEntity review) {

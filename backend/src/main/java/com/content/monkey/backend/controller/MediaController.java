@@ -19,6 +19,11 @@ public class MediaController {
         return mediaService.getMediaByTitle(mediaTitle);
     }
 
+    @GetMapping("/id/{mediaID}")
+    public MediaEntity getMediaByID(@PathVariable("mediaID") Long mediaID) {
+        return mediaService.getMediaByID(mediaID);
+    }
+
     @PostMapping("/")
     public MediaEntity getMediaByTitle(@RequestBody MediaEntity mediaEntity) {
         MediaEntity result = mediaService.getMediaByTitle(mediaEntity.getMediaTitle());

@@ -22,6 +22,14 @@ public class MediaService {
         return mediaEntity.getFirst();
     }
 
+    public MediaEntity getMediaByID(Long mediaID) {
+        List<MediaEntity> mediaEntity = mediaRepository.findByid(mediaID);
+        if (mediaEntity.isEmpty()) {
+            return null;
+        }
+        return mediaEntity.getFirst();
+    }
+
     public MediaEntity createMediaEntity(MediaEntity mediaEntity) {
         return mediaRepository.save(mediaEntity);
     }
