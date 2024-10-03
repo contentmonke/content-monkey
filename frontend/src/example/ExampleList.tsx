@@ -25,12 +25,10 @@ function ExampleList() {
 
   return (
     <div>
-      <h1>Example List</h1>
-      <ul className="ex-list">
+      <h1>Demo List</h1>
         {examples.map(example => (
-          <li key={example.id}>{example.name}</li>
+          <div key={example.id}>{example.name}</div>
         ))}
-      </ul>
     </div>
   );
 }

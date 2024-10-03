@@ -8,7 +8,7 @@ import { handleSearchFields } from "../reviews/review-utils";
 import ErrorAlert from "../../components/ErrorAlert";
 import SearchResults from "./SearchResults";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { fullpageContainer } from "../../style/review-page";
+import { newFullpageContainer } from "../../style/review-page";
 import { useLocation } from 'react-router-dom';
 
 import MediaSearchBar from "../reviews/MediaSearchBar";
@@ -57,8 +57,8 @@ function SearchPage() {
     <>
       <Container
         disableGutters
-        maxWidth={false}
-        sx={{ ...fullpageContainer }}
+        maxWidth={true}
+        sx={{ ...newFullpageContainer }}
       >
         {media !== null &&
           <Box textAlign={'left'}>
@@ -75,13 +75,13 @@ function SearchPage() {
         <Container disableGutters sx={{ width: '100%', maxWidth: '1000px' }}>
           {(media === null) ?
             <>
-              {/* <MediaSearchBar
+              <MediaSearchBar
                 mediaType={mediaType}
                 handleMediaChange={handleMediaChange}
                 title={title}
                 setTitle={setTitle}
                 handleSearchClick={handleSearchClick}
-              /> */}
+              />
               <br />
               {isLoading && <SmallLoading />}
               {results.length > 0 &&

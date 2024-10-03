@@ -4,9 +4,17 @@ import cmLogo from '/monkey.svg'
 
 import SignUpButton from '../SignUpButton/SignUpButton';
 import { Canvas } from '@react-three/fiber';
-import { Loader } from '@react-three/drei';
+import {
+  Html,
+  useProgress
+} from '@react-three/drei';
 import ModelView from './ModelView.tsx'
 import { Suspense } from 'react';
+
+function Loader() {
+  const { active, progress, errors, item, loaded, total } = useProgress();
+  return <Html center>{progress}%</Html>;
+}
 
 function Landing() {
 
@@ -17,15 +25,14 @@ function Landing() {
           fov: 20,
           near: 0.1,
           far: 200,
-          position: [0,0,15]
+          position: [0, 0, 15]
         }}
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 0 }}
       >
-        <Suspense fallback={null}>
+        <Suspense fallback={<Loader />}>
           <ModelView />
         </Suspense>
       </Canvas>
-      <Loader />
     </div>
 
     <div className="gradient"></div>

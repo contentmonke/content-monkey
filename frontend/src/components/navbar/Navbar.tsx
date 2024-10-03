@@ -68,6 +68,7 @@ const Navbar = () => {
         searchQuery: searchQuery,
       },
     });
+    setSearchQuery("");
   }
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
