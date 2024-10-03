@@ -82,4 +82,34 @@ export const newFullpageContainer: SxProps<Theme> = {
   maxWidth: '1000px',
   minHeight: '90vh',
   height: 'auto'
+
+export const createReviewContainer: SxProps<Theme> = {
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  mt: 2
+}
+
+export const createReviewInfo: SxProps<Theme> = {
+  flexGrow: 1,
+  display: 'flex',
+  px: 6
+}
+
+export const createReviewImageContainer: SxProps<Theme> = {
+  width: '40%',
+  justifyContent: 'right'
+}
+
+export const createReviewImage = {
+  width: '80%',
+  height: 'auto',
+  minWidth: 150,
+  maxWidth: 180
+}
+
+export const createReviewPrompts: SxProps<Theme> = {
+  flexGrow: 1,
+  mx: 3,
+  textAlign: 'left'
 }

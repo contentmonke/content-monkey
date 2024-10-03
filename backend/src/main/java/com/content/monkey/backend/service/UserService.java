@@ -43,4 +43,34 @@ public class UserService {
         }
     }
 
+    public UserEntity updateBiography(Long id, String biography) {
+        UserEntity user = getUser(id);
+        user.setBiography(biography);
+
+        // Save the updated user
+        return userRepository.save(user);
+    }
+
+    public UserEntity updateGenres(Long id, String genres) {
+        UserEntity user = getUser(id);
+        user.setGenres(genres);
+
+        // Save the updated user
+        return userRepository.save(user);
+    }
+
+    public String getGenres(Long id) {
+        UserEntity user = getUser(id);
+        return user.getGenres();
+    }
+
+    public UserEntity updateEmail(Long id, String email) {
+        UserEntity user = getUser(id);
+        if(user.getEmail() == null) {
+            user.setEmail(email);
+        }
+        return userRepository.save(user);
+    }
+
+
 }

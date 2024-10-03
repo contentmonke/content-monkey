@@ -2,7 +2,7 @@ import { api } from "../../api/requests";
 import { MediaType } from "../../models/Models";
 
 
-export async function loadSearchResults(mediaType: MediaType, title: String, setResults: any, setIsLoading: any, setIsError: any) {
+export async function loadSearchResults(mediaType: string, title: string, setResults: any, setIsLoading: any, setIsError: any) {
   setIsLoading(true)
   if (mediaType === MediaType.BOOK) {
     api.search.fetchSearch({ title })

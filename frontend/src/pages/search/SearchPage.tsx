@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Loading, SmallLoading } from "../../components/Loading";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-import { MediaType, VolumeInfo } from "../../models/Models";
+import { Media, MediaType, VolumeInfo } from "../../models/Models";
 import { loadSearchResults } from "./search-utils";
 import { Typography, Button, Box, Container } from "@mui/material";
 import { handleSearchFields } from "../reviews/review-utils";
@@ -21,7 +21,7 @@ function SearchPage() {
   const [results, setResults] = useState<VolumeInfo[]>([]);
   const [isLoading, setIsLoading] = useState("");
   const [mediaType, setMediaType] = useState(MediaType.BOOK);
-  const [media, setMedia] = useState<VolumeInfo | null>(null);
+  const [media, setMedia] = useState<Media | null>(null);
   const [page, setPage] = useState(1);
   const [isError, setIsError] = useState(false);
   const [prevSearch, setPrevSearch] = useState("");
@@ -107,7 +107,7 @@ function SearchPage() {
             </>
           }
         </Container>
-      </Container>
+      </Container >
       <ErrorAlert
         message={`Error searching for '${title}'`}
         showAlert={isError}
