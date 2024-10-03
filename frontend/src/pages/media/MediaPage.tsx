@@ -85,7 +85,10 @@ function MediaPage() {
                       readOnly
                     />
                     <h5 style={{ marginRight: 10 }}> {media?.averageRating} </h5>
-                    <div >{media?.totalRatings} Ratings • {(media?.numTotalReviews).toLocaleString()} Reviews</div>
+                    <div >
+                      {media?.totalRatings} {media?.totalRatings === 1 ? 'Rating • ' : 'Ratings • '}
+                      {(media?.numTotalReviews).toLocaleString()} {media?.numTotalReviews === 1 ? 'Review' : 'Reviews'}
+                    </div>
                     <Typography
                       variant={'caption'}
                       fontSize={14}

@@ -35,7 +35,8 @@ public class MediaEntityDTO {
 
     public static MediaEntityDTO convertMediaEntityToDTO(MediaEntity mediaEntity,
                                                          List<ReviewEntityDTO> reviewEntities,
-                                                         int numTotalReviews) {
+                                                         int numTotalReviews,
+                                                         float averageRating) {
 
         return new MediaEntityDTO(
                 mediaEntity.getId(),
@@ -44,8 +45,9 @@ public class MediaEntityDTO {
                 mediaEntity.getAuthor(),
                 mediaEntity.getGenre(),
                 mediaEntity.getDescription(),
-                mediaEntity.getAverageRating(),
-                mediaEntity.getTotalRatings(),
+                averageRating,
+//                mediaEntity.getTotalRatings(),  //TODO - allow ratings w/o review
+                numTotalReviews,
                 mediaEntity.getThumbnail(),
                 mediaEntity.getMediaType(),
                 reviewEntities,
