@@ -70,11 +70,10 @@ public class ReviewService {
         return reviewRepository.save(newReviewEntity);
     }
 
-    public void deleteReview(Long reviewId) throws ReviewNotFoundException {
+    public void deleteReview(Long reviewId) throws ReviewNotFoundException{
         ReviewEntity reviewEntity = getReviewById(reviewId);
         try {
             commentService.deleteListOfComments(reviewEntity.getCommentIds());
-//            commentRepository.deleteAllByIdInBatch(reviewEntity.getCommentIds());
             reviewRepository.deleteById(reviewId);
         } catch (Exception e) {
             throw new ReviewNotFoundException();

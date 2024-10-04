@@ -35,13 +35,13 @@ public class MediaService {
             return null;
         }
 
-        int numReviews = reviewRepository.countByMediaId(mediaEntity.getFirst().getId());
+        int numReviews = reviewRepository.countByMediaId(mediaEntity.get(0).getId());
         List<ReviewEntity> reviewEntities = reviewRepository.findAllByMediaId(
-                mediaEntity.getFirst().getId(),
+                mediaEntity.get(0).getId(),
                 PageRequest.of(pageNumber, pageSize)
         );
 
-        float sumReviews = reviewRepository.getSumRatings(mediaEntity.getFirst().getId());
+        float sumReviews = reviewRepository.getSumRatings(mediaEntity.get(0).getId());
         float averageRating = (float) Math.round((sumReviews / (float) numReviews) * 2) / 2;
 
 
@@ -56,7 +56,7 @@ public class MediaService {
         }
 
         MediaEntityDTO mediaEntityDTO = MediaEntityDTO.convertMediaEntityToDTO(
-                mediaEntity.getFirst(),
+                mediaEntity.get(0),
                 reviewEntityDTOs,
                 numReviews,
                 averageRating);
@@ -69,7 +69,7 @@ public class MediaService {
         if (mediaEntity.isEmpty()) {
             return null;
         }
-        return mediaEntity.getFirst();
+        return mediaEntity.get(0);
     }
 
     public MediaEntityDTO createMediaEntity(MediaEntity mediaEntity) {
