@@ -47,7 +47,9 @@ public class ReviewService {
     }
 
     public ReviewEntity createReview(ReviewEntity review) {
-        return reviewRepository.save(review);
+        ReviewEntity savedEntity = reviewRepository.save(review);
+        userService.addReviewIdToUser(savedEntity.getUserId(), savedEntity.getId());
+        return savedEntity;
     }
 
     public ReviewEntity editReview(Long reviewId, ReviewEntity newReviewEntity) {
@@ -68,11 +70,10 @@ public class ReviewService {
         return reviewRepository.save(newReviewEntity);
     }
 
-    public void deleteReview(Long reviewId) throws ReviewNotFoundException {
+    public void deleteReview(Long reviewId) throws ReviewNotFoundException{
         ReviewEntity reviewEntity = getReviewById(reviewId);
         try {
             commentService.deleteListOfComments(reviewEntity.getCommentIds());
-//            commentRepository.deleteAllByIdInBatch(reviewEntity.getCommentIds());
             reviewRepository.deleteById(reviewId);
         } catch (Exception e) {
             throw new ReviewNotFoundException();
