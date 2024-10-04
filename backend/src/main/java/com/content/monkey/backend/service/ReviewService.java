@@ -47,7 +47,9 @@ public class ReviewService {
     }
 
     public ReviewEntity createReview(ReviewEntity review) {
-        return reviewRepository.save(review);
+        ReviewEntity savedEntity = reviewRepository.save(review);
+        userService.addReviewIdToUser(savedEntity.getUserId(), savedEntity.getId());
+        return savedEntity;
     }
 
     public ReviewEntity editReview(Long reviewId, ReviewEntity newReviewEntity) {

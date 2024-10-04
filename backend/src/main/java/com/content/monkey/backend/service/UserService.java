@@ -2,10 +2,13 @@ package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import java.util.List;
@@ -27,7 +30,6 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
-//        created.setId(null);
         return userRepository.save(created);
     }
 
@@ -69,6 +71,15 @@ public class UserService {
         if(user.getEmail() == null) {
             user.setEmail(email);
         }
+        return userRepository.save(user);
+    }
+
+    public UserEntity addReviewIdToUser(Long id, Long reviewId) {
+        UserEntity user = getUser(id);
+        if (user.getReviewIds() == null) {
+            user.setReviewIds(new ArrayList<>());
+        }
+        user.getReviewIds().add(reviewId);
         return userRepository.save(user);
     }
 
