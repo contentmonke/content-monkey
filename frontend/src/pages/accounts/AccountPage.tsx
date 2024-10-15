@@ -1,17 +1,12 @@
 import '../../App.css';
 import { useEffect, useState } from 'react';
 import React from 'react';
-import cmLogo from '/monkey.svg';
-import LoginButton from '../home/SignUpButton/SignUpButton';
-import LogoutButton from '../home/LogoutButton/LogoutButton';
-import Profile from '../profile/Profile';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
 import DeleteAccount from '../../components/DeleteAccount';
-import { AppBar, Toolbar, Typography, Box, Grid, Card, CardContent, Avatar, IconButton, Divider } from '@mui/material';
+import { Typography, Box, Card, CardContent, Avatar, IconButton, Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import ExampleList from '../../example/ExampleList';
 import EditGenresModal from './EditGenresModal'; // Import the modal
 
 // Dummy Data for favorite media, liked posts, recent reviews, and genres
@@ -97,14 +92,14 @@ function AccountPage() {
           console.log(mediaResponse);
 
           const reviewsWithMediaTitles = await Promise.all(
-                              recentReviews.data.map(async (review) => {
-                                  const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
-                                  return {
-                                      ...review,
-                                      mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
-                                  };
-                              })
-                          );
+            recentReviews.data.map(async (review) => {
+              const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
+              return {
+                ...review,
+                mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
+              };
+            })
+          );
 
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;
@@ -132,9 +127,6 @@ function AccountPage() {
   return (
     <>
       <Box sx={{ paddingTop: '64px', paddingLeft: 4, paddingRight: 4 }}>
-        <Grid container spacing={4}>
-          {/* Left Section: User Info */}
-          <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -183,13 +175,8 @@ function AccountPage() {
                 </ul>
               </CardContent>
             </Card>
-          </Grid>
 
           {/* Right Section: Favorite Media, Liked Posts, Recent Reviews */}
-          <Grid item xs={12} md={8}>
-            <Grid container spacing={2}>
-              {/* Favorite Media */}
-              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -202,10 +189,8 @@ function AccountPage() {
                     </ul>
                   </CardContent>
                 </Card>
-              </Grid>
 
               {/* Liked Posts */}
-              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -218,10 +203,8 @@ function AccountPage() {
                     </ul>
                   </CardContent>
                 </Card>
-              </Grid>
 
               {/* Recent Reviews */}
-              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -268,11 +251,6 @@ function AccountPage() {
                     )}
                   </CardContent>
                 </Card>
-              </Grid>
-
-            </Grid>
-          </Grid>
-        </Grid>
       </Box>
 
       {/* Edit Genres Modal */}

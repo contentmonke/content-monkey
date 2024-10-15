@@ -7,6 +7,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Avatar } from '@mui/material';
+import DropdownMenu from './av-dropdown-menu/DropdownMenu';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,14 +52,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
   const [searchQuery, setSearchQuery] = useState('');
 
-  //const mediaType = MediaType.BOOK;
-  // const [results, setResults] = useState<VolumeInfo[]>([]);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState("");
-
+  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -69,7 +67,6 @@ const Navbar = () => {
         searchQuery: searchQuery,
       },
     });
-    setSearchQuery("");
   }
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -78,17 +75,20 @@ const Navbar = () => {
     }
   };
 
+  const toggleAvatarDropdown = () => {
+    setAvatarDropdownOpen(!avatarDropdownOpen);
+  };
 
   return isAuthenticated && (
     <>
       <div className="bar">
         <nav>
           <ul className="desktop-nav">
-            <li>
+            <li className="nav-logo-li">
               <a href="/" className="nav-logo">
               </a>
             </li>
-            <li>
+            <li className="nav-search-li">
               <Search>
                 <SearchIconWrapper onClick={handleSearchSubmit}>
                   <SearchIcon />
@@ -102,26 +102,29 @@ const Navbar = () => {
                 />
               </Search>
             </li>
-            <li>
+            <li className="nav-item-li">
               Item
             </li>
-            <li>
+            <li className="nav-item-li">
               Item
             </li>
-            <li>
+            <li className="nav-item-li">
               Item
             </li>
-            <li>
+            <li className="nav-item-li">
               Item
             </li>
-            <li>
+            <li className="nav-item-li">
               Item
             </li>
-            <li>
-              Item
-            </li>
-            <li>
-              <AccountCircleIcon style={{ cursor: 'pointer' }} onClick={() => navigate('/account')} />
+            <li className="nav-avatar-li">
+              {user ? (<>
+                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer' }} onClick={() => toggleAvatarDropdown()} />
+                {avatarDropdownOpen && <DropdownMenu closeDropdown={() => setAvatarDropdownOpen(false)} />}
+              </>
+              ) :
+                (<AccountCircleIcon />)}
+
             </li>
           </ul>
         </nav>
