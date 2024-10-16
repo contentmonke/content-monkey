@@ -6,11 +6,13 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "./reviews/review-utils";
 import { Media, Review } from "../models/Models";
 import { fetchMediaList } from "./media/media-utils";
+import { SmallLoading } from "../components/Loading";
 
 function UploadPage() {
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [mediaList, setMediaList] = useState<Media[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth0();
 
   useEffect(() => {
@@ -25,6 +27,7 @@ function UploadPage() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', userData.id);
+    setIsLoading(true);
 
     api.reviews.uploadReviews(formData)
       .then((response) => {
@@ -38,6 +41,7 @@ function UploadPage() {
         if (mediaIds.length > 0) {
           fetchMediaList(mediaIds, setMediaList);
         }
+        setIsLoading(false);
       })
       .catch((e) => {
         console.error(e);
@@ -46,6 +50,8 @@ function UploadPage() {
 
   return (
     <>
+      <div>Go to goodreads.com and click "My Books" on the header. On the left menu bar, there is a section called "Tools" - click "Import and export". Click the "Export Library" button to download your csv. Upload this csv using the button below.</div>
+      <br />
       <Button
         component="label"
         role={undefined}
@@ -60,6 +66,7 @@ function UploadPage() {
           onChange={handleUpload}
           style={{ display: 'none' }}></input>
       </Button>
+      {isLoading && <SmallLoading />}
       {reviews.length > 0 &&
         <>
           {reviews.map(review => {
