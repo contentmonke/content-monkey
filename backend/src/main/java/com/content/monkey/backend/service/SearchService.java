@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.core.env.Environment;
 
-
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class SearchService {
     public List<SearchEntity> getSearchResults(String bookTitle) {
         String apiKey = environment.getProperty("CM_GOOGLE_KEY");
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
-                        "leapis.com/books/v1/volumes")
+                "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle)
                 .queryParam("maxResults", 30)
                 .queryParam("key", apiKey)
@@ -44,5 +43,33 @@ public class SearchService {
                 })
                 .collect(Collectors.toList());
     }
-}
 
+    public SearchEntity getSearchResultsByTitleAndAuthor(String bookTitle, String author) {
+        String apiKey = environment.getProperty("CM_GOOGLE_KEY");
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
+                "leapis.com/books/v1/volumes")
+                .queryParam("q", bookTitle + "+inauthor:" + author)
+                .queryParam("maxResults", 30)
+                .queryParam("key", apiKey)
+                .build()
+                .toUri();
+        GoogleBooksResponse response = template.getForObject(uri, GoogleBooksResponse.class);
+        List<SearchEntity> results = response.getItems().stream()
+                .map(item -> {
+                    SearchEntity entity = new SearchEntity();
+                    entity.setTitle(item.getVolumeInfo().getTitle());
+                    entity.setAuthors(item.getVolumeInfo().getAuthors());
+                    entity.setPublisher(item.getVolumeInfo().getPublisher());
+                    entity.setPublishedDate(item.getVolumeInfo().getPublishedDate());
+                    entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());
+                    entity.setPageCount(item.getVolumeInfo().getPageCount());
+                    entity.setDescription(item.getVolumeInfo().getDescription());
+                    return entity;
+                })
+                .toList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+}

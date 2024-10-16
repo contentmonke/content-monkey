@@ -15,6 +15,13 @@ export const api = {
         await axios.post(`${URL}/reviews`, review)
       );
     },
+    async uploadReviews(file: any) {
+      return (await axios.post(`${URL}/reviews/upload`, file, {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      }))
+    }
   },
   search: {
     async fetchSearch({ title }: any) {
@@ -47,7 +54,12 @@ export const api = {
         await axios.post(`${URL}/media/`, mediaEntity)
 
       );
-    }
+    },
+    async fetchMediaList(mediaIds: any) {
+      return (
+        await axios.post(`${URL}/media/list`, mediaIds)
+      );
+    },
   },
   user: {
     async fetchUser(username: any) {
@@ -57,5 +69,4 @@ export const api = {
         }));
     }
   }
-
 }

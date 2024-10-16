@@ -13,4 +13,10 @@ public class GoogleBooksResponse {
         this.items = items;
     }
 
+    @Override
+    public String toString() {
+        return "GoogleBooksResponse{" +
+                "items=" + items +
+                '}';
+    }
 }

@@ -1,13 +1,22 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
-import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
-import com.content.monkey.backend.repository.CommentRepository;
+import com.content.monkey.backend.model.dto.GoodReadsDTO;
 import com.content.monkey.backend.repository.ReviewRepository;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +30,70 @@ public class ReviewService {
     private CommentService commentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MediaService mediaService;
 
+    // HELPER FUNCTIONS
+    private static LocalDateTime formatGoodReadsDate(String date) {
+        if (date.isEmpty()) {
+            return null;
+        }
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate localDate = LocalDate.parse(date, inputFormat);
+
+        return localDate.atStartOfDay();
+    }
+
+    private String simplifyMediaTitle(String mediaTitle) {
+        int delimiterIndex = mediaTitle.indexOf('(');
+        String title = mediaTitle;
+
+        if (delimiterIndex != -1) {
+            title = mediaTitle.substring(0, delimiterIndex - 1); // "Hello"
+        }
+        return title;
+    }
+
+    private List<ReviewEntity> convertGoodReadsToReviewEntities(List<GoodReadsDTO> goodReadsDTOS, Long userId) {
+        List<ReviewEntity> reviewEntities = new ArrayList<>();
+        for (GoodReadsDTO dto : goodReadsDTOS) {
+            // Find MediaEntity
+            String mediaTitle = simplifyMediaTitle(dto.getTitle());
+            System.out.println("============================================");
+            System.out.println("Simplified Title = " + mediaTitle);
+            MediaEntity mediaEntity = null;
+            if (!mediaTitle.isEmpty()) {
+                mediaEntity = mediaService.getOrSearchAndCreateMediaEntity(mediaTitle, dto.getAuthor());
+            }
+
+            LocalDateTime dateAdded = formatGoodReadsDate(dto.getDateAdded());
+            LocalDateTime dateRead = formatGoodReadsDate(dto.getDateRead());
+            LocalDateTime dateEnded = dateRead == null ? dateAdded : dateRead;
+
+            // Create ReviewEntity
+            reviewEntities.add(
+                    ReviewEntity.builder()
+                            .userId(userId)
+                            .commentIds(new ArrayList<>())
+                            .dateCreated(dateAdded)
+                            .body(dto.getMyReview())
+                            .mediaId((mediaEntity == null) ? null : mediaEntity.getId())
+                            .rating(dto.getMyRating())
+                            .upVotes(0)
+                            .downVotes(0)
+                            .startDate(dateEnded)
+                            .endDate(dto.getReadingStatus().equals("currently-reading") ? null
+                                    : dateEnded)
+                            .build()
+            );
+        }
+        System.out.println("convertGoodReadsToReviewEntities results");
+        System.out.println(reviewEntities);
+
+        return reviewEntities;
+    }
+
+    // API SERVICES
     public List<ReviewEntity> getAllReviews() {
         List<ReviewEntity> reviews = reviewRepository.findAll();
         return reviews;
@@ -78,6 +150,44 @@ public class ReviewService {
         } catch (Exception e) {
             throw new ReviewNotFoundException();
         }
+    }
+
+    public List<ReviewEntity> upload(MultipartFile file, Long userId) throws IOException {
+        if (file.isEmpty()) {
+            System.out.println("file is empty");
+        }
+        // Read CSV file
+        InputStream inputStream = file.getInputStream();
+        final CsvMapper csvMapper = new CsvMapper();
+        List<GoodReadsDTO> goodReadsReviews = new ArrayList<>();
+        try {
+            CsvSchema csvSchema = csvMapper
+                    .schemaFor(GoodReadsDTO.class)
+                    .withHeader()
+                    .withColumnSeparator(',')
+                    .withColumnReordering(true);
+
+            MappingIterator<GoodReadsDTO> iterator = csvMapper
+                    .readerFor(GoodReadsDTO.class)
+                    .with(csvSchema)
+                    .readValues(inputStream);
+
+            goodReadsReviews = iterator.readAll();
+
+        } catch(Exception e) {
+            System.out.println(e);
+            return new ArrayList<>();
+        }
+
+        System.out.println(goodReadsReviews);
+
+        // TODO - Remove this filter for unread books (when To-Read list is implemented)
+        goodReadsReviews.removeIf(item -> item.getReadingStatus().equals("to-read"));
+
+        // Convert GoodReads data to ReviewEntities
+        List<ReviewEntity> reviewEntities = convertGoodReadsToReviewEntities(goodReadsReviews, userId);
+        return reviewEntities;
+//        return new ArrayList<>();
     }
 
 }

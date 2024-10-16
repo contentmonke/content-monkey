@@ -6,7 +6,9 @@ import com.content.monkey.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -61,6 +63,16 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Object> uploadReviews(@RequestParam("file") MultipartFile file,
+                                                @RequestParam("userId") Long userId) throws IOException {
+        List<ReviewEntity> uploadedReviews = reviewService.upload(file, userId);
+
+        return ResponseEntity.ok().body(uploadedReviews);
+
+    }
+
 
 
 

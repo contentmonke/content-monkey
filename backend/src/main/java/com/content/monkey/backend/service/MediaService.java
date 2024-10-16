@@ -2,6 +2,7 @@ package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.model.dto.ReviewEntityDTO;
@@ -26,11 +27,11 @@ public class MediaService {
     private ReviewRepository reviewRepository;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private SearchService searchService;
 
     public MediaEntityDTO getMediaByTitle(String title, int pageNumber, int pageSize) {
         List<MediaEntity> mediaEntity = mediaRepository.findByMediaTitle(title);
-
         if (mediaEntity.isEmpty()) {
             return null;
         }
@@ -40,7 +41,6 @@ public class MediaService {
                 mediaEntity.get(0).getId(),
                 PageRequest.of(pageNumber, pageSize)
         );
-
         float sumReviews = reviewRepository.getSumRatings(mediaEntity.get(0).getId());
         float averageRating = (float) Math.round((sumReviews / (float) numReviews) * 2) / 2;
 
@@ -62,6 +62,26 @@ public class MediaService {
                 averageRating);
 
         return mediaEntityDTO;
+
+    }
+
+    public MediaEntity getMediaByTitleAndAuthor(String title, String author, int pageNumber, int pageSize) {
+        List<MediaEntity> mediaEntities = mediaRepository.findByMediaTitleAndAuthor(title, author);
+        if (mediaEntities.isEmpty()) {
+            return null;
+        }
+
+        MediaEntity mediaEntity = mediaEntities.get(0);
+
+        int numReviews = reviewRepository.countByMediaId(mediaEntity.getId());
+        float sumReviews = reviewRepository.getSumRatings(mediaEntity.getId());
+        float averageRating = (float) Math.round((sumReviews / (float) numReviews) * 2) / 2;
+
+        mediaEntity.setAverageRating(averageRating);
+        mediaEntity.setTotalRatings(numReviews);  // TODO - change this number when we allow ratings w/o reviews
+
+        return mediaEntity;
+
     }
 
     public MediaEntity getMediaByID(Long mediaID) {
@@ -75,5 +95,51 @@ public class MediaService {
     public MediaEntityDTO createMediaEntity(MediaEntity mediaEntity) {
         MediaEntity savedMediaEntity = mediaRepository.save(mediaEntity);
         return MediaEntityDTO.convertMediaEntityToDTO(savedMediaEntity, new ArrayList<>(), 0, 0);
+    }
+
+    public MediaEntity createMediaEntityNoDTO(MediaEntity mediaEntity) {
+        return mediaRepository.save(mediaEntity);
+    }
+
+    private MediaEntity convertSearchEntityToMediaEntity(SearchEntity searchEntity) {
+        if (searchEntity == null) {
+            return null;
+        }
+        MediaEntity mediaEntity = MediaEntity
+                .builder()
+                .mediaTitle(searchEntity.getTitle())
+                .mediaDuration(Integer.parseInt(searchEntity.getPageCount()))
+                .author(searchEntity.getAuthors().isEmpty() ? null : searchEntity.getAuthors().get(0))
+                .description(searchEntity.getDescription())
+                .averageRating(0)
+                .totalRatings(0)
+                .thumbnail(searchEntity.getThumbnail())
+                .mediaType("Book")
+                .build();
+        return mediaEntity;
+    }
+    public MediaEntity getOrSearchAndCreateMediaEntity(String title, String author) {
+        System.out.println("Search googleAPI for..." +
+                "\ntitle=" + title +
+                "\nauthor=" + author);
+        SearchEntity searchResult = searchService.getSearchResultsByTitleAndAuthor(title, author);
+        System.out.println("search result = " + searchResult);
+        MediaEntity mediaEntity = getMediaByTitleAndAuthor(
+                searchResult.getTitle(),
+                searchResult.getAuthors().isEmpty() ? author : searchResult.getAuthors().get(0),
+                0,
+                10
+        );
+        if (mediaEntity == null) {
+            System.out.println("Media not in database...");
+            mediaEntity = convertSearchEntityToMediaEntity(searchResult);
+            mediaEntity = createMediaEntityNoDTO(mediaEntity);
+            System.out.println("Created " + mediaEntity);
+        }
+        return mediaEntity;
+    }
+
+    public List<MediaEntity> getMediaList(List<Long> mediaIds) {
+        return mediaRepository.findAllById(mediaIds);
     }
 }
