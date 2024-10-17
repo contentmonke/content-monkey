@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AccountPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, error, isLoading } = useAuth0();
   const [bio, setBio] = useState('No biography available.');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -63,110 +63,109 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [user?.name]);
 
-  console.log(reviews[1].dateCreated)
-
-  return (<>
-    {(isAuthenticated && !isLoading && user) ? (<>
-      <div className="profile-container">
-        {/* Left Sidebar */}
-        <div className="sidebar">
-          <img src={user.picture} alt={user.name} className="profile-picture" />
-          <p className="prof-name">{user.nickname}</p>
-          <p>{bio}</p>
-          <div>
-            {favoriteGenres.map((genre, index) => (
-              <div key={index} className="genre-item">
-                <div className="fave-genre">{genre}</div>
-              </div>
-            ))}
-          </div>
-          <Button onClick={() => navigate('/')} label="Edit Profile" width="230px" />
-          <hr />
-          <ul className="sidebar-menu">
-            <li>Activity</li>
-            <li>Friends</li>
-            <li>Movies</li>
-            <li>TV Shows</li>
-            <li>Books</li>
-            <li>Video Games</li>
-            <li>Lists</li>
-            <li>Groups</li>
-          </ul>
-        </div>
-
-        {/* Right Main Content */}
-        <div className="main-content">
-          <div className="favorite-content">
-            <p className="fave-titles">Favorite Content</p>
-            <hr className="main-divider" />
-            <div className="content-grid">
-              {favoriteContent.map(item => (
-                <div key={item.id} className="content-item">
-                  <img src={item.imageUrl} alt={item.title} />
-                  <p>{item.title}</p>
+  return ((isLoading) ? <div className="loader"><Loading /></div> : (<>
+    {(isAuthenticated && user) ?
+      (<>
+        <div className="profile-container">
+          {/* Left Sidebar */}
+          <div className="sidebar">
+            <img src={user.picture} alt={user.name} className="profile-picture" />
+            <p className="prof-name">{user.nickname}</p>
+            <p>{bio}</p>
+            <div>
+              {favoriteGenres.map((genre, index) => (
+                <div key={index} className="genre-item">
+                  <div className="fave-genre">{genre}</div>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="recent-reviews">
-            <p className="fave-titles">Recent Reviews</p>
-            <hr className="main-divider" />
-            <ul>
-              {reviews.map((review, index) => (
-                <div key={index}>
-                  <li>
-                    <div className="review-header">
-                      {/* Display review rating on the left and date on the right */}
-                      <Rating
-                        size={'small'}
-                        sx={{ my: 0, mr: 1, mb: 0.5 }}
-                        value={review.rating}
-                        precision={0.5}
-                        readOnly
-                      />
-                      <p className="review-date">
-                        {new Date(review.dateCreated).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: '2-digit'
-                        })}{' '}
-                        {new Date(review.dateCreated).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true
-                        })}
-                      </p>
-                    </div>
-
-                    {/* Other content like review title and upvotes/downvotes */}
-                    <p className="review-title">{review.mediaTitle}</p>
-
-                    <Container disableGutters>
-                      <IconButton size={'small'}>
-                        <ThumbUp sx={{ width: 15 }} />
-                      </IconButton>
-                      <Typography variant="caption">{review.upVotes}</Typography>
-                      <IconButton>
-                        <ThumbDown sx={{ width: 15 }} />
-                      </IconButton>
-                      <Typography variant="caption">{review.downVotes}</Typography>
-                    </Container>
-                  </li>
-
-                  {/* Add a Divider between each review */}
-                  {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
-                </div>
-              ))}
+            <Button onClick={() => navigate('/')} label="Edit Profile" width="230px" />
+            <hr />
+            <ul className="sidebar-menu">
+              <li>Activity</li>
+              <li>Friends</li>
+              <li>Movies</li>
+              <li>TV Shows</li>
+              <li>Books</li>
+              <li>Video Games</li>
+              <li>Lists</li>
+              <li>Groups</li>
             </ul>
           </div>
-        </div>
-      </div >
-    </>) :
-      <>
-      </>
-    }
-  </>);
+
+          {/* Right Main Content */}
+          <div className="main-content">
+            <div className="favorite-content">
+              <p className="fave-titles">Favorite Content</p>
+              <hr className="main-divider" />
+              <div className="content-grid">
+                {favoriteContent.map(item => (
+                  <div key={item.id} className="content-item">
+                    <img src={item.imageUrl} alt={item.title} />
+                    <p>{item.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="recent-reviews">
+              <p className="fave-titles">Recent Reviews</p>
+              <hr className="main-divider" />
+              <ul>
+                {reviews.map((review, index) => (
+                  <div key={index}>
+                    <li>
+                      <div className="review-header">
+                        {/* Display review rating on the left and date on the right */}
+                        <Rating
+                          size={'small'}
+                          sx={{ my: 0, mr: 1, mb: 0.5 }}
+                          value={review.rating}
+                          precision={0.5}
+                          readOnly
+                        />
+                        <p className="review-date">
+                          {new Date(review.dateCreated).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit'
+                          })}{' '}
+                          {new Date(review.dateCreated).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                          })}
+                        </p>
+                      </div>
+
+                      {/* Other content like review title and upvotes/downvotes */}
+                      <p className="review-title">{review.mediaTitle}</p>
+
+                      <Container disableGutters>
+                        <IconButton size={'small'}>
+                          <ThumbUp sx={{ width: 15 }} />
+                        </IconButton>
+                        <Typography variant="caption">{review.upVotes}</Typography>
+                        <IconButton>
+                          <ThumbDown sx={{ width: 15 }} />
+                        </IconButton>
+                        <Typography variant="caption">{review.downVotes}</Typography>
+                      </Container>
+                    </li>
+
+                    {/* Add a Divider between each review */}
+                    {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+                  </div>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div >
+      </>) : (
+        <>
+        </>)
+    }</>
+  ));
 };
 
 
@@ -179,7 +178,7 @@ const AccountPage: React.FC = () => {
 
 // function AccountPage() {
 //   const [count, setCount] = useState(0);
-//   const { user, isLoading, error, logout } = useAuth0();
+//   const {user, isLoading, error, logout} = useAuth0();
 //   const [userData, setUserData] = useState();
 //   const [bio, setBio] = useState('No biography available.');
 //   const [favoriteGenres, setFavoriteGenres] = useState(dummyGenres);
@@ -218,7 +217,7 @@ const AccountPage: React.FC = () => {
 //     if (newBio !== null && newBio !== '') {
 //       try {
 //         const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-//         const response = await axios.put('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography', { biography: newBio });
+//         const response = await axios.put('http://localhost:8080/api/user/' + userEdit.data[0].id + '/biography', {biography: newBio });
 
 //         if (response.status === 200) {
 //           setBio(newBio);
@@ -243,10 +242,10 @@ const AccountPage: React.FC = () => {
 //     async function fetchData() {
 //       try {
 //         if (!isLoading && user?.name) {
-//           const response = await axios.post('http://localhost:8080/api/user/', { name: user?.name });
+//           const response = await axios.post('http://localhost:8080/api/user/', {name: user?.name });
 //           setUserData(response.data);
 //           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-//           const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
+//           const emailResponse = await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, {email: user?.email });
 //           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
 //           const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
 
