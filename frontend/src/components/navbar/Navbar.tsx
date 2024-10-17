@@ -119,7 +119,7 @@ const Navbar = () => {
             </li>
             <li className="nav-avatar-li">
               {user ? (<>
-                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer' }} onClick={() => toggleAvatarDropdown()} />
+                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px'}} onClick={() => toggleAvatarDropdown()} />
                 {avatarDropdownOpen && <DropdownMenu closeDropdown={() => setAvatarDropdownOpen(false)} />}
               </>
               ) :

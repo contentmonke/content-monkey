@@ -6,7 +6,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
 import DeleteAccount from '../../components/DeleteAccount';
-import { Typography, Box, Card, CardContent, Avatar, IconButton, Divider } from '@mui/material';
+import { Typography, Rating, Divider, Container, IconButton } from '@mui/material';
+import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import EditIcon from '@mui/icons-material/Edit';
 //import EditGenresModal from './EditGenresModal.tsx'; // Import the modal
 
@@ -27,24 +28,18 @@ const AccountPage: React.FC = () => {
     { id: 3, title: 'The Witcher 3', imageUrl: 'https://via.placeholder.com/150' },
   ];
 
-  const recentReviews = [
-    { id: 1, title: 'Inception Review', content: 'Amazing movie with a great plot twist.' },
-    { id: 2, title: 'Breaking Bad Review', content: 'A masterpiece of television.' },
-    { id: 3, title: 'The Witcher 3 Review', content: 'One of the best RPGs ever made.' },
-  ];
-
   useEffect(() => {
     async function fetchData() {
       try {
         if (!isLoading && user?.name) {
-          const userBio = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-          const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + user?.name);
-
-          const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/210`);
-          console.log(mediaResponse);
+          await axios.post('http://localhost:8080/api/user/', { name: user?.name });
+          const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+          await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
+          const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+          const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
 
           const reviewsWithMediaTitles = await Promise.all(
-            recentReviews.data.map(async (review) => {
+            recentReviews.data.map(async (review: any) => {
               const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
               return {
                 ...review,
@@ -56,11 +51,9 @@ const AccountPage: React.FC = () => {
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;
 
-          console.log(userBio.data[0]);
           setBio(JSON.parse(biography).biography || 'No biography available.');
           setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
           setReviews(reviewsWithMediaTitles);
-          console.log(reviewsWithMediaTitles);
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -69,6 +62,8 @@ const AccountPage: React.FC = () => {
 
     fetchData();
   }, [user?.name]);
+
+  console.log(reviews[1].dateCreated)
 
   return (<>
     {(isAuthenticated && !isLoading && user) ? (<>
@@ -79,13 +74,13 @@ const AccountPage: React.FC = () => {
           <p className="prof-name">{user.nickname}</p>
           <p>{bio}</p>
           <div>
-            {favoriteGenres.map(item => (
-              <div key={item.id} className="genre-item">
-                <div className="fave-genre">{item.genre}</div>
+            {favoriteGenres.map((genre, index) => (
+              <div key={index} className="genre-item">
+                <div className="fave-genre">{genre}</div>
               </div>
             ))}
           </div>
-          <Button onClick={() => navigate('/')} label="Edit Profile" width="209px" />
+          <Button onClick={() => navigate('/')} label="Edit Profile" width="230px" />
           <hr />
           <ul className="sidebar-menu">
             <li>Activity</li>
@@ -118,16 +113,55 @@ const AccountPage: React.FC = () => {
             <p className="fave-titles">Recent Reviews</p>
             <hr className="main-divider" />
             <ul>
-              {recentReviews.map(review => (
-                <li key={review.id}>
-                  <strong>{review.title}</strong>
-                  <p>{review.content}</p>
-                </li>
+              {reviews.map((review, index) => (
+                <div key={index}>
+                  <li>
+                    <div className="review-header">
+                      {/* Display review rating on the left and date on the right */}
+                      <Rating
+                        size={'small'}
+                        sx={{ my: 0, mr: 1, mb: 0.5 }}
+                        value={review.rating}
+                        precision={0.5}
+                        readOnly
+                      />
+                      <p className="review-date">
+                        {new Date(review.dateCreated).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: '2-digit'
+                        })}{' '}
+                        {new Date(review.dateCreated).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true
+                        })}
+                      </p>
+                    </div>
+
+                    {/* Other content like review title and upvotes/downvotes */}
+                    <p className="review-title">{review.mediaTitle}</p>
+
+                    <Container disableGutters>
+                      <IconButton size={'small'}>
+                        <ThumbUp sx={{ width: 15 }} />
+                      </IconButton>
+                      <Typography variant="caption">{review.upVotes}</Typography>
+                      <IconButton>
+                        <ThumbDown sx={{ width: 15 }} />
+                      </IconButton>
+                      <Typography variant="caption">{review.downVotes}</Typography>
+                    </Container>
+                  </li>
+
+                  {/* Add a Divider between each review */}
+                  {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+                </div>
               ))}
             </ul>
           </div>
         </div>
-      </div>
+      </div >
     </>) :
       <>
       </>

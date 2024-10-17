@@ -14,7 +14,6 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
 
   const navAndReload = (page: string) => {
     navigate(page, { replace: true });
-    window.location.reload();
   }
 
   // Close dropdown if clicking outside of it

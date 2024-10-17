@@ -6,11 +6,11 @@
 
 .sidebar {
   width: 250px;
-  padding: 20px;
+  padding: 10px;
 }
 
 .profile-picture {
-  width: 209px;
+  width: 230px;
   border-radius: 50%;
   margin-bottom: 20px;
 }
@@ -18,7 +18,7 @@
 .prof-name {
   font-weight: 600;
   font-size: 20px;
-  max-width: 209px;
+  max-width: 230px;
   white-space: normal;
   word-break:break-all;
 }
@@ -39,7 +39,7 @@
 }
 
 .fave-titles {
-  font-size: 18px;
+  font-size: 20px;
   margin: 0px;
 }
 
@@ -111,4 +111,18 @@ hr {
 
 .recent-reviews p {
   margin: 5px 0;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-date {
+  margin-left: auto; /* Ensures the date is pushed to the right */
+}
+
+.review-title {
+  font-weight: 500;
 }
