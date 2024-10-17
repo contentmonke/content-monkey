@@ -116,26 +116,33 @@ const AccountPage: React.FC = () => {
                   <div key={index}>
                     <li>
                       <div className="review-header">
-                        {/* Display review rating on the left and date on the right */}
-                        <Rating
-                          size={'small'}
-                          sx={{ my: 0, mr: 1, mb: 0.5 }}
-                          value={review.rating}
-                          precision={0.5}
-                          readOnly
-                        />
-                        <p className="review-date">
-                          {new Date(review.dateCreated).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: '2-digit'
-                          })}{' '}
-                          {new Date(review.dateCreated).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                          })}
-                        </p>
+                        {(() => {
+                          const reviewDate = new Date(review.dateCreated);
+                          reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
+                          return (
+                            <>
+                              <Rating
+                                size={'small'}
+                                sx={{ my: 0, mr: 1, mb: 0.5 }}
+                                value={review.rating}
+                                precision={0.5}
+                                readOnly
+                              />
+                              <p className="review-date">
+                                {reviewDate.toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: '2-digit',
+                                })}{' '}
+                                {reviewDate.toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </p>
+                            </>
+                          );
+                        })()}
                       </div>
 
                       {/* Other content like review title and upvotes/downvotes */}
