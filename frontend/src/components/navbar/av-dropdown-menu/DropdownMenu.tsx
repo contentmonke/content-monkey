@@ -14,6 +14,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
 
   const navAndReload = (page: string) => {
     navigate(page, { replace: true });
+    closeDropdown();
   }
 
   // Close dropdown if clicking outside of it
@@ -37,7 +38,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
     <div className="dropdown-menu" ref={dropdownRef}>
       <ul>
         <li onClick={() => navAndReload('/account')} >Profile</li>
-        <li>Settings</li>
+        <li onClick={() => navAndReload('/settings')}>Settings</li>
         {isAuthenticated ?
           <li onClick={() => logout()}>Sign out</li>
           :

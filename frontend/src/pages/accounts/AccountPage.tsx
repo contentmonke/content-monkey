@@ -5,10 +5,10 @@ import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Loading } from '../../components/Loading';
-import DeleteAccount from '../../components/DeleteAccount';
 import { Typography, Rating, Divider, Container, IconButton } from '@mui/material';
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
-import EditIcon from '@mui/icons-material/Edit';
+//import EditIcon from '@mui/icons-material/Edit';
+//import DeleteAccount from '../../components/DeleteAccount';
 //import EditGenresModal from './EditGenresModal.tsx'; // Import the modal
 
 import Button from "../../components/button/Button";
@@ -69,7 +69,7 @@ const AccountPage: React.FC = () => {
         <div className="profile-container">
           {/* Left Sidebar */}
           <div className="sidebar">
-            <img src={user.picture} alt={user.name} className="profile-picture" />
+            <img src={user.picture} alt={user.name} className="pub-profile-picture" />
             <p className="prof-name">{user.nickname}</p>
             <p>{bio}</p>
             <div>
@@ -79,7 +79,7 @@ const AccountPage: React.FC = () => {
                 </div>
               ))}
             </div>
-            <Button onClick={() => navigate('/')} label="Edit Profile" width="230px" />
+            <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
             <hr />
             <ul className="sidebar-menu">
               <li>Activity</li>
@@ -175,7 +175,7 @@ const AccountPage: React.FC = () => {
   ));
 };
 
-
+export default AccountPage;
 
 // // Dummy Data for favorite media, liked posts, recent reviews, and genres
 // const favoriteMedia = [];
@@ -431,5 +431,3 @@ const AccountPage: React.FC = () => {
 //     </>
 //   );
 // } 
-
-export default AccountPage;

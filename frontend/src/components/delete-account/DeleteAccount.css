@@ -1,8 +1,8 @@
-.button {
+.bad-button {
   z-index: 2;
   font-size: 18px;
   font-weight: 600;
-  background-color: var(--button-color, #31628F);
+  background-color: #FF3E3E;
   width: var(--button-width, 200px); /* Default to 200px if not set */
   height: 45px;
   border: 1px solid #D1D1D1;
@@ -10,10 +10,9 @@
   transition: .2s ease-in-out;
   margin: 0;
   padding: 0;
-  color: var(--button-textcolor, #ffffff);
 }
 
-.button:hover {
-  background-color: var(--button-hovercolor, #295680);
+.bad-button:hover {
+  background-color: #ea3939;
   transition: .2s ease-in-out;
 }

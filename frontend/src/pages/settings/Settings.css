@@ -1,0 +1,71 @@
+.main-content-settings {
+  display: flex;
+  width: 900px;
+  margin: 0 auto;
+}
+
+.settings-content-layout {
+  flex: 1;
+  padding: 40px;
+  padding-top: 0px;
+  max-width: 700px;
+  margin-left: auto;
+  height: 100vh;
+}
+
+.settings-content-layout h1 {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #24292e;
+}
+
+.profile-picture-section {
+  display: block;
+  margin-bottom: 30px;
+}
+
+.profile-field {
+  margin-bottom: 20px;
+}
+
+.profile-field label {
+  display: inline;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #24292e;
+}
+
+.settings-prof-pic-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.pic-and-bio-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+.bio-field {
+  width: 100%;
+}
+
+.genre-title-settings {
+  margin-bottom: 10px;
+}
+
+.genre-title-settings label {
+  margin-right: 10px;
+}
+
+.genre-title-settings button {
+  padding: 0;
+  color: black;
+  background-color: transparent;
+}
+
+.add-genre-button {
+  margin-top: 8px;
+  background-color: transparent;
+}
