@@ -72,7 +72,7 @@ function SearchPage() {
           </Box>
         }
         <br />
-        <Container disableGutters sx={{ width: '100%', maxWidth: '1000px' }}>
+        <Container disableGutters sx={{ width: '100%', maxWidth: '900px' }}>
           {(media === null) ?
             <>
               <MediaSearchBar
