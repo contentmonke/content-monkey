@@ -10,6 +10,7 @@ import EditProfile from './pages/settings/profile/EditProfile';
 import EditAccount from './pages/settings/account/EditAccount';
 import { Container } from '@mui/material';
 import Navbar from "./components/navbar/Navbar"
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -26,11 +27,11 @@ function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">
               {/* Default route to render EditProfile */}
-              <Route index element={<EditProfile />} />
+              <Route index element={<ProtectedRoute component={EditProfile} />} />
 
               {/* Other nested routes */}
-              <Route path="profile" element={<EditProfile />} />
-              <Route path="account" element={<EditAccount />} />
+              <Route path="profile" element={<ProtectedRoute component={EditProfile} />} />
+              <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
             </Route>
             <Route path="/media/:title" element={<MediaPage />} />
           </Routes>

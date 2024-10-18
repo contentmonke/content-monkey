@@ -3,18 +3,17 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@m
 import Button from '../../../components/button/Button'
 
 const EditGenresModal = ({ open, handleClose, favoriteGenres, setFavoriteGenres }) => {
-  const [newGenres, setNewGenres] = useState([...favoriteGenres]);
   // Handle input change for each genre
   const handleGenreChange = (index, value) => {
-    const updatedGenres = [...newGenres];
+    const updatedGenres = [...favoriteGenres];
     updatedGenres[index] = value;
-    setNewGenres(updatedGenres);
+    setFavoriteGenres(updatedGenres);
   };
 
   // Function to add a new genre if less than 3 are present
   const handleAddGenre = () => {
-    if (newGenres.length < 3) {
-      setNewGenres([...newGenres, '']); // Add an empty input for new genre
+    if (favoriteGenres.length < 3) {
+      setFavoriteGenres([...favoriteGenres, ''])
     } else {
       alert('You can only add up to 3 genres.');
     }
@@ -22,7 +21,7 @@ const EditGenresModal = ({ open, handleClose, favoriteGenres, setFavoriteGenres 
 
   // Function to save edited genres and close modal
   const handleSaveGenres = async () => {
-    const validGenres = newGenres.filter((genre) => genre.trim() !== ''); // Filter out any empty genres
+    const validGenres = favoriteGenres.filter((genre) => genre.trim() !== ''); // Filter out any empty genres
     setFavoriteGenres(validGenres);
 
     // try {
@@ -51,7 +50,7 @@ const EditGenresModal = ({ open, handleClose, favoriteGenres, setFavoriteGenres 
     >
       <DialogTitle>Edit Favorite Genres</DialogTitle> {/* Custom title color */}
       <DialogContent>
-        {newGenres.map((genre, index) => (
+        {favoriteGenres.map((genre, index) => (
           <TextField
             key={index}
             margin="dense"
@@ -70,7 +69,7 @@ const EditGenresModal = ({ open, handleClose, favoriteGenres, setFavoriteGenres 
         ))}
 
         {/* Add genre button, disabled if there are already 3 genres */}
-        {newGenres.length < 3 && (
+        {favoriteGenres.length < 3 && (
           <div className="add-genre-button">
             <Button
               onClick={handleAddGenre}
