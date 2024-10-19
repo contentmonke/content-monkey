@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 
-
 import java.net.URI;
 import java.util.List;
 
@@ -29,22 +28,24 @@ public class UserController {
     private Auth0Service auth0Service;
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
-        System.out.println("HERE");
-        System.out.println(user);
         List<UserEntity> users = userService.getSingleUser(user.getName());
         if (users.isEmpty()) {
             users.add(createExampleEntity(user));
         }
-        System.out.println(users);
         return users;
     }
+
+    @PostMapping("/setPicture")
+    public void setPicture(@RequestParam("id") Long id, @RequestParam("picture") String picture) {
+        userService.updatePicture(id, picture);
+    }
+
     @GetMapping("/all")
     public List<UserEntity> getAllExamples() {
         List<UserEntity> examples = userService.getAllExamples();
-        System.out.println("Fetched examples: " + examples.toString());
+        //System.out.println("Fetched examples: " + examples.toString());
         return examples;
     }
-
 
     public UserEntity createExampleEntity(@RequestBody UserEntity example) {
         UserEntity created = userService.createUserEntity(example);
@@ -74,6 +75,11 @@ public class UserController {
             return null;
         }
         return users;
+    }
+
+    @GetMapping("/{id}")
+    public UserEntity getUserById(@PathVariable Long id) {
+        return userService.getUser(id);
     }
 
     @PutMapping("genres/{id}")

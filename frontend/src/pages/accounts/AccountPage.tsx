@@ -12,12 +12,18 @@ import { ThumbDown, ThumbUp } from "@mui/icons-material";
 //import EditGenresModal from './EditGenresModal.tsx'; // Import the modal
 
 import Button from "../../components/button/Button";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AccountPage: React.FC = () => {
+  const { id } = useParams(); // Get the username from the URL
+
   const navigate = useNavigate();
-  const { user, isAuthenticated, error, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
+  const [name, setName] = useState('User not found');
+  const [email, setEmail] = useState('');
   const [bio, setBio] = useState('No biography available.');
+  const [profilePicture, setProfilePicture] = useState('https://via.placeholder.com/150');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [reviews, setReviews] = useState([]);
 
@@ -31,37 +37,42 @@ const AccountPage: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!isLoading && user?.name) {
-          await axios.post('http://localhost:8080/api/user/', { name: user?.name });
-          const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-          await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
-          const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-          const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
+        const userResponse = await axios.get(`http://localhost:8080/api/user/${id}`);
+        //await axios.post('http://localhost:8080/api/user/', { name: user?.name });
+        //const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+        //await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
+        //const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+        const recentReviews = await axios.get(`http://localhost:8080/api/reviews/userId/${id}`);
 
-          const reviewsWithMediaTitles = await Promise.all(
-            recentReviews.data.map(async (review: any) => {
-              const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
-              return {
-                ...review,
-                mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
-              };
-            })
-          );
-
-          const biography = userBio.data[0].bio;
-          const genres = userBio.data[0].genres;
-
-          setBio(JSON.parse(biography).biography || 'No biography available.');
-          setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
-          setReviews(reviewsWithMediaTitles);
+        const reviewsWithMediaTitles = await Promise.all(
+          recentReviews.data.map(async (review: any) => {
+            const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
+            return {
+              ...review,
+              mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
+            };
+          })
+        );
+        console.log(userResponse);
+        setEmail(userResponse.data.email);
+        setName(userResponse.data.name.split('@')[0])
+        if (userResponse.data.picture != null) {
+          setProfilePicture(userResponse.data.picture);
         }
+        if (userResponse.data.bio!= null) {
+          setBio(JSON.parse(userResponse.data.bio).biography)
+        }
+        if (userResponse.data.genres != null) {
+          setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
+        }
+        setReviews(reviewsWithMediaTitles);
       } catch (error) {
         console.error('Error fetching data', error);
       }
     }
 
     fetchData();
-  }, [user?.name]);
+  }, [id]);
 
   return ((isLoading) ? <div className="loader"><Loading /></div> : (<>
     {(isAuthenticated && user) ?
@@ -69,8 +80,8 @@ const AccountPage: React.FC = () => {
         <div className="profile-container">
           {/* Left Sidebar */}
           <div className="sidebar">
-            <img src={user.picture} alt={user.name} className="pub-profile-picture" />
-            <p className="prof-name">{user.nickname}</p>
+            <img src={profilePicture} alt={name} className="pub-profile-picture" />
+            <p className="prof-name">{name}</p>
             <p>{bio}</p>
             <div>
               {favoriteGenres.map((genre, index) => (
@@ -79,7 +90,11 @@ const AccountPage: React.FC = () => {
                 </div>
               ))}
             </div>
-            <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
+            {(isAuthenticated && user && user.email == email) ?
+              <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
+              :
+              <>
+              </>}
             <hr />
             <ul className="sidebar-menu">
               <li>Activity</li>

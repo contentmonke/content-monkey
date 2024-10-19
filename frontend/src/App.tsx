@@ -22,7 +22,7 @@ function App() {
           <Routes>
             {/* Define the route for /account */}
             <Route path="/" element={<Home />} />
-            <Route path="/account" element={<AccountPage />} />
+            <Route path="/u/:id" element={<AccountPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">

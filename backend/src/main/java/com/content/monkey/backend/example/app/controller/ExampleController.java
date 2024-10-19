@@ -18,7 +18,7 @@ public class ExampleController {
     @GetMapping
     public List<ExampleEntity> getAllExamples() {
         List<ExampleEntity> examples = exampleService.getAllExamples();
-        System.out.println("Fetched examples: " + examples.toString());
+        //System.out.println("Fetched examples: " + examples.toString());
         return examples;
     }
 
