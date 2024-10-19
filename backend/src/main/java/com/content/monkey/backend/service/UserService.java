@@ -74,6 +74,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserEntity updatePicture(Long id, String picture) {
+        UserEntity user = getUser(id);
+        if(user.getPicture() == null) {
+            user.setPicture(picture);
+        }
+        return userRepository.save(user);
+    }
+
     public UserEntity addReviewIdToUser(Long id, Long reviewId) {
         UserEntity user = getUser(id);
         if (user.getReviewIds() == null) {
@@ -82,6 +90,4 @@ public class UserService {
         user.getReviewIds().add(reviewId);
         return userRepository.save(user);
     }
-
-
 }

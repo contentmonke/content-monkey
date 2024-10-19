@@ -35,11 +35,22 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "picture")
+    private String picture;
+
     @Column(name = "posts_liked_by_user")
     private List<Long> posts_liked;
 
     @Column(name = "comments_liked_by_user")
     private List<Long> comments_liked;
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public void setGenres(String genres) {
         this.genres = genres;

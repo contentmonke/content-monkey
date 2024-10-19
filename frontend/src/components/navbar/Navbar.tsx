@@ -4,11 +4,12 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Avatar } from '@mui/material';
 import DropdownMenu from './av-dropdown-menu/DropdownMenu';
+import axios from 'axios';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -56,6 +57,27 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    async function setData() {
+      try {
+        // YOU CAN GET RID OF THIS CODE ONCE EVERYONE HAS A DEFAULT PROFILE PIC
+        const userRes = await axios.post('http://localhost:8080/api/user/', user);
+        await axios.post('http://localhost:8080/api/user/setPicture', null,
+          { params: {
+            id: userRes.data[0].id,
+            picture: user.picture
+          }}
+        );
+      } catch (error) {
+        console.error('Error setting data', error);
+      }
+    }
+
+    if (isAuthenticated && user) {
+      setData();
+    }
+  }, [isAuthenticated])
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -119,7 +141,7 @@ const Navbar = () => {
             </li>
             <li className="nav-avatar-li">
               {user ? (<>
-                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px'}} onClick={() => toggleAvatarDropdown()} />
+                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
                 {avatarDropdownOpen && <DropdownMenu closeDropdown={() => setAvatarDropdownOpen(false)} />}
               </>
               ) :
