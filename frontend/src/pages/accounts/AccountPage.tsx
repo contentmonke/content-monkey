@@ -54,11 +54,17 @@ const AccountPage: React.FC = () => {
           })
         );
         console.log(userResponse);
-        setProfilePicture(userResponse.data.picture);
         setEmail(userResponse.data.email);
         setName(userResponse.data.name.split('@')[0])
-        setBio(JSON.parse(userResponse.data.bio).biography)
-        setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
+        if (userResponse.data.picture != null) {
+          setProfilePicture(userResponse.data.picture);
+        }
+        if (userResponse.data.bio!= null) {
+          setBio(JSON.parse(userResponse.data.bio).biography)
+        }
+        if (userResponse.data.genres != null) {
+          setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
+        }
         setReviews(reviewsWithMediaTitles);
       } catch (error) {
         console.error('Error fetching data', error);
