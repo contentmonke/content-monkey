@@ -63,6 +63,9 @@ public class ReviewService {
             System.out.println("Simplified Title = " + mediaTitle);
             MediaEntity mediaEntity = null;
             if (!mediaTitle.isEmpty()) {
+                if (dto.getAuthor() == null || dto.getAuthor().equals("Unknown")) {
+                    dto.setAuthor("");
+                }
                 mediaEntity = mediaService.getOrSearchAndCreateMediaEntity(mediaTitle, dto.getAuthor());
             }
 

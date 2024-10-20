@@ -124,6 +124,15 @@ public class MediaService {
                 "\nauthor=" + author);
         SearchEntity searchResult = searchService.getSearchResultsByTitleAndAuthor(title, author);
         System.out.println("search result = " + searchResult);
+        // Error finding book - returning erroneous MediaEntity
+        if (searchResult == null) {
+            System.out.println("Couldn't find title: " + title);
+            return MediaEntity.builder()
+                    .mediaTitle(title)
+                    .author(author)
+                    .mediaType("Book")
+                    .build();
+        }
         MediaEntity mediaEntity = getMediaByTitleAndAuthor(
                 searchResult.getTitle(),
                 searchResult.getAuthors().isEmpty() ? author : searchResult.getAuthors().get(0),
