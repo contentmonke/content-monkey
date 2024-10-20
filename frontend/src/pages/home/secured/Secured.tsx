@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 import LogoutButton from '../LogoutButton/LogoutButton';
 import Example from '../../../example/ExampleList'
+import Navbar from '../../../components/navbar/Navbar';
 
 function Secured() {
   const { user, isAuthenticated } = useAuth0();

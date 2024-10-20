@@ -74,9 +74,7 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [id]);
 
-  return ((isLoading) ? <div className="loader"><Loading /></div> : (<>
-    {(isAuthenticated && user) ?
-      (<>
+  return <>
         <div className="profile-container">
           {/* Left Sidebar */}
           <div className="sidebar">
@@ -183,11 +181,7 @@ const AccountPage: React.FC = () => {
             </div>
           </div>
         </div >
-      </>) : (
-        <>
-        </>)
-    }</>
-  ));
+      </>
 };
 
 export default AccountPage;

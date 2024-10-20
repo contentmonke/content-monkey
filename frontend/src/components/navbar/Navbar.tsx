@@ -5,7 +5,7 @@ import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Avatar } from '@mui/material';
 import DropdownMenu from './av-dropdown-menu/DropdownMenu';
@@ -52,16 +52,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth0();
   const [searchQuery, setSearchQuery] = useState('');
+  const isHome = location.pathname === '/'
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
 
   useEffect(() => {
     async function setData() {
       try {
-        // YOU CAN GET RID OF THIS CODE ONCE EVERYONE HAS A DEFAULT PROFILE PIC
+        // YOU CAN GET RID OF THIS CODE ONCE EVERYONE HAS A DEFAUL PROFILE PIC
         const userRes = await axios.post('http://localhost:8080/api/user/', user);
         await axios.post('http://localhost:8080/api/user/setPicture', null,
           { params: {
@@ -100,8 +102,8 @@ const Navbar = () => {
   const toggleAvatarDropdown = () => {
     setAvatarDropdownOpen(!avatarDropdownOpen);
   };
-
-  return isAuthenticated && (
+  
+  return (!isHome || isAuthenticated) && (
     <>
       <div className="bar">
         <nav>
