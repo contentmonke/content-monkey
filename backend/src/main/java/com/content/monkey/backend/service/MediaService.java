@@ -118,30 +118,16 @@ public class MediaService {
                 .build();
         return mediaEntity;
     }
-    public MediaEntity getOrSearchAndCreateMediaEntity(String title, String author) {
-        System.out.println("Search googleAPI for..." +
-                "\ntitle=" + title +
-                "\nauthor=" + author);
-        SearchEntity searchResult = searchService.getSearchResultsByTitleAndAuthor(title, author);
-        System.out.println("search result = " + searchResult);
-        // Error finding book - returning erroneous MediaEntity
-        if (searchResult == null) {
-            System.out.println("Couldn't find title: " + title);
-            return MediaEntity.builder()
-                    .mediaTitle(title)
-                    .author(author)
-                    .mediaType("Book")
-                    .build();
-        }
+    public MediaEntity getOrCreateMediaEntity(SearchEntity searchEntity) {
         MediaEntity mediaEntity = getMediaByTitleAndAuthor(
-                searchResult.getTitle(),
-                searchResult.getAuthors().isEmpty() ? author : searchResult.getAuthors().get(0),
+                searchEntity.getTitle(),
+                searchEntity.getAuthors().isEmpty() ? "" : searchEntity.getAuthors().get(0),
                 0,
                 10
         );
         if (mediaEntity == null) {
             System.out.println("Media not in database...");
-            mediaEntity = convertSearchEntityToMediaEntity(searchResult);
+            mediaEntity = convertSearchEntityToMediaEntity(searchEntity);
             mediaEntity = createMediaEntityNoDTO(mediaEntity);
             System.out.println("Created " + mediaEntity);
         }

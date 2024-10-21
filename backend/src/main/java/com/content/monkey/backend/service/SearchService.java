@@ -20,7 +20,7 @@ public class SearchService {
     private Environment environment;
 
     public List<SearchEntity> getSearchResults(String bookTitle) {
-        String apiKey = environment.getProperty("CM_GOOGLE_KEY");
+       String apiKey = environment.getProperty("CM_GOOGLE_KEY");
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
                 "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle)
@@ -45,7 +45,7 @@ public class SearchService {
     }
 
     public SearchEntity getSearchResultsByTitleAndAuthor(String bookTitle, String author) {
-        String apiKey = environment.getProperty("CM_GOOGLE_KEY");
+       String apiKey = environment.getProperty("CM_GOOGLE_KEY");
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
                 "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle + "+inauthor:" + author)
@@ -54,6 +54,9 @@ public class SearchService {
                 .build()
                 .toUri();
         GoogleBooksResponse response = template.getForObject(uri, GoogleBooksResponse.class);
+        if (response.getItems() == null) {
+            return null;
+        }
         List<SearchEntity> results = response.getItems().stream()
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();

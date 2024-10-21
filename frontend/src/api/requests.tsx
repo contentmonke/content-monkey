@@ -1,6 +1,7 @@
 import axios from "axios";
 import { MediaType, Review } from "../models/Models";
 import { useAuth0 } from "@auth0/auth0-react";
+import { mockUploadResponse, uploadResponse } from "../pages/upload/mock-data";
 
 const URL = 'http://localhost:8080/api';
 
@@ -15,12 +16,19 @@ export const api = {
         await axios.post(`${URL}/reviews`, review)
       );
     },
-    async uploadReviews(file: any) {
-      return (await axios.post(`${URL}/reviews/upload`, file, {
-        headers: {
-          'content-type': 'multipart/form-data'
-        }
-      }))
+    async uploadFile(file: any) {
+      return uploadResponse;
+      // return mockUploadResponse;
+      // return (await axios.post(`${URL}/reviews/upload`, file, {
+      //   headers: {
+      //     'content-type': 'multipart/form-data'
+      //   }
+      // }))
+    },
+    async confirmUploads(uploadResults: any, userId: any) {
+      return (
+        await axios.post(`${URL}/reviews/confirmUploads/${userId}`, uploadResults)
+      );
     }
   },
   search: {
@@ -42,14 +50,6 @@ export const api = {
         thumbnail: media.thumbnail,
         mediaType: "Book"
       }
-      // const mediaEntity = {
-      //   mediaTitle: "superLongAndNotRealMedia",
-      //   mediaDuration: 100,
-      //   author: "Jane Doe",
-      //   description: "This is the description",
-      //   thumbnail: null,
-      //   mediaType: "Book"
-      // }
       return (
         await axios.post(`${URL}/media/`, mediaEntity)
 

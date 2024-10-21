@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     List<ReviewEntity> findAllByMediaId(Long id, PageRequest of);
+    List<ReviewEntity> findByMediaIdAndUserId(Long mediaId, Long userId);
 
     int countByMediaId(Long id);
 

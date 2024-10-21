@@ -3,7 +3,10 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.SearchEntity;
+import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.GoodReadsDTO;
+import com.content.monkey.backend.model.dto.UploadResultDTO;
 import com.content.monkey.backend.repository.ReviewRepository;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -12,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +37,8 @@ public class ReviewService {
     private UserService userService;
     @Autowired
     private MediaService mediaService;
+    @Autowired
+    private SearchService searchService;
 
     // HELPER FUNCTIONS
     private static LocalDateTime formatGoodReadsDate(String date) {
@@ -54,19 +61,19 @@ public class ReviewService {
         return title;
     }
 
-    private List<ReviewEntity> convertGoodReadsToReviewEntities(List<GoodReadsDTO> goodReadsDTOS, Long userId) {
-        List<ReviewEntity> reviewEntities = new ArrayList<>();
+    private List<UploadResultDTO> convertGoodReadsToUploadResult(List<GoodReadsDTO> goodReadsDTOS) {
+        List<UploadResultDTO> uploadResultDTOS = new ArrayList<>();
         for (GoodReadsDTO dto : goodReadsDTOS) {
-            // Find MediaEntity
             String mediaTitle = simplifyMediaTitle(dto.getTitle());
             System.out.println("============================================");
             System.out.println("Simplified Title = " + mediaTitle);
-            MediaEntity mediaEntity = null;
+            // Create Search Entity
+            SearchEntity searchEntity = null;
             if (!mediaTitle.isEmpty()) {
                 if (dto.getAuthor() == null || dto.getAuthor().equals("Unknown")) {
                     dto.setAuthor("");
                 }
-                mediaEntity = mediaService.getOrSearchAndCreateMediaEntity(mediaTitle, dto.getAuthor());
+                searchEntity = searchService.getSearchResultsByTitleAndAuthor(mediaTitle, dto.getAuthor());
             }
 
             LocalDateTime dateAdded = formatGoodReadsDate(dto.getDateAdded());
@@ -74,26 +81,32 @@ public class ReviewService {
             LocalDateTime dateEnded = dateRead == null ? dateAdded : dateRead;
 
             // Create ReviewEntity
-            reviewEntities.add(
-                    ReviewEntity.builder()
-                            .userId(userId)
+            ReviewEntity reviewEntity = ReviewEntity.builder()
+                            .userId(null)
                             .commentIds(new ArrayList<>())
                             .dateCreated(dateAdded)
                             .body(dto.getMyReview())
-                            .mediaId((mediaEntity == null) ? null : mediaEntity.getId())
+                            .mediaId(null)
                             .rating(dto.getMyRating())
                             .upVotes(0)
                             .downVotes(0)
                             .startDate(dateEnded)
                             .endDate(dto.getReadingStatus().equals("currently-reading") ? null
                                     : dateEnded)
+                            .build();
+
+            // Append Upload Results
+            uploadResultDTOS.add(
+                    UploadResultDTO.builder()
+                            .searchEntity(searchEntity)
+                            .reviewEntity(reviewEntity)
                             .build()
             );
         }
-        System.out.println("convertGoodReadsToReviewEntities results");
-        System.out.println(reviewEntities);
+        System.out.println("convertGoodReadsToUploadResult results");
+        System.out.println(uploadResultDTOS);
 
-        return reviewEntities;
+        return uploadResultDTOS;
     }
 
     // API SERVICES
@@ -122,6 +135,12 @@ public class ReviewService {
     }
 
     public ReviewEntity createReview(ReviewEntity review) {
+        // avoid duplicates
+        List<ReviewEntity> reviewEntity = reviewRepository.findByMediaIdAndUserId(review.getMediaId(), review.getUserId());
+        if (!reviewEntity.isEmpty()) {
+            System.out.println("Already have a review for this media");
+            return null;
+        }
         ReviewEntity savedEntity = reviewRepository.save(review);
         userService.addReviewIdToUser(savedEntity.getUserId(), savedEntity.getId());
         return savedEntity;
@@ -155,7 +174,7 @@ public class ReviewService {
         }
     }
 
-    public List<ReviewEntity> upload(MultipartFile file, Long userId) throws IOException {
+    public List<UploadResultDTO> upload(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             System.out.println("file is empty");
         }
@@ -187,10 +206,21 @@ public class ReviewService {
         // TODO - Remove this filter for unread books (when To-Read list is implemented)
         goodReadsReviews.removeIf(item -> item.getReadingStatus().equals("to-read"));
 
-        // Convert GoodReads data to ReviewEntities
-        List<ReviewEntity> reviewEntities = convertGoodReadsToReviewEntities(goodReadsReviews, userId);
+        // Convert GoodReads data to UploadResults
+        List<UploadResultDTO> uploadResultDTOS = convertGoodReadsToUploadResult(goodReadsReviews);
+        return uploadResultDTOS;
+    }
+
+    public List<ReviewEntity> confirmUploads(Long userId, List<UploadResultDTO> uploadResultDTOS) {
+        List<ReviewEntity> reviewEntities = new ArrayList<>();
+        for (UploadResultDTO dto : uploadResultDTOS) {
+            MediaEntity mediaEntity = mediaService.getOrCreateMediaEntity(dto.getSearchEntity());
+            dto.getReviewEntity().setUserId(userId);
+            dto.getReviewEntity().setMediaId(mediaEntity.getId());
+//            reviewEntities.add(dto.getReviewEntity());
+            reviewEntities.add(createReview(dto.getReviewEntity()));
+        }
         return reviewEntities;
-//        return new ArrayList<>();
     }
 
 }

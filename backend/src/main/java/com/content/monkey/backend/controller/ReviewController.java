@@ -1,6 +1,7 @@
 package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.dto.UploadResultDTO;
 import com.content.monkey.backend.service.ReviewService;
 import com.content.monkey.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class ReviewController {
     @PostMapping()
     public ResponseEntity<ReviewEntity> createReview(@RequestBody ReviewEntity reviewEntity) {
         ReviewEntity newEntity = reviewService.createReview(reviewEntity);
+        if (newEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
         URI uri = URI.create("/api/reviews/" + newEntity.getId());
         return ResponseEntity.created(uri).body(newEntity);
     }
@@ -65,11 +69,20 @@ public class ReviewController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Object> uploadReviews(@RequestParam("file") MultipartFile file,
-                                                @RequestParam("userId") Long userId) throws IOException {
-        List<ReviewEntity> uploadedReviews = reviewService.upload(file, userId);
+    public ResponseEntity<List<UploadResultDTO>> uploadReviews(@RequestParam("file") MultipartFile file) throws IOException {
+        List<UploadResultDTO> uploadedReviews = reviewService.upload(file);
 
         return ResponseEntity.ok().body(uploadedReviews);
+
+    }
+
+    @PostMapping("/confirmUploads/{userId}")
+    public ResponseEntity<List<ReviewEntity>> confirmUploads(
+            @PathVariable("userId") Long userId,
+            @RequestBody() List<UploadResultDTO> uploadResults) throws IOException {
+
+        List<ReviewEntity> reviewEntities = reviewService.confirmUploads(userId, uploadResults);
+        return ResponseEntity.ok().body(reviewEntities);
 
     }
 

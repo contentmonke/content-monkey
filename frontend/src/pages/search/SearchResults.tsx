@@ -3,6 +3,7 @@ import { handleSearchFields } from "../reviews/review-utils";
 import { pagination } from "../../style/review-page";
 import { RefObject } from "react";
 import { useNavigate } from 'react-router-dom';
+import CustomPagination from "../../components/CustomPagination";
 
 type customParams = {
   results: any[],
@@ -17,21 +18,6 @@ type customParams = {
 
 function SearchResults({ results, page, mediaType, setMedia, handlePageChange, scrollRef, location }: customParams) {
 
-  const scrollToTop = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-    else {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   const navigate = useNavigate();
 
   const handleClick = (result: any) => {
@@ -41,11 +27,6 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
       }
     });
   };
-
-  const handlePageChangeLocal = (pageCount: any) => {
-    handlePageChange(pageCount);
-    scrollToTop();
-  }
 
   return (
     <List sx={{ padding: 0 }}>
@@ -61,13 +42,11 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
               </ListItemButton>
             </div>
           ))}
-          <Container sx={{ ...pagination }}>
-            <Pagination
-              count={Math.ceil(results.length / 10)}
-              page={page}
-              onChange={(event, pageCount) => handlePageChangeLocal(pageCount)}
-            />
-          </Container>
+          <CustomPagination
+            scrollRef={scrollRef}
+            items={results}
+            page={page}
+            handlePageChange={handlePageChange} />
         </>
       }
     </List>

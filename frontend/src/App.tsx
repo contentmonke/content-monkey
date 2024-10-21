@@ -11,7 +11,7 @@ import EditAccount from './pages/settings/account/EditAccount';
 import { Container } from '@mui/material';
 import Navbar from "./components/navbar/Navbar"
 import ProtectedRoute from './ProtectedRoute';
-import UploadPage from './pages/UploadPage';
+import UploadPage from './pages/upload/UploadPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
