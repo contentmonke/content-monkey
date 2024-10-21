@@ -12,6 +12,7 @@ import { Container } from '@mui/material';
 import Navbar from "./components/navbar/Navbar"
 import ProtectedRoute from './ProtectedRoute';
 import UploadPage from './pages/upload/UploadPage';
+import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -33,6 +34,7 @@ function App() {
               {/* Other nested routes */}
               <Route path="profile" element={<ProtectedRoute component={EditProfile} />} />
               <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
+              <Route path="friends/:id" element={<ProtectedRoute component={FriendsPage} />} />
             </Route>
             <Route path="/media/:title" element={<MediaPage />} />
             <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />

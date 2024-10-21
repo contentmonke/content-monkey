@@ -92,9 +92,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<String> getFriendRequests(Long id) {
+    public List<UserEntity> getFriendRequests(Long id) {
         UserEntity user = getUser(id);
-        return user.getFriend_requests();
+        List<UserEntity> usernames = new ArrayList<>();
+        if (user.getFriend_requests() == null) {
+            return usernames;
+        }
+        for (int i = 0; i < user.getFriend_requests().size(); i++) {
+            UserEntity getUserById = getUser(Long.valueOf(user.getFriend_requests().get(i)));
+            usernames.add(getUserById);
+        }
+        return usernames;
     }
 
     public UserEntity sendFriendRequest(Long from, Long to) {
@@ -103,14 +111,14 @@ public class UserService {
             user.setFriend_requests(new ArrayList<String>());
         }
         System.out.println(user.getFriend_list());
-        if (!user.getFriend_requests().contains(String.valueOf(from))) {
+        if (!user.getFriend_requests().contains(String.valueOf(from)) && !user.getFriend_list().contains(String.valueOf(from))) {
             user.getFriend_requests().add((String.valueOf(from)));
         }
         return userRepository.save(user);
     }
     public UserEntity acceptRequest(Long from, Long to, boolean decision) {
         UserEntity user = getUser(to);
-        if (user.getFriend_list() == null) {
+        if (user.getFriend_requests() != null) {
             user.getFriend_requests().remove(String.valueOf(from));
         }
         if (decision) {
@@ -121,8 +129,12 @@ public class UserService {
             if (requester.getFriend_list() == null) {
                 requester.setFriend_list(new ArrayList<>());
             }
-            user.getFriend_list().add(String.valueOf(from));
-            requester.getFriend_list().add(String.valueOf(to));
+            if (!user.getFriend_list().contains(String.valueOf(from))) {
+                user.getFriend_list().add(String.valueOf(from));
+            }
+            if (!requester.getFriend_list().add(String.valueOf(to))) {
+                requester.getFriend_list().add(String.valueOf(to));
+            }
             userRepository.save(user);
             userRepository.save(requester);
         }
@@ -130,12 +142,15 @@ public class UserService {
         return user;
     }
 
-    public List<String> getFriendList(Long id) {
+    public List<UserEntity> getFriendList(Long id) {
         UserEntity user = getUser(id);
-        List<String> usernames = new ArrayList<>();
+        List<UserEntity> usernames = new ArrayList<>();
+        if (user.getFriend_list() == null) {
+            return usernames;
+        }
         for (int i = 0; i < user.getFriend_list().size(); i++) {
             UserEntity getUserById = getUser(Long.valueOf(user.getFriend_list().get(i)));
-            usernames.add(getUserById.getName());
+            usernames.add(getUserById);
         }
         return usernames;
     }

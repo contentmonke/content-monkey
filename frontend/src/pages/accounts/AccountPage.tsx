@@ -98,7 +98,7 @@ const AccountPage: React.FC = () => {
             <hr />
             <ul className="sidebar-menu">
               <li>Activity</li>
-              <li>Friends</li>
+              <li onClick={() => navigate(`/settings/friends/${id}`)}>Friends</li>
               <li>Movies</li>
               <li>TV Shows</li>
               <li>Books</li>

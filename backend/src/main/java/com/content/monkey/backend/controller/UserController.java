@@ -94,12 +94,12 @@ public class UserController {
     }
 
     @GetMapping("/friend_requests/{id}")
-    public List<String> getFriendRequests(@PathVariable Long id) {
+    public List<UserEntity> getFriendRequests(@PathVariable Long id) {
         return userService.getFriendRequests(id);
     }
 
     @GetMapping("/friend_list/{id}")
-    public List<String> getFriendList(@PathVariable Long id) {
+    public List<UserEntity> getFriendList(@PathVariable Long id) {
         return userService.getFriendList(id);
     }
 
