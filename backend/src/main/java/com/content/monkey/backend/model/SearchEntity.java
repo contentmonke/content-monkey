@@ -72,6 +72,19 @@ public class SearchEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "SearchEntity{" +
+                "title='" + title + '\'' +
+                ", authors=" + authors +
+                ", publisher='" + publisher + '\'' +
+                ", publishedDate='" + publishedDate + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", pageCount='" + pageCount + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
 
 

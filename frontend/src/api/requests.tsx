@@ -15,6 +15,22 @@ export const api = {
         await axios.post(`${URL}/reviews`, review)
       );
     },
+    async uploadFile(file: any) {
+      // return uploadResponse;
+      // return mockUploadResponse;
+      // return seanFile;
+      return (await axios.post(`${URL}/reviews/upload`, file, {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      }))
+    },
+    async confirmUploads(uploadResults: any, userId: any) {
+      // return ({ data: [] });
+      return (
+        await axios.post(`${URL}/reviews/confirmUploads/${userId}`, uploadResults)
+      );
+    }
   },
   search: {
     async fetchSearch({ title }: any) {
@@ -35,19 +51,17 @@ export const api = {
         thumbnail: media.thumbnail,
         mediaType: "Book"
       }
-      // const mediaEntity = {
-      //   mediaTitle: "superLongAndNotRealMedia",
-      //   mediaDuration: 100,
-      //   author: "Jane Doe",
-      //   description: "This is the description",
-      //   thumbnail: null,
-      //   mediaType: "Book"
-      // }
       return (
         await axios.post(`${URL}/media/`, mediaEntity)
 
       );
-    }
+    },
+    async fetchMediaList(mediaIds: any) {
+      // return mediaEntities;
+      return (
+        await axios.post(`${URL}/media/list`, mediaIds)
+      );
+    },
   },
   user: {
     async fetchUser(username: any) {
@@ -57,5 +71,4 @@ export const api = {
         }));
     }
   }
-
 }

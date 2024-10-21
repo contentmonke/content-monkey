@@ -41,4 +41,18 @@ public class MediaController {
         return result;
     }
 
+    @GetMapping("/{mediaTitle}/author/{author}")
+    public MediaEntity getMediaByTitleAndAuthor(
+            @PathVariable("mediaTitle") String mediaTitle,
+            @PathVariable("author") String author,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        return mediaService.getMediaByTitleAndAuthor(mediaTitle, author, pageNumber, pageSize);
+    }
+
+    @PostMapping("/list")
+    public List<MediaEntity> getMediaList(@RequestBody List<Long> mediaIds) {
+        return mediaService.getMediaList(mediaIds);
+    }
+
 }

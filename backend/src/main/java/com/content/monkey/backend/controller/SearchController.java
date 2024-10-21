@@ -28,9 +28,12 @@ public class SearchController {
 
     @GetMapping
     public List<SearchEntity> getSearchResults(@RequestParam String bookTitle) {
-
         return searchService.getSearchResults(bookTitle);
+    }
 
+    @GetMapping("/specific")
+    public SearchEntity getSearchResultsByTitleAndAuthor(@RequestParam String bookTitle, @RequestParam String author) {
+        return searchService.getSearchResultsByTitleAndAuthor(bookTitle, author);
     }
 
 

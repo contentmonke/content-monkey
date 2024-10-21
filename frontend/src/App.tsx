@@ -11,6 +11,7 @@ import EditAccount from './pages/settings/account/EditAccount';
 import { Container } from '@mui/material';
 import Navbar from "./components/navbar/Navbar"
 import ProtectedRoute from './ProtectedRoute';
+import UploadPage from './pages/upload/UploadPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -34,6 +35,7 @@ function App() {
               <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
             </Route>
             <Route path="/media/:title" element={<MediaPage />} />
+            <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />
           </Routes>
         </Container>
       </div>
