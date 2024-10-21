@@ -93,8 +93,8 @@ const AccountPage: React.FC = () => {
             {(isAuthenticated && user && user.email == email) ?
               <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
               :
-              <>
-              </>}
+              <Button onClick={() => {return}} label="Request" width="230px" />
+              }
             <hr />
             <ul className="sidebar-menu">
               <li>Activity</li>

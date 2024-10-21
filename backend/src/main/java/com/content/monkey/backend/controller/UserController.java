@@ -93,4 +93,24 @@ public class UserController {
         return userService.updateEmail(id, emailAdd);
     }
 
+    @GetMapping("/friend_requests/{id}")
+    public List<String> getFriendRequests(@PathVariable Long id) {
+        return userService.getFriendRequests(id);
+    }
+
+    @GetMapping("/friend_list/{id}")
+    public List<String> getFriendList(@PathVariable Long id) {
+        return userService.getFriendList(id);
+    }
+
+    @PostMapping("/friend_requests/{from}/{to}")
+    public UserEntity sendFriendRequests(@PathVariable Long from, @PathVariable Long to) {
+        return userService.sendFriendRequest(from, to);
+    }
+
+    @PostMapping("/friend_accept/{from}/{to}")
+    public UserEntity acceptRequest(@PathVariable Long from, @PathVariable Long to, @RequestParam boolean decision) {
+        return userService.acceptRequest(from, to, decision);
+    }
+
 }
