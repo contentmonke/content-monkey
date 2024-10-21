@@ -1,26 +1,10 @@
-import { Divider } from "@mui/material";
+import { Divider, Rating } from "@mui/material";
 import "./UploadPage.css"
 import CustomPagination from "../../components/CustomPagination";
 import Button from "../../components/button/Button";
+import { formatDate } from "./upload-utils";
 
 function UploadResults({ uploadResults, page, handlePageChange, scrollRef, handleEditClick }: any) {
-
-  const formatDate = (date: any) => {
-    const reviewDate = new Date(date);
-    reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
-    return (
-      reviewDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-      }) + " " +
-      reviewDate.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      })
-    );
-  }
 
   return (
     <>
@@ -37,16 +21,22 @@ function UploadResults({ uploadResults, page, handlePageChange, scrollRef, handl
                     <div className="item-content">
                       <div>
                         < img className="item-img"
-                          src={uploadResult.searchEntity.thumbnail}>
+                          src={uploadResult.searchEntity?.thumbnail}>
                         </img>
                       </div>
                       <div className="review-info">
-                        <div>{uploadResult.searchEntity.title}</div>
-                        <div>{uploadResult.searchEntity.authors}</div>
+                        <div>{uploadResult.searchEntity?.title}</div>
+                        <div>{uploadResult.searchEntity?.authors}</div>
                         <br />
                         <div className="review-dates">
                           {formatDate(uploadResult.reviewEntity.startDate)} &mdash; {formatDate(uploadResult.reviewEntity.endDate)}
                         </div>
+                        <Rating
+                          sx={{ my: 0, mr: 1 }}
+                          value={uploadResult.reviewEntity.rating}
+                          precision={0.5}
+                          readOnly
+                        />
                         <div>{uploadResult.reviewEntity.body}</div>
                       </div>
                     </div>

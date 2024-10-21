@@ -1,7 +1,6 @@
 import axios from "axios";
 import { MediaType, Review } from "../models/Models";
 import { useAuth0 } from "@auth0/auth0-react";
-import { mockUploadResponse, uploadResponse } from "../pages/upload/mock-data";
 
 const URL = 'http://localhost:8080/api';
 
@@ -17,15 +16,17 @@ export const api = {
       );
     },
     async uploadFile(file: any) {
-      return uploadResponse;
+      // return uploadResponse;
       // return mockUploadResponse;
-      // return (await axios.post(`${URL}/reviews/upload`, file, {
-      //   headers: {
-      //     'content-type': 'multipart/form-data'
-      //   }
-      // }))
+      // return seanFile;
+      return (await axios.post(`${URL}/reviews/upload`, file, {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      }))
     },
     async confirmUploads(uploadResults: any, userId: any) {
+      // return ({ data: [] });
       return (
         await axios.post(`${URL}/reviews/confirmUploads/${userId}`, uploadResults)
       );
@@ -56,6 +57,7 @@ export const api = {
       );
     },
     async fetchMediaList(mediaIds: any) {
+      // return mediaEntities;
       return (
         await axios.post(`${URL}/media/list`, mediaIds)
       );

@@ -1,14 +1,15 @@
-import { Button } from "@mui/material";
+import { uploadReviewsButton } from "../style/upload-page";
+import "../pages/upload/UploadPage.css"
 
 function CancelButton({ onClick }: any) {
   return (
-    <Button
-      variant="outlined"
-      size='large'
-      sx={{ borderRadius: 0, mr: 2 }}
-      onClick={onClick}>
+    <button
+      className={'button'}
+      style={{ ...uploadReviewsButton, width: '150px', marginLeft: '10px', marginRight: '10px' }}
+      onClick={() => onClick()}
+    >
       Cancel
-    </Button>
+    </button>
   );
 }
 

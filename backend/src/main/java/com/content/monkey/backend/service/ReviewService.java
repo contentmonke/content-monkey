@@ -218,7 +218,9 @@ public class ReviewService {
             dto.getReviewEntity().setUserId(userId);
             dto.getReviewEntity().setMediaId(mediaEntity.getId());
 //            reviewEntities.add(dto.getReviewEntity());
-            reviewEntities.add(createReview(dto.getReviewEntity()));
+            reviewEntities.add(
+                    createReview(dto.getReviewEntity())
+            );
         }
         return reviewEntities;
     }

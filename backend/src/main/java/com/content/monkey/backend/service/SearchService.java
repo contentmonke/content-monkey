@@ -9,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.core.env.Environment;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class SearchService {
     private Environment environment;
 
     public List<SearchEntity> getSearchResults(String bookTitle) {
-       String apiKey = environment.getProperty("CM_GOOGLE_KEY");
+        String apiKey = environment.getProperty("CM_GOOGLE_KEY");
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
                 "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle)
@@ -45,7 +46,7 @@ public class SearchService {
     }
 
     public SearchEntity getSearchResultsByTitleAndAuthor(String bookTitle, String author) {
-       String apiKey = environment.getProperty("CM_GOOGLE_KEY");
+        String apiKey = environment.getProperty("CM_GOOGLE_KEY");
         URI uri = UriComponentsBuilder.fromHttpUrl("https://www.goog" +
                 "leapis.com/books/v1/volumes")
                 .queryParam("q", bookTitle + "+inauthor:" + author)
@@ -61,7 +62,8 @@ public class SearchService {
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
                     entity.setTitle(item.getVolumeInfo().getTitle());
-                    entity.setAuthors(item.getVolumeInfo().getAuthors());
+                    entity.setAuthors(item.getVolumeInfo().getAuthors() == null ? new ArrayList<>()
+                            : item.getVolumeInfo().getAuthors());
                     entity.setPublisher(item.getVolumeInfo().getPublisher());
                     entity.setPublishedDate(item.getVolumeInfo().getPublishedDate());
                     entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());

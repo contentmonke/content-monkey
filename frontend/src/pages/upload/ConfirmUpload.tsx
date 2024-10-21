@@ -15,7 +15,6 @@ function ConfirmUpload({ open, setOpen, handleConfirm }: any) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        {/* <Button onClick={() => setOpen(false)}>No</Button> */}
         <button
           className={'button'}
           style={{ ...uploadReviewsButton, width: '100px' }}

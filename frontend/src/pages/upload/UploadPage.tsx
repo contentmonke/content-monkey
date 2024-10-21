@@ -2,7 +2,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "../reviews/review-utils";
-import { UploadResult } from "../../models/Models";
+import { Media, UploadResult } from "../../models/Models";
 import { SmallLoading } from "../../components/Loading";
 import { uploadFile, uploadReviews } from "./upload-utils";
 import './UploadPage.css';
@@ -11,13 +11,21 @@ import { uploadButton, uploadReviewsButton } from "../../style/upload-page";
 import UploadResults from "./UploadResults";
 import UploadPopup from "./UploadPopup";
 import ConfirmUpload from "./ConfirmUpload";
+import EditResultModal from './EditResultModal';
+import SuccessAlert from '../../components/SuccessAlert';
+import ErrorAlert from '../../components/ErrorAlert';
+import { Divider } from '@mui/material';
 
 function UploadPage() {
   const { user } = useAuth0();
   const uploadRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
+  const [createdReviews, setCreatedReviews] = useState<Media[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
   const [acknowledgedPopup, setAcknowledgedPopup] = useState(false);
   const [confirmUpload, setConfirmUpload] = useState(false);
@@ -35,11 +43,17 @@ function UploadPage() {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
+    setCreatedReviews(null);
     uploadFile(formData, setUploadResults, setIsLoading);
   }
 
   const handleConfirmUpload = () => {
-    uploadReviews(uploadResults, userData.id, setIsLoading);
+    setConfirmUpload(false);
+    setUploadResults([]);
+    uploadReviews(uploadResults, userData.id, setCreatedReviews, setIsLoading, setIsSuccess, setIsError);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }
 
   const handlePageChange = (value: any) => {
@@ -84,6 +98,7 @@ function UploadPage() {
             <input
               type="file"
               accept=".csv"
+              ref={fileInputRef}
               onChange={handleUpload}
               style={{ display: 'none' }}
             />
@@ -103,17 +118,21 @@ function UploadPage() {
       </div>
       <br />
       {isLoading && <SmallLoading />}
-      <EditResultModal
-
+      {isEditing &&
+        <EditResultModal
+          open={isEditing}
+          handleClose={closeEdit}
+          result={editingResult}
+        />
+      }
+      <UploadPopup
+        open={uploadResults.length > 0 && acknowledgedPopup == false}
+        setAcknowledgedPopup={setAcknowledgedPopup}
       />
       <ConfirmUpload
         open={confirmUpload}
         setOpen={setConfirmUpload}
         handleConfirm={handleConfirmUpload}
-      />
-      <UploadPopup
-        open={uploadResults.length > 0 && acknowledgedPopup == false}
-        setAcknowledgedPopup={setAcknowledgedPopup}
       />
       <UploadResults
         uploadResults={uploadResults}
@@ -121,6 +140,34 @@ function UploadPage() {
         page={page}
         handlePageChange={handlePageChange}
         scrollRef={uploadRef}
+      />
+      {createdReviews !== null &&
+        <div className="upload-list">
+          <div className="list-status">
+            Successfully uploaded {createdReviews.length} reviews &mdash; we found existing reviews for the remaining uploads
+          </div>
+          <Divider component="li" sx={{ mb: 2 }} />
+          <div className="created-reviews">
+            {createdReviews.map((createdReview, index) => (
+              <div key={index}>
+                < img className="media-img"
+                  src={createdReview.thumbnail}>
+                </img>
+              </div>
+            ))}
+          </div>
+        </div>
+      }
+
+      <SuccessAlert
+        message={"Reviews successfully uploaded"}
+        showAlert={isSuccess}
+        setShowAlert={setIsSuccess}
+      />
+      <ErrorAlert
+        message={"Error uploading the reviews"}
+        showAlert={isError}
+        setShowAlert={setIsError}
       />
     </div>
   );

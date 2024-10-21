@@ -1,32 +1,20 @@
-import { Container, Divider, List, ListItemButton, Pagination } from "@mui/material";
+import { Divider, List, ListItemButton } from "@mui/material";
 import { handleSearchFields } from "../reviews/review-utils";
-import { pagination } from "../../style/review-page";
 import { RefObject } from "react";
-import { useNavigate } from 'react-router-dom';
 import CustomPagination from "../../components/CustomPagination";
 
 type customParams = {
   results: any[],
   page: any,
   mediaType: any,
-  setMedia: any,
+  handleClick: any,
   handlePageChange: any,
   scrollRef: RefObject<HTMLDivElement>,
   location: string
 }
 
 
-function SearchResults({ results, page, mediaType, setMedia, handlePageChange, scrollRef, location }: customParams) {
-
-  const navigate = useNavigate();
-
-  const handleClick = (result: any) => {
-    navigate(`/media/${result.title}`, {
-      state: {
-        result: result
-      }
-    });
-  };
+function SearchResults({ results, page, mediaType, handleClick, handlePageChange, scrollRef, location }: customParams) {
 
   return (
     <List sx={{ padding: 0 }}>
