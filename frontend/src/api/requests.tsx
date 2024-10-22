@@ -25,15 +25,29 @@ export const api = {
       );
     }
   },
+  searchMovie: {
+    async fetchMoviesSearch( title : any) {
+      return (
+        await axios.get(`${URL}/search/movie/${title}`)
+      )
+    }
+  },
+  searchTV: {
+    async fetchTVSearch( title: any ) {
+      return (
+        await axios.get(`${URL}/search/tv/${title}`)
+      )
+    }
+  },
   media: {
-    async fetchMedia(media: any) {
+    async fetchMedia(media: any, mediaType: any) {
       const mediaEntity = {
         mediaTitle: media.title,
         mediaDuration: media.pageCount,
-        author: media.authors[0],
+        author: media.authors ? media.authors[0] : null,
         description: media.description,
         thumbnail: media.thumbnail,
-        mediaType: "Book"
+        mediaType: mediaType
       }
       // const mediaEntity = {
       //   mediaTitle: "superLongAndNotRealMedia",

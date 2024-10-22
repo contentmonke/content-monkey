@@ -1,4 +1,4 @@
-package com.content.monkey.backend.model;
+package com.content.monkey.backend.model.BooksApiModels;
 
 import java.util.List;
 

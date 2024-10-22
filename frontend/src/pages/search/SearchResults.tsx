@@ -35,7 +35,7 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
   const navigate = useNavigate();
 
   const handleClick = (result: any) => {
-    navigate(`/media/${result.title}`, {
+    navigate(`/media/${result.title}/${mediaType}`, {
       state: {
         result: result
       }

@@ -1,7 +1,9 @@
 package com.content.monkey.backend.service;
 
-import com.content.monkey.backend.model.GoogleBooksResponse;
+import com.content.monkey.backend.model.BooksApiModels.GoogleBooksResponse;
 import com.content.monkey.backend.model.SearchEntity;
+import com.content.monkey.backend.model.TMDB_API_Models.TMDBMovieResponse;
+import com.content.monkey.backend.model.TMDB_API_Models.TMDBTVShowResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +42,60 @@ public class SearchService {
                     entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());
                     entity.setPageCount(item.getVolumeInfo().getPageCount());
                     entity.setDescription(item.getVolumeInfo().getDescription());
+                    return entity;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<SearchEntity> getMovieSearchResults(String title) {
+        String apiKey = environment.getProperty("CM_TMDB_KEY");
+
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://api.themoviedb.org/3/search/movie")
+                .queryParam("query", title)
+                .queryParam("api_key", apiKey)
+                .build()
+                .toUri();
+
+        // Make a GET request to the TMDB API using RestTemplate
+        TMDBMovieResponse response = template.getForObject(uri, TMDBMovieResponse.class);
+
+//        // Handle null or empty response
+
+        return response.getResults().stream()
+                .map(item -> {
+                    SearchEntity entity = new SearchEntity();
+                    entity.setTitle(item.getTitle());
+                    entity.setReleaseDate(item.getReleaseDate());
+                    entity.setDescription(item.getOverview());
+                    entity.setThumbnail(item.getPosterPath() != null ?
+                            "https://image.tmdb.org/t/p/w500" + item.getPosterPath() : null);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<SearchEntity> getTvShowSearchResults(String title) {
+        String apiKey = environment.getProperty("CM_TMDB_KEY");
+
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://api.themoviedb.org/3/search/tv")
+                .queryParam("query", title)
+                .queryParam("api_key", apiKey)
+                .build()
+                .toUri();
+
+        // Make a GET request to the TMDB API using RestTemplate
+        TMDBTVShowResponse response = template.getForObject(uri, TMDBTVShowResponse.class);
+
+//        // Handle null or empty response
+
+        return response.getResults().stream()
+                .map(item -> {
+                    SearchEntity entity = new SearchEntity();
+                    entity.setTitle(item.getTitle());
+                    entity.setReleaseDate(item.getReleaseDate());
+                    entity.setDescription(item.getOverview());
+                    entity.setThumbnail(item.getPosterPath() != null ?
+                            "https://image.tmdb.org/t/p/w500" + item.getPosterPath() : null);
                     return entity;
                 })
                 .collect(Collectors.toList());

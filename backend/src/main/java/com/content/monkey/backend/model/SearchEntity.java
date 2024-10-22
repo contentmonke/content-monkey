@@ -15,6 +15,15 @@ public class SearchEntity {
     private String pageCount;
     private String description;
 
+    private String releaseDate;
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
 
     // Getters and Setters
     public String getTitle() {
