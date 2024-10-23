@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Button, Stack } from '@mui/material';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -46,8 +47,10 @@ const FriendsPage: React.FC = () => {
     const { id } = useParams();
     const [friends, setFriends] = useState([]);
     const [requests, setRequests] = useState([]);
+    const [loggedInUserId, setLoggedInUserId] = useState(0);
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
+    const {user} = useAuth0();
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -73,6 +76,10 @@ const FriendsPage: React.FC = () => {
                 setRequests(requestList.data)
                 console.log(requestList)
 
+                const currUserResponse = await axios.post("http://localhost:8080/api/user/", user)
+                console.log(currUserResponse.data)
+                setLoggedInUserId(currUserResponse.data[0].id)
+
             } catch(err) {
                 console.error('Error fetching data', err);
             }
@@ -93,7 +100,7 @@ const FriendsPage: React.FC = () => {
           aria-label="full width tabs example"
         >
           <Tab label="Friends" {...a11yProps(0)} />
-          <Tab label="Requests" {...a11yProps(1)} />
+          {parseInt(String(loggedInUserId)) === parseInt(id) && <Tab label="Requests" {...a11yProps(1)} />}
           <Tab label="Blocked" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
@@ -102,7 +109,7 @@ const FriendsPage: React.FC = () => {
             return <li key={i}>{f.name}</li>
         })}
       </TabPanel>
-      <TabPanel value={value} index={1} dir={theme.direction}>
+      {parseInt(String(loggedInUserId)) === parseInt(id) && <TabPanel value={value} index={1} dir={theme.direction}>
         {requests.map((r, i) => {
             return <li key={i}>
             {r.name}
@@ -110,7 +117,7 @@ const FriendsPage: React.FC = () => {
             <Button variant="contained" color="error">Decline</Button>
           </li>
         })}
-      </TabPanel>
+      </TabPanel>}
       <TabPanel value={value} index={2} dir={theme.direction}>
         Item Three
       </TabPanel>

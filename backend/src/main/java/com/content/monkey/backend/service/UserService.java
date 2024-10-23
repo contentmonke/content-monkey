@@ -35,11 +35,22 @@ public class UserService {
     }
 
     public List<UserEntity> getSingleUser(String username) {
-        return userRepository.findByName(username);
+        List<UserEntity> users = userRepository.findByName(username);
+        if (!users.isEmpty() && (users.get(0).getFriend_list() == null || users.get(0).getFriend_requests() == null)) {
+            users.get(0).setFriend_list(new ArrayList<>());
+            users.get(0).setFriend_requests(new ArrayList<>());
+        }
+        userRepository.save(users.get(0));
+        return users;
     }
 
     public void deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
+            UserEntity user = getUser(id);
+            for (int i = 0; i < user.getFriend_list().size(); i++) {
+                UserEntity tempUser = getUser(Long.valueOf(user.getFriend_list().get(i)));
+                tempUser.getFriend_list().remove(String.valueOf(id));
+            }
             userRepository.deleteById(id);
         } else {
             throw new NoSuchElementException("User not found");
@@ -109,6 +120,9 @@ public class UserService {
         UserEntity user = getUser(to);
         if (user.getFriend_requests() == null) {
             user.setFriend_requests(new ArrayList<String>());
+        }
+        if (user.getFriend_list() == null) {
+            user.setFriend_list(new ArrayList<String>());
         }
         System.out.println(user.getFriend_list());
         if (!user.getFriend_requests().contains(String.valueOf(from)) && !user.getFriend_list().contains(String.valueOf(from))) {

@@ -29,6 +29,7 @@ public class UserController {
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
         List<UserEntity> users = userService.getSingleUser(user.getName());
+        System.out.println(user.getName());
         if (users.isEmpty()) {
             users.add(createExampleEntity(user));
         }
