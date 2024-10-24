@@ -148,6 +148,60 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
     );
   }
 
+  if (mediaType === MediaType.UNSELECTED) {
+    const fieldValues = [
+      searchEntity.title,
+      searchEntity.description,
+      searchEntity.releaseDate ? searchEntity.releaseData : searchEntity.publishedDate,
+    ];
+
+    return (
+      <Container disableGutters sx={{ display: 'flex', maxWidth: '750px' }}>
+        <Container disableGutters sx={{ ...resultImageContainer, minWidth: minImgSize, maxWidth: maxImgSize }}>
+          < img
+            src={searchEntity.thumbnail}
+            style={{ ...resultImage }}>
+          </img>
+        </Container >
+        <Container disableGutters sx={{ mt: 1 }}>
+          {movieFields.map((field, index) => (
+            <Container disableGutters sx={{ display: 'flex', py: py }} key={index}>
+              <Container disableGutters sx={{ width: 'auto' }}>
+                <Typography
+                  sx={{
+                    ...fieldLabel,
+                    fontSize: fontSize,
+                    minWidth: width
+                  }}>
+                  {field}
+                </Typography>
+              </Container>
+              <Container disableGutters sx={{ ...fieldContent }}>
+                {Array.isArray(fieldValues[index]) ?
+                  <>
+                    {fieldValues[index].map((fieldValue, i) => (
+                      <Typography
+                        key={i}
+                        fontSize={fontSize}>
+                        {fieldValue}{(i !== fieldValues[index].length - 1) ? ',\u00A0' : ""}
+                      </Typography>
+                    ))}
+                  </>
+                  :
+                  <Typography
+                    fontSize={fontSize}
+                    textOverflow={'ellipse'}>
+                    {fieldValues[index]}
+                  </Typography>
+                }
+              </Container>
+            </Container>
+          ))}
+        </Container>
+      </Container >
+    );
+  }
+
   return <></>
 }
 

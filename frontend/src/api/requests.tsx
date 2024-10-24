@@ -39,6 +39,13 @@ export const api = {
       )
     }
   },
+  searchAll: {
+    async fetchAllSearch( title: any ) {
+      return (
+        await axios.get(`${URL}/search/any/${title}`)
+      )
+    }
+  },
   media: {
     async fetchMedia(media: any, mediaType: any) {
       const mediaEntity = {
