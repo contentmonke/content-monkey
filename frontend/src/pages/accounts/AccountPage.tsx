@@ -26,6 +26,10 @@ const AccountPage: React.FC = () => {
   const [profilePicture, setProfilePicture] = useState('https://via.placeholder.com/150');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [loggedInUserId, setLoggedInUserId] = useState(0);
+  const [loggedInUserFriendRequests, setLoggedInUserFriendRequests] = useState([]);
+  const [loggedInUserFriends, setLoggedInUserFriends] = useState([]);
+  const [isDisabledRequest, setIsDisabledRequest] = useState(false);
 
   // Mock data for favorite content and reviews
   const favoriteContent = [
@@ -53,7 +57,7 @@ const AccountPage: React.FC = () => {
             };
           })
         );
-        console.log(userResponse);
+        // console.log(userResponse);
         setEmail(userResponse.data.email);
         setName(userResponse.data.name.split('@')[0])
         if (userResponse.data.picture != null) {
@@ -74,6 +78,34 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    try{
+        const getUser = async () => {
+          if (isLoading === false && user !== null) {
+            const curr_user = await axios.post("http://localhost:8080/api/user/", user)
+            console.log(curr_user.data[0])
+            setLoggedInUserId(curr_user.data[0].id);
+            setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+            setLoggedInUserFriends(curr_user.data[0].friend_list);
+            setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
+            console.log("loggedInUserFriends", loggedInUserFriends);}
+        }
+        getUser()
+    } catch(err) {
+      console.log("Error getting logged in user", err)
+    }
+  }, [isLoading, user])
+
+  const handleFriendRequest  = async () => {
+    try {
+      const sendRequest = await axios.post(`http://localhost:8080/api/user/friend_requests/${loggedInUserId}/${id}`)
+      console.log(sendRequest)
+      setIsDisabledRequest(true);
+    } catch(err) {
+      console.log("Error while sending friend request", err)
+    }
+  }
+
   return ((isLoading) ? <div className="loader"><Loading /></div> : (<>
     {(isAuthenticated && user) ?
       (<>
@@ -93,12 +125,18 @@ const AccountPage: React.FC = () => {
             {(isAuthenticated && user && user.email == email) ?
               <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
               :
-              <>
-              </>}
+              loggedInUserFriends?.includes(id) === false && <Button 
+                                                            onClick={() => handleFriendRequest()} 
+                                                            label={loggedInUserFriendRequests?.includes(id) || isDisabledRequest ? "Requested" : "Request"} 
+                                                            width="230px"
+                                                            disabled={loggedInUserFriendRequests?.includes(id) || isDisabledRequest}
+                                                            />
+                                                            
+              }
             <hr />
             <ul className="sidebar-menu">
               <li>Activity</li>
-              <li>Friends</li>
+              <li onClick={() => navigate(`/settings/friends/${id}`)}>Friends</li>
               <li>Movies</li>
               <li>TV Shows</li>
               <li>Books</li>
