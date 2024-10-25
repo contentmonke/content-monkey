@@ -1,11 +1,13 @@
 package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "media")
 public class MediaEntity {
@@ -15,7 +17,6 @@ public class MediaEntity {
 
     @Column(name = "media_title")
     private String mediaTitle;
-    //TODO - Add fields
 
     @Column(name = "media_duration")
     private int mediaDuration;
@@ -116,6 +117,17 @@ public class MediaEntity {
 
     @Override
     public String toString() {
-        return "MediaEntity{" + "id=" + id + '}';
+        return "MediaEntity{" +
+                "id=" + id +
+                ", mediaTitle='" + mediaTitle + '\'' +
+                ", mediaDuration=" + mediaDuration +
+                ", author='" + author + '\'' +
+                ", genre='" + genre + '\'' +
+                ", description='" + description + '\'' +
+                ", averageRating=" + averageRating +
+                ", totalRatings=" + totalRatings +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", mediaType='" + mediaType + '\'' +
+                '}';
     }
 }

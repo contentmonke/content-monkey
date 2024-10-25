@@ -11,4 +11,11 @@ public class BookItem {
     public void setVolumeInfo(VolumeInfo volumeInfo) {
         this.volumeInfo = volumeInfo;
     }
+
+    @Override
+    public String toString() {
+        return "BookItem{" +
+                "volumeInfo=" + volumeInfo +
+                '}';
+    }
 }

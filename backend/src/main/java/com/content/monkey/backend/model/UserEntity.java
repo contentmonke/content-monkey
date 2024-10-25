@@ -41,6 +41,12 @@ public class UserEntity {
     @Column(name = "posts_liked_by_user")
     private List<Long> posts_liked;
 
+    @Column(name = "friend_requests")
+    private List<String> friend_requests;
+
+    @Column(name = "friend_list")
+    private List<String> friend_list;
+
     @Column(name = "comments_liked_by_user")
     private List<Long> comments_liked;
 

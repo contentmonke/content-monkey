@@ -1,51 +1,20 @@
-import { Container, Divider, List, ListItemButton, Pagination } from "@mui/material";
+import { Divider, List, ListItemButton } from "@mui/material";
 import { handleSearchFields } from "../reviews/review-utils";
-import { pagination } from "../../style/review-page";
 import { RefObject } from "react";
-import { useNavigate } from 'react-router-dom';
+import CustomPagination from "../../components/CustomPagination";
 
 type customParams = {
   results: any[],
   page: any,
   mediaType: any,
-  setMedia: any,
+  handleClick: any,
   handlePageChange: any,
   scrollRef: RefObject<HTMLDivElement>,
   location: string
 }
 
 
-function SearchResults({ results, page, mediaType, setMedia, handlePageChange, scrollRef, location }: customParams) {
-
-  const scrollToTop = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-    else {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const navigate = useNavigate();
-
-  const handleClick = (result: any) => {
-    navigate(`/media/${result.title}`, {
-      state: {
-        result: result
-      }
-    });
-  };
-
-  const handlePageChangeLocal = (pageCount: any) => {
-    handlePageChange(pageCount);
-    scrollToTop();
-  }
+function SearchResults({ results, page, mediaType, handleClick, handlePageChange, scrollRef, location }: customParams) {
 
   return (
     <List sx={{ padding: 0 }}>
@@ -61,13 +30,11 @@ function SearchResults({ results, page, mediaType, setMedia, handlePageChange, s
               </ListItemButton>
             </div>
           ))}
-          <Container sx={{ ...pagination }}>
-            <Pagination
-              count={Math.ceil(results.length / 10)}
-              page={page}
-              onChange={(event, pageCount) => handlePageChangeLocal(pageCount)}
-            />
-          </Container>
+          <CustomPagination
+            scrollRef={scrollRef}
+            items={results}
+            page={page}
+            handlePageChange={handlePageChange} />
         </>
       }
     </List>

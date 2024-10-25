@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, Stack, TextField, Typography, Checkbox, FormControlLabel, Container, Divider } from "@mui/material";
+import { Dialog, DialogTitle, Stack, TextField, Typography, Checkbox, FormControlLabel, Container } from "@mui/material";
 import { Dayjs } from 'dayjs';
 
 import { useEffect, useState } from "react";
@@ -8,15 +8,13 @@ import ConfirmButton from "../../components/ConfirmButton";
 import DatePickerField from "../../components/DatePickerField";
 import RatingStars from "../../components/RatingStars";
 import { createReview } from "../../api/objects";
-import { loadSearchResults } from "../search/search-utils";
-import { SmallLoading } from "../../components/Loading";
 import WarningModal from "../../components/WarningModal";
 import SuccessAlert from "../../components/SuccessAlert";
 import ErrorAlert from "../../components/ErrorAlert";
 import { createReviewContainer, createReviewImage, createReviewImageContainer, createReviewInfo, createReviewPrompts, modal } from "../../style/review-page";
-import ModalHeader from "./ModalHeader";
 import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "./review-utils";
+import { ModalHeader } from "./ModalHeader";
 
 type params = {
   open: boolean,
