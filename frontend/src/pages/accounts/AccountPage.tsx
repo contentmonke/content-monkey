@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
-import { Loading } from '../../components/Loading';
 import { Typography, Rating, Divider, Container, IconButton } from '@mui/material';
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 //import EditIcon from '@mui/icons-material/Edit';
@@ -18,7 +17,7 @@ const AccountPage: React.FC = () => {
   const { id } = useParams(); // Get the username from the URL
 
   const navigate = useNavigate();
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
 
   const [name, setName] = useState('User not found');
   const [email, setEmail] = useState('');
