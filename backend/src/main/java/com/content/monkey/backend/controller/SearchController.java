@@ -2,12 +2,9 @@ package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.service.SearchService;
-import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.apache.commons.text.similarity.CosineDistance;
-import org.apache.commons.text.similarity.JaroWinklerDistance;
 import java.util.*;
 
 import java.util.ArrayList;
@@ -21,9 +18,7 @@ public class SearchController {
 
     @GetMapping
     public List<SearchEntity> getSearchResults(@RequestParam String bookTitle) {
-
         return searchService.getSearchResults(bookTitle);
-
     }
 
     @GetMapping("/movie/{title}")
@@ -36,11 +31,17 @@ public class SearchController {
         return searchService.getTvShowSearchResults(title);
     }
 
+    @GetMapping("/videoGame/{title}")
+    public List<SearchEntity> getVideoGameSearchResults(@PathVariable("title") String title) {
+        return searchService.getVideoGameSearchResults(title);
+    }
+
     @GetMapping("any/{title}")
     public List<SearchEntity> getAnySearchResults(@PathVariable("title") String title) {
         List<SearchEntity> results = new ArrayList<>(searchService.getMovieSearchResults(title));
         results.addAll(searchService.getSearchResults(title));
         results.addAll(searchService.getTvShowSearchResults(title));
+        results.addAll(searchService.getVideoGameSearchResults(title));
         LevenshteinDistance levenshtein = new LevenshteinDistance();
         results.sort(Comparator.comparingInt(m -> levenshtein.apply(m.getTitle(), title)));
         return results;

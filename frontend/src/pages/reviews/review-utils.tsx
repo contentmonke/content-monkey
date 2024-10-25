@@ -93,7 +93,7 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
   }
 
   
-  if (mediaType === MediaType.MOVIE || mediaType === MediaType.TV_SHOW) {
+  if (mediaType === MediaType.MOVIE || mediaType === MediaType.TV_SHOW || mediaType === MediaType.VIDEO_GAME) {
 
     const fieldValues = [
       searchEntity.title,

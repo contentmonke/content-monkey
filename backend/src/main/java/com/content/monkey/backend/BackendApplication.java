@@ -19,7 +19,10 @@ public class BackendApplication {
 
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
+		return builder.additionalInterceptors((request, body, execution) -> {
+			request.getHeaders().add("User-Agent", "Sui"); // Customize your user-agent here
+			return execution.execute(request, body);
+		}).build();
 	}
 
 }

@@ -39,6 +39,13 @@ export const api = {
       )
     }
   },
+  searchVideoGames: {
+    async fetchVideoGameSearch( title: any ) {
+      return (
+        await axios.get(`${URL}/search/videoGame/${title}`)
+      )
+    }
+  },
   searchAll: {
     async fetchAllSearch( title: any ) {
       return (

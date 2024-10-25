@@ -1,17 +1,27 @@
 package com.content.monkey.backend.service;
 
+import com.api.igdb.apicalypse.APICalypse;
+import com.api.igdb.exceptions.RequestException;
+import com.api.igdb.request.IGDBWrapper;
+import com.api.igdb.request.ProtoRequestKt;
+import com.api.igdb.request.TwitchAuthenticator;
+import com.api.igdb.utils.Endpoints;
+import com.api.igdb.utils.TwitchToken;
 import com.content.monkey.backend.model.BooksApiModels.GoogleBooksResponse;
 import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.model.TMDB_API_Models.TMDBMovieResponse;
 import com.content.monkey.backend.model.TMDB_API_Models.TMDBTVShowResponse;
+import com.content.monkey.backend.model.VideoGameModels.GiantBombResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.core.env.Environment;
+import proto.Search;
 
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +42,11 @@ public class SearchService {
                 .build()
                 .toUri();
         GoogleBooksResponse response = template.getForObject(uri, GoogleBooksResponse.class);
+
+        if (response == null) {
+            return new ArrayList<>();
+        }
+
         return response.getItems().stream()
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
@@ -59,7 +74,9 @@ public class SearchService {
         // Make a GET request to the TMDB API using RestTemplate
         TMDBMovieResponse response = template.getForObject(uri, TMDBMovieResponse.class);
 
-//        // Handle null or empty response
+        if (response == null) {
+            return new ArrayList<>();
+        }
 
         return response.getResults().stream()
                 .map(item -> {
@@ -86,7 +103,9 @@ public class SearchService {
         // Make a GET request to the TMDB API using RestTemplate
         TMDBTVShowResponse response = template.getForObject(uri, TMDBTVShowResponse.class);
 
-//        // Handle null or empty response
+        if (response == null) {
+            return new ArrayList<>();
+        }
 
         return response.getResults().stream()
                 .map(item -> {
@@ -100,5 +119,36 @@ public class SearchService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<SearchEntity> getVideoGameSearchResults(String title) {
+        String apiKey = environment.getProperty("CM_GIANTBOMB_KEY");
+
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://www.giantbomb.com/api/search")
+                .queryParam("query", title)
+                .queryParam("api_key", apiKey)
+                .queryParam("format", "json")
+                .queryParam("resources", "game")
+                .build()
+                .toUri();
+
+        GiantBombResponse response = template.getForObject(uri, GiantBombResponse.class);
+
+        if (response == null) {
+            return new ArrayList<>();
+        }
+
+        return response.getResults().stream()
+                .map(item -> {
+                    SearchEntity entity = new SearchEntity();
+                    entity.setTitle(item.getTitle());
+                    entity.setReleaseDate(item.getReleaseDate());
+                    entity.setDescription(item.getOverview());
+                    entity.setThumbnail(item.getPosterPath() != null ?
+                            item.getPosterPath().getThumbUrl() : null);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+    }
+
 }
 
