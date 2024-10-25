@@ -1,4 +1,3 @@
-import { string } from "three/webgpu";
 import "./Button.css";
 
 interface ButtonProps {

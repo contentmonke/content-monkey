@@ -13,7 +13,7 @@ import { Suspense } from 'react';
 import SearchAndExplore from './SearchAndExplore.tsx';
 
 function Loader() {
-  const { active, progress, errors, item, loaded, total } = useProgress();
+  const { progress } = useProgress();
   return <Html center>{progress}%</Html>;
 }
 

@@ -14,8 +14,7 @@ const EditAccount: React.FC = () => {
     try {
       console.log('Account deletion process initiated.');
       const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-      console.log(user.sub);
-      const userDel = await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id + '/' + user.sub);
+      await axios.delete('http://localhost:8080/api/user/' + userEdit.data[0].id + '/' + user.sub);
       console.log('localhost:8080/api/user/' + userEdit.data[0].id)
       alert('Account successfully deleted.');
       logout();
