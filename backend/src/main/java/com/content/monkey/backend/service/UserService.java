@@ -40,7 +40,9 @@ public class UserService {
             users.get(0).setFriend_list(new ArrayList<>());
             users.get(0).setFriend_requests(new ArrayList<>());
         }
-        userRepository.save(users.get(0));
+        if (!users.isEmpty()) {
+            userRepository.save(users.get(0));
+        }
         return users;
     }
 
@@ -118,6 +120,7 @@ public class UserService {
 
     public UserEntity sendFriendRequest(Long from, Long to) {
         UserEntity user = getUser(to);
+        System.out.println("in here");
         if (user.getFriend_requests() == null) {
             user.setFriend_requests(new ArrayList<String>());
         }
