@@ -7,7 +7,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Button, Stack } from '@mui/material';
+// import { Button, Stack } from '@mui/material';
+import Button from "../../../components/button/Button";
 import { useAuth0 } from '@auth0/auth0-react';
 import UserNavBar from '../UserNavbar';
 
@@ -57,7 +58,6 @@ const FriendsPage: React.FC = () => {
         setValue(newValue);
       };
     const handleAcceptRequest = async (from, index) => {
-        console.log(from)
         try {
             const accept = await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=true`);
             console.log(accept);
@@ -115,8 +115,8 @@ const FriendsPage: React.FC = () => {
         {requests.map((r, i) => {
             return <li key={i}>
             {r.name}
-            <Button sx={{m:4}} onClick={() => handleAcceptRequest(r.id, i)} color="success" variant="contained">Accept</Button>
-            <Button variant="contained" color="error">Decline</Button>
+            <Button width={'6rem'} onClick={() => handleAcceptRequest(r.id, i)} label="Accept" />
+            <Button width={"6rem"} color="#FF6961" onClick={() => {return}} label="Decline" />
           </li>
         })}
       </TabPanel>}
