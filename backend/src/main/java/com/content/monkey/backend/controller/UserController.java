@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 
-
 import java.net.URI;
 import java.util.List;
 
@@ -29,22 +28,25 @@ public class UserController {
     private Auth0Service auth0Service;
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
-        System.out.println("HERE");
-        System.out.println(user);
         List<UserEntity> users = userService.getSingleUser(user.getName());
+        System.out.println(user.getName());
         if (users.isEmpty()) {
             users.add(createExampleEntity(user));
         }
-        System.out.println(users);
         return users;
     }
+
+    @PostMapping("/setPicture")
+    public void setPicture(@RequestParam("id") Long id, @RequestParam("picture") String picture) {
+        userService.updatePicture(id, picture);
+    }
+
     @GetMapping("/all")
     public List<UserEntity> getAllExamples() {
         List<UserEntity> examples = userService.getAllExamples();
-        System.out.println("Fetched examples: " + examples.toString());
+        //System.out.println("Fetched examples: " + examples.toString());
         return examples;
     }
-
 
     public UserEntity createExampleEntity(@RequestBody UserEntity example) {
         UserEntity created = userService.createUserEntity(example);
@@ -76,6 +78,11 @@ public class UserController {
         return users;
     }
 
+    @GetMapping("/{id}")
+    public UserEntity getUserById(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
+
     @PutMapping("genres/{id}")
     public UserEntity updateGenres(@PathVariable Long id, @RequestBody String genres) {
         return userService.updateGenres(id, genres);
@@ -85,6 +92,26 @@ public class UserController {
     public UserEntity updateEmail(@PathVariable Long id, @RequestBody Map<String, String> email) {
         String emailAdd = email.get("email");
         return userService.updateEmail(id, emailAdd);
+    }
+
+    @GetMapping("/friend_requests/{id}")
+    public List<UserEntity> getFriendRequests(@PathVariable Long id) {
+        return userService.getFriendRequests(id);
+    }
+
+    @GetMapping("/friend_list/{id}")
+    public List<UserEntity> getFriendList(@PathVariable Long id) {
+        return userService.getFriendList(id);
+    }
+
+    @PostMapping("/friend_requests/{from}/{to}")
+    public UserEntity sendFriendRequests(@PathVariable Long from, @PathVariable Long to) {
+        return userService.sendFriendRequest(from, to);
+    }
+
+    @PostMapping("/friend_accept/{from}/{to}")
+    public UserEntity acceptRequest(@PathVariable Long from, @PathVariable Long to, @RequestParam boolean decision) {
+        return userService.acceptRequest(from, to, decision);
     }
 
 }

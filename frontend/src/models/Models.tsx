@@ -55,6 +55,11 @@ export type Media = {
   numTotalReviews: number
 }
 
+export type UploadResult = {
+  reviewEntity: Review,
+  searchEntity: VolumeInfo
+}
+
 export enum MediaType {
   BOOK = "Book",
   MOVIE = "Movie",

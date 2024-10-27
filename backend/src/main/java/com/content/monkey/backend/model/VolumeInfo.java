@@ -67,5 +67,18 @@ public class VolumeInfo {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "VolumeInfo{" +
+                "title='" + title + '\'' +
+                ", authors=" + authors +
+                ", publisher='" + publisher + '\'' +
+                ", publishedDate='" + publishedDate + '\'' +
+                ", pageCount='" + pageCount + '\'' +
+                ", imageLinks=" + imageLinks +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
 
