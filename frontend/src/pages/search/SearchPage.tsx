@@ -125,6 +125,7 @@ function SearchPage() {
   );
 }
 
-export default withAuthenticationRequired(SearchPage, {
-  onRedirecting: () => <Loading />,
-});
+// export default withAuthenticationRequired(SearchPage, {
+//   onRedirecting: () => <Loading />,
+// });
+export default SearchPage;
