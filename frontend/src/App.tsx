@@ -25,6 +25,7 @@ function App() {
             {/* Define the route for /account */}
             <Route path="/" element={<Home />} />
             <Route path="/u/:id" element={<AccountPage />} />
+            <Route path="/u/:id/friends" element={<FriendsPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">
@@ -34,7 +35,6 @@ function App() {
               {/* Other nested routes */}
               <Route path="profile" element={<ProtectedRoute component={EditProfile} />} />
               <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
-              <Route path="friends/:id" element={<ProtectedRoute component={FriendsPage} />} />
             </Route>
             <Route path="/media/:title" element={<MediaPage />} />
             <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />

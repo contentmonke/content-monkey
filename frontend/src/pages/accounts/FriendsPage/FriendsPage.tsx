@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Button, Stack } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
+import UserNavBar from '../UserNavbar';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -89,6 +90,7 @@ const FriendsPage: React.FC = () => {
 
   return (
     <div className="card center">
+    <UserNavBar />
     <Box sx={{ bgcolor: 'background.paper', width: "auto"}}>
       <AppBar position="static">
         <Tabs

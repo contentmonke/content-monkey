@@ -151,14 +151,10 @@ const AccountPage: React.FC = () => {
         }
         <hr />
         <ul className="sidebar-menu">
-          <li>Activity</li>
-          <li onClick={() => navigate(`/settings/friends/${id}`)}>Friends</li>
-          <li>Movies</li>
-          <li>TV Shows</li>
-          <li>Books</li>
-          <li>Video Games</li>
-          <li>Lists</li>
-          <li>Groups</li>
+          <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
+          <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
+          <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
+          <li onClick={() => navigate(`/u/${id}/favorites`)}>Favorites</li>
         </ul>
       </div>
 

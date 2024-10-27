@@ -1,0 +1,63 @@
+/* UserNavbar container with 900px width and centered */
+.user-navbar-container {
+  width: 900px;
+  margin: 0 auto;
+  padding: 10px 0;
+  padding-bottom: 25px;
+}
+
+/* Main navbar styling */
+.user-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #d5e5f3; /* New background color */
+  padding: 10px 20px;
+  border-radius: 2px; /* Reduced border radius to make it more square */
+  
+  border: solid;
+  border-color: rgb(181, 181, 181);
+  border-width: 1px;
+}
+
+/* User section */
+.user-navbar-user {
+  display: flex;
+  align-items: center;
+}
+
+.user-navbar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-navbar-username {
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Navbar menu */
+.user-navbar-menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-navbar-menu li {
+  margin-right: 20px;
+}
+
+.user-navbar-menu a {
+  color: #000;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.user-navbar-menu a.user-navbar-active {
+  color: #000;
+  border-bottom: 2px solid #31628F; /* Green underline for active page */
+}

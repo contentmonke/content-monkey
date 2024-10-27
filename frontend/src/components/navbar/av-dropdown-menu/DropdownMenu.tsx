@@ -19,7 +19,6 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
     closeDropdown();
   }
 
-  // Close dropdown if clicking outside of it
   useEffect(() => {
     async function fetchData() {
       try {
@@ -33,7 +32,10 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
     }
 
     fetchData();
-
+  }, [])
+  
+  // Close dropdown if clicking outside of it
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         closeDropdown();
