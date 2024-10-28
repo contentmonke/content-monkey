@@ -1,7 +1,7 @@
 import Button from "./button/Button";
 
 
-function ConfirmButton({ title, disabled, onClick }: any) {
+function ConfirmButton({ title, onClick }: any) {
   return (
     <Button
       label={title}

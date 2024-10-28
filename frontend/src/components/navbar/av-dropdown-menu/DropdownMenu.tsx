@@ -6,34 +6,21 @@ import './DropdownMenu.css'; // Styling for dropdown
 
 interface DropdownMenuProps {
   closeDropdown: () => void;
+  userId: number | null; //
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown, userId }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { user, logout, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-  const [userId, setUserId] = useState(0);
 
   const navAndReload = (page: string) => {
     navigate(page, { replace: true });
     closeDropdown();
   }
-
+  
   // Close dropdown if clicking outside of it
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (!isLoading && user?.name) {
-          const userResponse = await axios.post(`http://localhost:8080/api/user/name/${user.name}`);
-          setUserId(userResponse.data[0].id)
-        }
-      } catch (error) {
-        console.error('Error fetching data', error);
-      }
-    }
-
-    fetchData();
-
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         closeDropdown();

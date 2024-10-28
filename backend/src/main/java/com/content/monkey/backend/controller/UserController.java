@@ -29,6 +29,7 @@ public class UserController {
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
         List<UserEntity> users = userService.getSingleUser(user.getName());
+        System.out.println(user.getName());
         if (users.isEmpty()) {
             users.add(createExampleEntity(user));
         }
@@ -91,6 +92,26 @@ public class UserController {
     public UserEntity updateEmail(@PathVariable Long id, @RequestBody Map<String, String> email) {
         String emailAdd = email.get("email");
         return userService.updateEmail(id, emailAdd);
+    }
+
+    @GetMapping("/friend_requests/{id}")
+    public List<UserEntity> getFriendRequests(@PathVariable Long id) {
+        return userService.getFriendRequests(id);
+    }
+
+    @GetMapping("/friend_list/{id}")
+    public List<UserEntity> getFriendList(@PathVariable Long id) {
+        return userService.getFriendList(id);
+    }
+
+    @PostMapping("/friend_requests/{from}/{to}")
+    public UserEntity sendFriendRequests(@PathVariable Long from, @PathVariable Long to) {
+        return userService.sendFriendRequest(from, to);
+    }
+
+    @PostMapping("/friend_accept/{from}/{to}")
+    public UserEntity acceptRequest(@PathVariable Long from, @PathVariable Long to, @RequestParam boolean decision) {
+        return userService.acceptRequest(from, to, decision);
     }
 
 }

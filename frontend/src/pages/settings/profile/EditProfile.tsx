@@ -5,7 +5,7 @@ import { TextField } from '@mui/material';
 import Button from '../../../components/button/Button';
 import ProfilePicture from './ProfilePicture';
 import EditIcon from '@mui/icons-material/Edit';
-import EditGenresModal from './editGenresModal';
+import EditGenresModal from './EditGenresModal';
 import SuccessAlert from '../../../components/SuccessAlert';
 import ErrorAlert from '../../../components/ErrorAlert';
 
@@ -29,17 +29,6 @@ const EditProfile: React.FC = () => {
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
           await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-          const recentReviews = await axios.get('http://localhost:8080/api/reviews/userId/' + idResponse.data[0].id);
-
-          const reviewsWithMediaTitles = await Promise.all(
-            recentReviews.data.map(async (review: any) => {
-              const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
-              return {
-                ...review,
-                mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
-              };
-            })
-          );
 
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;

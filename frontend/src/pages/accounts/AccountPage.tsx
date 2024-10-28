@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
-import { Loading } from '../../components/Loading';
 import { Typography, Rating, Divider, Container, IconButton } from '@mui/material';
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 //import EditIcon from '@mui/icons-material/Edit';
@@ -26,6 +25,10 @@ const AccountPage: React.FC = () => {
   const [profilePicture, setProfilePicture] = useState('https://via.placeholder.com/150');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [loggedInUserId, setLoggedInUserId] = useState(0);
+  const [loggedInUserFriendRequests, setLoggedInUserFriendRequests] = useState([]);
+  const [loggedInUserFriends, setLoggedInUserFriends] = useState([]);
+  const [isDisabledRequest, setIsDisabledRequest] = useState(false);
 
   // Mock data for favorite content and reviews
   const favoriteContent = [
@@ -53,13 +56,13 @@ const AccountPage: React.FC = () => {
             };
           })
         );
-        console.log(userResponse);
+        // console.log(userResponse);
         setEmail(userResponse.data.email);
         setName(userResponse.data.name.split('@')[0])
         if (userResponse.data.picture != null) {
           setProfilePicture(userResponse.data.picture);
         }
-        if (userResponse.data.bio!= null) {
+        if (userResponse.data.bio != null) {
           setBio(JSON.parse(userResponse.data.bio).biography)
         }
         if (userResponse.data.genres != null) {
@@ -74,120 +77,162 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [id]);
 
-  return ((isLoading) ? <div className="loader"><Loading /></div> : (<>
-    {(isAuthenticated && user) ?
-      (<>
-        <div className="profile-container">
-          {/* Left Sidebar */}
-          <div className="sidebar">
-            <img src={profilePicture} alt={name} className="pub-profile-picture" />
-            <p className="prof-name">{name}</p>
-            <p>{bio}</p>
-            <div>
-              {favoriteGenres.map((genre, index) => (
-                <div key={index} className="genre-item">
-                  <div className="fave-genre">{genre}</div>
-                </div>
-              ))}
-            </div>
-            {(isAuthenticated && user && user.email == email) ?
-              <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
-              :
-              <>
-              </>}
-            <hr />
-            <ul className="sidebar-menu">
-              <li>Activity</li>
-              <li>Friends</li>
-              <li>Movies</li>
-              <li>TV Shows</li>
-              <li>Books</li>
-              <li>Video Games</li>
-              <li>Lists</li>
-              <li>Groups</li>
-            </ul>
-          </div>
+  useEffect(() => {
+    try {
+      const getUser = async () => {
+        if (isLoading === false && user !== null) {
+          const curr_user = await axios.post("http://localhost:8080/api/user/", user)
+          console.log(curr_user.data[0])
+          setLoggedInUserId(curr_user.data[0].id);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+          setLoggedInUserFriends(curr_user.data[0].friend_list);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
+          console.log("loggedInUserFriends", loggedInUserFriends);
+        }
+      }
+      getUser()
+    } catch (err) {
+      console.log("Error getting logged in user", err)
+    }
+  }, [isLoading, user])
 
-          {/* Right Main Content */}
-          <div className="main-content">
-            <div className="favorite-content">
-              <p className="fave-titles">Favorite Content</p>
-              <hr className="main-divider" />
-              <div className="content-grid">
-                {favoriteContent.map(item => (
-                  <div key={item.id} className="content-item">
-                    <img src={item.imageUrl} alt={item.title} />
-                    <p>{item.title}</p>
-                  </div>
-                ))}
+  useEffect(() => {
+    try {
+      const getUser = async () => {
+        if (isLoading === false && user !== null) {
+          const curr_user = await axios.post("http://localhost:8080/api/user/", user)
+          console.log(curr_user.data[0])
+          setLoggedInUserId(curr_user.data[0].id);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+          setLoggedInUserFriends(curr_user.data[0].friend_list);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
+          console.log("loggedInUserFriends", loggedInUserFriends);
+        }
+      }
+      getUser()
+    } catch (err) {
+      console.log("Error getting logged in user", err)
+    }
+  }, [isLoading, user])
+
+  const handleFriendRequest = async () => {
+    try {
+      const sendRequest = await axios.post(`http://localhost:8080/api/user/friend_requests/${loggedInUserId}/${id}`)
+      console.log(sendRequest)
+      setIsDisabledRequest(true);
+    } catch (err) {
+      console.log("Error while sending friend request", err)
+    }
+  }
+
+  return <>
+    <div className="profile-container">
+      {/* Left Sidebar */}
+      <div className="sidebar">
+        <img src={profilePicture} alt={name} className="pub-profile-picture" />
+        <p className="prof-name">{name}</p>
+        <p>{bio}</p>
+        <div>
+          {favoriteGenres.map((genre, index) => (
+            <div key={index} className="genre-item">
+              <div className="fave-genre">{genre}</div>
+            </div>
+          ))}
+        </div>
+        {(isAuthenticated && user && user.email == email) ?
+          <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
+          :
+          loggedInUserFriends?.includes(id) === false && <Button
+            onClick={() => handleFriendRequest()}
+            label={loggedInUserFriendRequests?.includes(id) || isDisabledRequest ? "Requested" : "Request"}
+            width="230px"
+            disabled={loggedInUserFriendRequests?.includes(id) || isDisabledRequest}
+          />
+        }
+        <hr />
+        <ul className="sidebar-menu">
+          <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
+          <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
+          <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
+        </ul>
+      </div>
+
+      {/* Right Main Content */}
+      <div className="main-content">
+        <div className="favorite-content">
+          <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
+          <hr className="main-divider" />
+          <div className="content-grid">
+            {favoriteContent.map(item => (
+              <div key={item.id} className="content-item">
+                <img src={item.imageUrl} alt={item.title} />
+                <p>{item.title}</p>
               </div>
-            </div>
-
-            <div className="recent-reviews">
-              <p className="fave-titles">Recent Reviews</p>
-              <hr className="main-divider" />
-              <ul>
-                {reviews.map((review, index) => (
-                  <div key={index}>
-                    <li>
-                      <div className="review-header">
-                        {(() => {
-                          const reviewDate = new Date(review.dateCreated);
-                          reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
-                          return (
-                            <>
-                              <Rating
-                                size={'small'}
-                                sx={{ my: 0, mr: 1, mb: 0.5 }}
-                                value={review.rating}
-                                precision={0.5}
-                                readOnly
-                              />
-                              <p className="review-date">
-                                {reviewDate.toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: '2-digit',
-                                })}{' '}
-                                {reviewDate.toLocaleTimeString('en-US', {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                  hour12: true,
-                                })}
-                              </p>
-                            </>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Other content like review title and upvotes/downvotes */}
-                      <p className="review-title">{review.mediaTitle}</p>
-
-                      <Container disableGutters>
-                        <IconButton size={'small'}>
-                          <ThumbUp sx={{ width: 15 }} />
-                        </IconButton>
-                        <Typography variant="caption">{review.upVotes}</Typography>
-                        <IconButton>
-                          <ThumbDown sx={{ width: 15 }} />
-                        </IconButton>
-                        <Typography variant="caption">{review.downVotes}</Typography>
-                      </Container>
-                    </li>
-
-                    {/* Add a Divider between each review */}
-                    {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
-                  </div>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
-        </div >
-      </>) : (
-        <>
-        </>)
-    }</>
-  ));
+        </div>
+
+        <div className="recent-reviews">
+          <p className="fave-titles">Recent Reviews</p>
+          <hr className="main-divider" />
+          <ul>
+            {reviews.map((review, index) => (
+              <div key={index}>
+                <li>
+                  <div className="review-header">
+                    {(() => {
+                      const reviewDate = new Date(review.dateCreated);
+                      reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
+                      return (
+                        <>
+                          <Rating
+                            size={'small'}
+                            sx={{ my: 0, mr: 1, mb: 0.5 }}
+                            value={review.rating}
+                            precision={0.5}
+                            readOnly
+                          />
+                          <p className="review-date">
+                            {reviewDate.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: '2-digit',
+                            })}{' '}
+                            {reviewDate.toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            })}
+                          </p>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Other content like review title and upvotes/downvotes */}
+                  <p className="review-title">{review.mediaTitle}</p>
+
+                  <Container disableGutters>
+                    <IconButton size={'small'}>
+                      <ThumbUp sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{review.upVotes}</Typography>
+                    <IconButton>
+                      <ThumbDown sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{review.downVotes}</Typography>
+                  </Container>
+                </li>
+
+                {/* Add a Divider between each review */}
+                {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+              </div>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div >
+  </>
 };
 
 export default AccountPage;
