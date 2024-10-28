@@ -151,21 +151,16 @@ const AccountPage: React.FC = () => {
         }
         <hr />
         <ul className="sidebar-menu">
-          <li>Activity</li>
-          <li onClick={() => navigate(`/settings/friends/${id}`)}>Friends</li>
-          <li>Movies</li>
-          <li>TV Shows</li>
-          <li>Books</li>
-          <li>Video Games</li>
-          <li>Lists</li>
-          <li>Groups</li>
+          <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
+          <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
+          <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
         </ul>
       </div>
 
       {/* Right Main Content */}
       <div className="main-content">
         <div className="favorite-content">
-          <p className="fave-titles">Favorite Content</p>
+          <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
           <hr className="main-divider" />
           <div className="content-grid">
             {favoriteContent.map(item => (

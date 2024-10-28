@@ -1,130 +1,154 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-// import { Button, Stack } from '@mui/material';
-import Button from "../../../components/button/Button";
+import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import UserNavBar from '../UserNavbar';
+import SearchBox from '../../../components/SeachBox';
+import { CheckCircle, Cancel } from '@mui/icons-material';
+import './FriendsPage.css';
 
-interface TabPanelProps {
-    children?: React.ReactNode;
-    dir?: string;
-    index: number;
-    value: number;
-  }
-
-  function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`full-width-tabpanel-${index}`}
-        aria-labelledby={`full-width-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-  function a11yProps(index: number) {
-    return {
-      id: `full-width-tab-${index}`,
-      'aria-controls': `full-width-tabpanel-${index}`,
-    };
-  }
 const FriendsPage: React.FC = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth0();
+  const [friends, setFriends] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [loggedInUserId, setLoggedInUserId] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
-    const { id } = useParams();
-    const [friends, setFriends] = useState([]);
-    const [requests, setRequests] = useState([]);
-    const [loggedInUserId, setLoggedInUserId] = useState(0);
-    const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-    const {user} = useAuth0();
+  const handleTabChange = (index: number) => setActiveTab(index);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-      };
-    const handleAcceptRequest = async (from, index) => {
-        try {
-            const accept = await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=true`);
-            console.log(accept);
-            requests.splice(index, 1)
-        } catch(err) {
-            console.log("Error accepting friend request", err)
-        }
+  async function fetchData() {
+    try {
+      const friendsList = await axios.get(`http://localhost:8080/api/user/friend_list/${id}`);
+      setFriends(friendsList.data);
+
+      const requestList = await axios.get(`http://localhost:8080/api/user/friend_requests/${id}`);
+      setRequests(requestList.data);
+
+      const currUserResponse = await axios.post("http://localhost:8080/api/user/", user);
+      setLoggedInUserId(currUserResponse.data[0].id);
+    } catch (err) {
+      console.error('Error fetching data', err);
     }
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const friendsList = await axios.get(`http://localhost:8080/api/user/friend_list/${id}`);
-                console.log(friendsList)
-                setFriends(friendsList.data)
+  }
 
-                const requestList = await axios.get(`http://localhost:8080/api/user/friend_requests/${id}`)
-                setRequests(requestList.data)
-                console.log(requestList)
+  const goToFriendProfile = (friendId: number) => {
+    navigate(`/u/${friendId}`);
+  };
 
-                const currUserResponse = await axios.post("http://localhost:8080/api/user/", user)
-                console.log(currUserResponse.data)
-                setLoggedInUserId(currUserResponse.data[0].id)
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
-            } catch(err) {
-                console.error('Error fetching data', err);
-            }
-        }
-        fetchData();
-    }, [])
+  const handleSearchSubmit = () => {
+    // Implement search submit logic here
+    console.log(`Searching for: ${searchQuery}`);
+  };
+
+  const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchSubmit();
+    }
+  };
+
+  const handleAcceptRequest = async (from: number, index: number) => {
+    try {
+      await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=true`);
+      setRequests(requests.filter((_, i) => i !== index));
+    } catch (err) {
+      console.log("Error accepting friend request", err);
+    }
+    fetchData();
+  };
+
+  const handleDeclineRequest = async (from: number, index: number) => {
+    try {
+      await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=false`);
+      setRequests(requests.filter((_, i) => i !== index));
+    } catch (err) {
+      console.log("Error declining friend request", err);
+    }
+    fetchData();
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [id, user]);
 
   return (
-    <div className="card center">
-    <Box sx={{ bgcolor: 'background.paper', width: "auto"}}>
-      <AppBar position="static">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-        >
-          <Tab label="Friends" {...a11yProps(0)} />
-          {parseInt(String(loggedInUserId)) === parseInt(id) && <Tab label="Requests" {...a11yProps(1)} />}
-          <Tab label="Blocked" {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0} dir={theme.direction}>
-        {(friends).map((f, i) => {
-            return <li key={i}>{f.name}</li>
-        })}
-      </TabPanel>
-      {parseInt(String(loggedInUserId)) === parseInt(id) && <TabPanel value={value} index={1} dir={theme.direction}>
-        {requests.map((r, i) => {
-            return <li key={i}>
-            {r.name}
-            <Button width={'6rem'} onClick={() => handleAcceptRequest(r.id, i)} label="Accept" />
-            <Button width={"6rem"} color="#FF6961" onClick={() => {return}} label="Decline" />
-          </li>
-        })}
-      </TabPanel>}
-      <TabPanel value={value} index={2} dir={theme.direction}>
-        Item Three
-      </TabPanel>
-    </Box>
+    <div className="friends-page-container">
+      <UserNavBar />
+      <div className="friends-page-content">
+        <div className="friends-page-search">
+          <SearchBox
+            searchQuery={searchQuery}
+            onSearchInputChange={handleSearchInputChange}
+            onSearchSubmit={handleSearchSubmit}
+            onSearchSubmitOnEnter={handleSearchSubmitOnEnter}
+            inputWidth="25ch"
+            placeholder="Search users..."
+          />
+        </div>
+        <div className="tabs-container">
+          <div className="tabs-header">
+            <div className={`tab-item ${activeTab === 0 ? 'active' : ''}`} onClick={() => handleTabChange(0)}>
+              Friends
+            </div>
+            {parseInt(String(loggedInUserId)) === parseInt(id) && (
+              <div className={`tab-item ${activeTab === 1 ? 'active' : ''}`} onClick={() => handleTabChange(1)}>
+                Requests
+              </div>
+            )}
+            <div className={`tab-item ${activeTab === 2 ? 'active' : ''}`} onClick={() => handleTabChange(2)}>
+              Blocked
+            </div>
+          </div>
+          <div className="tab-content">
+          {activeTab === 0 && (
+              <ul className="friends-list">
+                {friends.map((f: any, i: number) => (
+                  <li
+                    key={i}
+                    className="friend-item"
+                    onClick={() => goToFriendProfile(f.id)} // Navigate on click
+                    style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                  >
+                    {f.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {activeTab === 1 && parseInt(String(loggedInUserId)) === parseInt(id) && (
+              <ul className="requests-list">
+                {requests.map((r: any, i: number) => (
+                  <li key={i} className="request-item">
+                    {r.name}
+                    <div className="request-icons">
+                      <CheckCircle
+                        onClick={() => handleAcceptRequest(r.id, i)}
+                        style={{ color: '#4caf50', cursor: 'pointer' }}
+                      />
+                      <Cancel
+                        onClick={() => handleDeclineRequest(r.id, i)}
+                        style={{ color: '#FF3E3E', cursor: 'pointer' }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {activeTab === 2 && (
+              <div className="blocked-content">
+                <p>No blocked users yet.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default FriendsPage
-
+export default FriendsPage;

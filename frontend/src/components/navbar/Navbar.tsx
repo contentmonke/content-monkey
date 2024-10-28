@@ -17,6 +17,7 @@ const Navbar = () => {
   const isHome = location.pathname === '/'
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
 
   useEffect(() => {
     async function setData() {
@@ -31,6 +32,7 @@ const Navbar = () => {
             }
           }
         );
+        setLoggedInUserId(userRes.data[0].id)
       } catch (error) {
         console.error('Error setting data', error);
       }
@@ -39,6 +41,7 @@ const Navbar = () => {
     if (isAuthenticated && user) {
       setData();
     }
+
   }, [isAuthenticated])
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,25 +84,16 @@ const Navbar = () => {
                 onSearchSubmitOnEnter={handleSearchSubmitOnEnter}
               />
             </li>
-            <li className="nav-item-li">
-              Item
+            <li onClick={() => navigate(`/u/${loggedInUserId}/content`)} className="nav-item-li nav-click">
+              Content
             </li>
-            <li className="nav-item-li">
-              Item
-            </li>
-            <li className="nav-item-li">
-              Item
-            </li>
-            <li className="nav-item-li">
-              Item
-            </li>
-            <li className="nav-item-li">
-              Item
+            <li onClick={() => navigate(`/u/${loggedInUserId}/friends`)} className="nav-item-li nav-click">
+              Friends
             </li>
             <li className="nav-avatar-li">
               {user ? (<>
                 <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
-                {avatarDropdownOpen && <DropdownMenu closeDropdown={() => setAvatarDropdownOpen(false)} />}
+                {avatarDropdownOpen && <DropdownMenu userId={loggedInUserId} closeDropdown={() => setAvatarDropdownOpen(false)} />}
               </>
               ) :
                 (<AccountCircleIcon />)}
