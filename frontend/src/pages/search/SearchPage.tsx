@@ -91,6 +91,13 @@ function SearchPage() {
                   Showing Results for '{prevSearch}'
                 </Typography>
               }
+              {results.length === 0 &&
+                  <Typography
+                    variant={'body2'}
+                    textAlign={'left'}>
+                    No results for '{prevSearch}'
+                </Typography>
+              }
               <SearchResults
                 results={results}
                 page={page}

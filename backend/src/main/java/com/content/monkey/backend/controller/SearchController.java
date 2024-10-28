@@ -44,6 +44,14 @@ public class SearchController {
         results.addAll(searchService.getVideoGameSearchResults(title));
         LevenshteinDistance levenshtein = new LevenshteinDistance();
         results.sort(Comparator.comparingInt(m -> levenshtein.apply(m.getTitle(), title)));
+//        results.sort(Comparator.comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder())));
+//        results.sort(Comparator
+//                .comparingInt((SearchEntity m) -> levenshtein.apply(m.getTitle(), title)) // Sort by Levenshtein distance
+//                .thenComparing(Comparator.comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder())))); // Move null thumbnails to the bottom
+
+//        results.sort(Comparator
+//                .comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder()))
+//                .thenComparingInt(m -> levenshtein.apply(m.getTitle(), title)));
         return results;
     }
 

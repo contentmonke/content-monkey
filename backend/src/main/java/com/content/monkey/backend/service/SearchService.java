@@ -1,12 +1,6 @@
 package com.content.monkey.backend.service;
 
-import com.api.igdb.apicalypse.APICalypse;
-import com.api.igdb.exceptions.RequestException;
-import com.api.igdb.request.IGDBWrapper;
-import com.api.igdb.request.ProtoRequestKt;
-import com.api.igdb.request.TwitchAuthenticator;
-import com.api.igdb.utils.Endpoints;
-import com.api.igdb.utils.TwitchToken;
+
 import com.content.monkey.backend.model.BooksApiModels.GoogleBooksResponse;
 import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.model.TMDB_API_Models.TMDBMovieResponse;
@@ -17,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.core.env.Environment;
-import proto.Search;
 
 
 import java.net.URI;
@@ -43,11 +36,13 @@ public class SearchService {
                 .toUri();
         GoogleBooksResponse response = template.getForObject(uri, GoogleBooksResponse.class);
 
-        if (response == null) {
-            return new ArrayList<>();
+
+        if (response == null || response.getItems() == null) {
+            return new ArrayList<SearchEntity>();
         }
 
         return response.getItems().stream()
+                .filter(bookItem ->  bookItem.getVolumeInfo().getImageLinks().getThumbnail() != null)
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
                     entity.setTitle(item.getVolumeInfo().getTitle());
@@ -79,13 +74,13 @@ public class SearchService {
         }
 
         return response.getResults().stream()
+                .filter(movieItem -> movieItem.getPosterPath() != null)
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
                     entity.setTitle(item.getTitle());
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
-                    entity.setThumbnail(item.getPosterPath() != null ?
-                            "https://image.tmdb.org/t/p/w500" + item.getPosterPath() : null);
+                    entity.setThumbnail("https://image.tmdb.org/t/p/w500" + item.getPosterPath());
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -108,13 +103,13 @@ public class SearchService {
         }
 
         return response.getResults().stream()
+                .filter(tvShowItem -> tvShowItem.getPosterPath() != null)
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
                     entity.setTitle(item.getTitle());
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
-                    entity.setThumbnail(item.getPosterPath() != null ?
-                            "https://image.tmdb.org/t/p/w500" + item.getPosterPath() : null);
+                    entity.setThumbnail("https://image.tmdb.org/t/p/w500" + item.getPosterPath());
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -138,13 +133,13 @@ public class SearchService {
         }
 
         return response.getResults().stream()
+                .filter(videoGameItem -> videoGameItem.getPosterPath() != null)
                 .map(item -> {
                     SearchEntity entity = new SearchEntity();
                     entity.setTitle(item.getTitle());
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
-                    entity.setThumbnail(item.getPosterPath() != null ?
-                            item.getPosterPath().getThumbUrl() : null);
+                    entity.setThumbnail(item.getPosterPath().getThumbUrl());
                     return entity;
                 })
                 .collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package com.content.monkey.backend.model.VideoGameModels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import proto.Game;
 
 public class VideoGameItem {
     @JsonProperty("name")
