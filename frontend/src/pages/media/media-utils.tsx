@@ -37,6 +37,38 @@ export async function fetchMediaList(mediaIds: any, setMediaList: any) {
     })
 }
 
+export async function fetchComments(commentIds: any, setComments: any, setIsLoading: any) {
+  setIsLoading(true);
+  api.comments.getComments(commentIds)
+    .then((response) => {
+      console.log(response.data);
+      setComments(response.data);
+    })
+    .catch((error) => {
+      setComments([]);
+      console.log(error)
+    })
+    .finally(() => {
+      setIsLoading(false)
+    });
+}
+
+export async function createComment(comment: any, setIsLoading: any, setIsSuccess: any, setIsError: any) {
+  setIsLoading(true);
+  api.comments.createComment(comment)
+    .then((response) => {
+      console.log(response.data);
+      setIsSuccess(true)
+    })
+    .catch((error) => {
+      console.log(error)
+      setIsError(true)
+    })
+    .finally(() => {
+      setIsLoading(false)
+    });
+}
+
 export const getLabels = (mediaType: MediaType): MediaLabel | null => {
   if (mediaType === MediaType.BOOK) {
     const mediaLabel: MediaLabel = {

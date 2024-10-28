@@ -13,6 +13,7 @@ export type Review = {
 }
 
 export type ReviewDTO = {
+  id: number,
   userId: number,
   username: string,
   commentIds: number[],
@@ -58,6 +59,18 @@ export type Media = {
 export type UploadResult = {
   reviewEntity: Review,
   searchEntity: VolumeInfo
+}
+
+export type Comment = {
+  id: number,
+  userId: number,
+  username: string,
+  reviewId: number,
+  body: string,
+  dateCreated: Date,
+  upVotes: number,
+  downVotes: number,
+  replyIds: number[]
 }
 
 export enum MediaType {

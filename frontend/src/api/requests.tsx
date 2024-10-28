@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 const URL = 'http://localhost:8080/api';
 
 export const api = {
+  // Review API Routes
   reviews: {
     fetchReview() {
       console.log("api.reviews.get()")
@@ -15,16 +16,15 @@ export const api = {
         await axios.post(`${URL}/reviews`, review)
       );
     },
+
     async uploadFile(file: any) {
-      // return uploadResponse;
-      // return mockUploadResponse;
-      // return seanFile;
       return (await axios.post(`${URL}/reviews/upload`, file, {
         headers: {
           'content-type': 'multipart/form-data'
         }
       }))
     },
+
     async confirmUploads(uploadResults: any, userId: any) {
       // return ({ data: [] });
       return (
@@ -32,6 +32,8 @@ export const api = {
       );
     }
   },
+
+  // Search API Routes
   search: {
     async fetchSearch({ title }: any) {
       return (
@@ -41,6 +43,8 @@ export const api = {
       );
     }
   },
+
+  // Media API Routes
   media: {
     async fetchMedia(media: any) {
       const mediaEntity = {
@@ -56,19 +60,36 @@ export const api = {
 
       );
     },
+
     async fetchMediaList(mediaIds: any) {
-      // return mediaEntities;
       return (
         await axios.post(`${URL}/media/list`, mediaIds)
       );
     },
   },
+
+  // User API Routes
   user: {
     async fetchUser(username: any) {
       return (await axios.post(`${URL}/user/`,
         {
           name: username
         }));
+    }
+  },
+
+  // Commment API Routes
+  comments: {
+    async createComment(comment: any) {
+      return (
+        await axios.post(`${URL}/comments`, comment)
+      );
+    },
+
+    async getComments(commentIds: any) {
+      return (
+        await axios.post(`${URL}/comments/getComments`, commentIds)
+      );
     }
   }
 }
