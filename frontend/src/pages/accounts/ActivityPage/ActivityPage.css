@@ -1,0 +1,45 @@
+.activity-page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.activity-page-tabs-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.activity-page-tabs-header {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+}
+
+.activity-page-tab-item {
+  flex: 1;
+  padding: 10px 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+  border-right: 1px solid #ccc;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000;
+}
+
+.activity-page-tab-item:last-child {
+  border-right: none;
+}
+
+.activity-page-tab-item.active {
+  color: #31628F;
+  border-bottom: 2px solid #31628F;
+}
+
+.activity-page-tab-content {
+  padding: 10px 0;
+}
+
+.activity-page-contentlist {
+  list-style-type: none;
+  padding: 0;
+}

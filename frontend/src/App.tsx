@@ -13,6 +13,8 @@ import Navbar from "./components/navbar/Navbar"
 import ProtectedRoute from './ProtectedRoute';
 import UploadPage from './pages/upload/UploadPage';
 import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
+import ContentPage from './pages/accounts/ContentPage/ContentPage';
+import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -26,6 +28,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/u/:id" element={<AccountPage />} />
             <Route path="/u/:id/friends" element={<FriendsPage />} />
+            <Route path="/u/:id/content/*" element={<ContentPage />} />
+            <Route path="/u/:id/activity/*" element={<ActivityPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">
