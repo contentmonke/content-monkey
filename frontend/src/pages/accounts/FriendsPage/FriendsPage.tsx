@@ -1,15 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import SearchBox from '../../../components/SeachBox';
 import { CheckCircle, Cancel } from '@mui/icons-material';
-import Button from '../../../components/button/Button';
 import './FriendsPage.css';
 
 const FriendsPage: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth0();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -34,6 +34,10 @@ const FriendsPage: React.FC = () => {
     }
   }
 
+  const goToFriendProfile = (friendId: number) => {
+    navigate(`/u/${friendId}`);
+  };
+
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -41,6 +45,12 @@ const FriendsPage: React.FC = () => {
   const handleSearchSubmit = () => {
     // Implement search submit logic here
     console.log(`Searching for: ${searchQuery}`);
+  };
+
+  const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchSubmit();
+    }
   };
 
   const handleAcceptRequest = async (from: number, index: number) => {
@@ -76,6 +86,7 @@ const FriendsPage: React.FC = () => {
             searchQuery={searchQuery}
             onSearchInputChange={handleSearchInputChange}
             onSearchSubmit={handleSearchSubmit}
+            onSearchSubmitOnEnter={handleSearchSubmitOnEnter}
             inputWidth="25ch"
             placeholder="Search users..."
           />
@@ -95,10 +106,17 @@ const FriendsPage: React.FC = () => {
             </div>
           </div>
           <div className="tab-content">
-            {activeTab === 0 && (
+          {activeTab === 0 && (
               <ul className="friends-list">
                 {friends.map((f: any, i: number) => (
-                  <li key={i} className="friend-item">{f.name}</li>
+                  <li
+                    key={i}
+                    className="friend-item"
+                    onClick={() => goToFriendProfile(f.id)} // Navigate on click
+                    style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                  >
+                    {f.name}
+                  </li>
                 ))}
               </ul>
             )}
