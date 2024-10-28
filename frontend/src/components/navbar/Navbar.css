@@ -13,7 +13,7 @@
 }
 
 .bar nav {
-  width: 1000px;
+  width: 900px;;
   margin: 0 auto;
   height: 100%;
 }
@@ -46,4 +46,12 @@
   max-height: 200px;
   filter: blur(100px);
   background: radial-gradient(circle,#ff7474 100%,#f09393 0);
+}
+
+.nav-avatar-li {
+  position: relative; /* Make this relative for positioning the dropdown */
+}
+
+.nav-click {
+  cursor: pointer;
 }

@@ -9,7 +9,7 @@ import ErrorAlert from "../../components/ErrorAlert";
 import SearchResults from "./SearchResults";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { newFullpageContainer } from "../../style/review-page";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import MediaSearchBar from "../reviews/MediaSearchBar";
 
@@ -26,7 +26,15 @@ function SearchPage() {
   const [isError, setIsError] = useState(false);
   const [prevSearch, setPrevSearch] = useState("");
   const dialogTitleRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
+  const handleClick = (result: any) => {
+    navigate(`/media/${result.title}`, {
+      state: {
+        result: result
+      }
+    });
+  };
 
   const handleMediaChange = (value: any) => {
     setMediaType(value);
@@ -72,7 +80,7 @@ function SearchPage() {
           </Box>
         }
         <br />
-        <Container disableGutters sx={{ width: '100%', maxWidth: '1000px' }}>
+        <Container disableGutters sx={{ width: '100%', maxWidth: '900px' }}>
           {(media === null) ?
             <>
               <MediaSearchBar
@@ -102,7 +110,7 @@ function SearchPage() {
                 results={results}
                 page={page}
                 mediaType={mediaType}
-                setMedia={setMedia}
+                handleClick={handleClick}
                 handlePageChange={handlePageChange}
                 scrollRef={dialogTitleRef}
                 location={'page'}
@@ -124,6 +132,7 @@ function SearchPage() {
   );
 }
 
-export default withAuthenticationRequired(SearchPage, {
-  onRedirecting: () => <Loading />,
-});
+// export default withAuthenticationRequired(SearchPage, {
+//   onRedirecting: () => <Loading />,
+// });
+export default SearchPage;

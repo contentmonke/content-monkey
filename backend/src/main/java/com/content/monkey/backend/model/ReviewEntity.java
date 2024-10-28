@@ -34,7 +34,7 @@ public class ReviewEntity {
     private LocalDateTime dateCreated;
 
     @NotNull
-    @NotEmpty
+//    @NotEmpty
     private String body;
 
     @NotNull

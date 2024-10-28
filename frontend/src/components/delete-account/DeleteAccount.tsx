@@ -1,5 +1,4 @@
-import React from 'react';
-import { Button } from '@mui/material';
+import './DeleteAccount.css'
 
 // Define the component
 const DeleteAccount = ({ onDelete }) => {
@@ -12,21 +11,12 @@ const DeleteAccount = ({ onDelete }) => {
   };
 
   return (
-    <Button
-      variant="contained"
-      sx={{
-        backgroundColor: 'lightcoral', // Light red background
-        color: 'white',
-        '&:hover': {
-          backgroundColor: 'red', // Darker red on hover
-        },
-        padding: '10px 20px',
-        fontWeight: 'bold',
-      }}
+    <button
+      className="bad-button"
       onClick={handleDelete} // Attach the handler
     >
       Delete Account
-    </Button>
+    </button>
   );
 };
 

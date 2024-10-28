@@ -79,7 +79,7 @@ export const fullpageContainer: SxProps<Theme> = {
 
 export const newFullpageContainer: SxProps<Theme> = {
   minWidth: '600px',
-  maxWidth: '1000px',
+  maxWidth: '900px',
   minHeight: '90vh',
   height: 'auto'
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public interface MediaRepository extends JpaRepository<MediaEntity, Long> {
 
     List<MediaEntity> findByMediaTitle(String mediaTitle);
+    List<MediaEntity> findByMediaTitleAndAuthor(String mediaTitle, String author);
 
     List<MediaEntity> findByMediaDurationLessThan(int duration);
 

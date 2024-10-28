@@ -51,26 +51,26 @@ function ModelView() {
       openBookRef.current.rotation.x = Math.PI / 10 + mouse.y * Math.PI * rotationMult;
       openBookRef.current.rotation.z = Math.PI / 9 + mouse.x * Math.PI * rotationMult;
 
-      openBookRef.current.position.x = 1 + mouse.x * positionMult;
-      openBookRef.current.position.y = -1.7 + mouse.y * positionMult;
+      openBookRef.current.position.x = 1.1 + mouse.x * positionMult;
+      openBookRef.current.position.y = -0.6 + mouse.y * positionMult;
     }
     if (controllerRef.current) {
       controllerRef.current.rotation.x = Math.PI / 2.7 + mouse.y * Math.PI * rotationMult;
       controllerRef.current.rotation.y = mouse.x * Math.PI * rotationMult;
 
       controllerRef.current.position.x = .5 + mouse.x * positionMult;
-      controllerRef.current.position.y = .7 + mouse.y * positionMult;
+      controllerRef.current.position.y = 1 + mouse.y * positionMult;
     }
     if (slateRef.current) {
       slateRef.current.rotation.x = Math.PI / 2 - mouse.y * Math.PI * rotationMult;
       slateRef.current.rotation.z = Math.PI / 24 + mouse.x * Math.PI * rotationMult;
 
       slateRef.current.position.x = -1 + mouse.x * positionMult;
-      slateRef.current.position.y = -1 + mouse.y * positionMult;
+      slateRef.current.position.y = -0.6 + mouse.y * positionMult;
     }
     if (trackRef.current) {
       trackRef.current.rotation.x = -mouse.y * Math.PI * rotationMult;
-      trackRef.current.position.y = 1 + height/2000;
+      trackRef.current.position.y = 1 + height/1100;
     }
   });
 
@@ -96,7 +96,7 @@ function ModelView() {
     <primitive
       object={book.scene}
       ref={openBookRef}
-      position={[1, -1.7, -3]}
+      position={[1.3, -1.1, -3]}
       rotation-x="90"
       scale=".8"
     />
@@ -120,7 +120,7 @@ function ModelView() {
       </Text3D>
     </group>
 
-    <group ref={booksRef} position={[2, -1.8, -2]} scale={.5}>
+    <group ref={booksRef} position={[1.3, -1, -2]} scale={.5}>
       <Text3D
         material={matcapMat}
         position={[-1.7, 0, 0]}
@@ -140,7 +140,7 @@ function ModelView() {
       </Text3D>
     </group>
 
-    <group ref={vgRef} position={[1.6, .7, -2]} scale={.5}>
+    <group ref={vgRef} position={[1.6, 1, -2]} scale={.5}>
       <Text3D
         material={matcapMat}
         position={[-1.45, 0, 0]}

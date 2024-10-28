@@ -24,6 +24,19 @@ export async function fetchMedia(media: any, setMedia: any, setLabels: any, setI
     });
 }
 
+export async function fetchMediaList(mediaIds: any, setMediaList: any) {
+  // let mediaId = parseInt(idString);
+  api.media.fetchMediaList(mediaIds)
+    .then((response) => {
+      console.log(response.data);
+      setMediaList(response.data);
+    })
+    .catch((error) => {
+      setMediaList([]);
+      console.log(error)
+    })
+}
+
 export const getLabels = (mediaType: MediaType): MediaLabel | null => {
   if (mediaType === MediaType.BOOK) {
     const mediaLabel: MediaLabel = {

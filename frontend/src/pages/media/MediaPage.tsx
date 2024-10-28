@@ -12,6 +12,8 @@ import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
 import { useLocation } from 'react-router-dom';
 import CreateReviewButton from "../reviews/CreateReviewButton";
+import {useAuth0} from "@auth0/auth0-react"
+import Button from "../../components/button/Button"
 
 
 function MediaPage() {
@@ -24,6 +26,7 @@ function MediaPage() {
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const location = useLocation(); // Accessing the state passed from the navbar
+  const {user, isAuthenticated, loginWithRedirect} = useAuth0();
 
 
   useEffect(() => {
@@ -59,17 +62,30 @@ function MediaPage() {
                 <StatusDropdown
                   isOpen={statusDropdownOpen}
                   setOpen={setStatusDropdownOpen}
-                  handleClick={handleStatusClick}
+                  handleClick={() => {
+                    if (isAuthenticated) {
+                      handleStatusClick(null);
+                    } else {
+                      loginWithRedirect();
+                    }
+                  }}
                 />
                 <ActionDropdown
                   isOpen={actionDropdownOpen}
                   setOpen={setActionDropdownOpen}
-                  handleClick={handleActionClick} />
+                  handleClick={() => {
+                    if (isAuthenticated) {
+                      handleActionClick(null);
+                    } else {
+                      loginWithRedirect();
+                    }
+                  }} />
                 <h6 style={{ ...rateField }}>Rate</h6>
-                <RatingStars
+                {isAuthenticated ? <RatingStars
                   value={rating}
                   setValue={(event: any) => handleRatingChange(event.target.value)}
-                />
+                /> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
+                
               </Container>
               <Divider orientation="vertical" sx={{ height: 'auto' }} />
               <Container sx={{ ...rightColumn }}>

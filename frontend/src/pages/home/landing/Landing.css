@@ -1,3 +1,8 @@
+.landing-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .gradient {
   position: absolute;
   left: 12.5%;
@@ -48,7 +53,8 @@
 }
 
 .left-text,
-.right-text {
+.right-text,
+.make-search {
   font-weight: 1000;
   font-size: 40px;
   background: -webkit-linear-gradient(#272727, #8e8e8e);
@@ -61,11 +67,31 @@
 }
 
 .fiber {
-  max-height: 90vh;
   z-index: -1;
 }
 
 .signUp {
   position: relative;
   z-index: 2;
+}
+
+.landed-100 {
+  min-height: 100vh;
+}
+
+.landing-page hr {
+  margin: 0;
+}
+
+.make-search {
+  font-size: 30px;
+}
+
+.search-box {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.s-and-e {
+  padding-bottom: 5em;
 }

@@ -6,8 +6,15 @@ import Home from './pages/home/Home';
 import ExampleList from './example/ExampleList';
 import SearchPage from './pages/search/SearchPage'
 import MediaPage from './pages/media/MediaPage'
+import EditProfile from './pages/settings/profile/EditProfile';
+import EditAccount from './pages/settings/account/EditAccount';
 import { Container } from '@mui/material';
 import Navbar from "./components/navbar/Navbar"
+import ProtectedRoute from './ProtectedRoute';
+import UploadPage from './pages/upload/UploadPage';
+import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
+import ContentPage from './pages/accounts/ContentPage/ContentPage';
+import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -15,16 +22,28 @@ function App() {
     <Router>
       <Navbar />
       <div className="pages">
-      <Container sx={{ mt: 5 }}>
-        <Routes>
-          {/* Define the route for /account */}
-          <Route path="/" element={<Home />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/examples" element={<ExampleList />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/media/:title" element={<MediaPage />} />
-        </Routes>
-      </Container>
+        <Container sx={{ mt: 5 }}>
+          <Routes>
+            {/* Define the route for /account */}
+            <Route path="/" element={<Home />} />
+            <Route path="/u/:id" element={<AccountPage />} />
+            <Route path="/u/:id/friends" element={<FriendsPage />} />
+            <Route path="/u/:id/content/*" element={<ContentPage />} />
+            <Route path="/u/:id/activity/*" element={<ActivityPage />} />
+            <Route path="/examples" element={<ExampleList />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/settings">
+              {/* Default route to render EditProfile */}
+              <Route index element={<ProtectedRoute component={EditProfile} />} />
+
+              {/* Other nested routes */}
+              <Route path="profile" element={<ProtectedRoute component={EditProfile} />} />
+              <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
+            </Route>
+            <Route path="/media/:title" element={<MediaPage />} />
+            <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />
+          </Routes>
+        </Container>
       </div>
     </Router>
   )

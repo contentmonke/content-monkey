@@ -1,63 +1,48 @@
 import "./Navbar.css";
 
-import InputBase from '@mui/material/InputBase';
-import { styled, alpha } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
+import SearchBox from '../../components/SeachBox'
 import { useAuth0 } from '@auth0/auth0-react';
-import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.1),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.black, 0.15),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 1
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '30ch',
-    },
-  },
-}));
+import { Avatar } from '@mui/material';
+import DropdownMenu from './av-dropdown-menu/DropdownMenu';
+import axios from 'axios';
 
 const Navbar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
   const [searchQuery, setSearchQuery] = useState('');
+  const isHome = location.pathname === '/'
 
-  //const mediaType = MediaType.BOOK;
-  // const [results, setResults] = useState<VolumeInfo[]>([]);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState("");
+  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
 
+  useEffect(() => {
+    async function setData() {
+      try {
+        // YOU CAN GET RID OF THIS CODE ONCE EVERYONE HAS A DEFAUL PROFILE PIC
+        const userRes = await axios.post('http://localhost:8080/api/user/', user);
+        await axios.post('http://localhost:8080/api/user/setPicture', null,
+          {
+            params: {
+              id: userRes.data[0].id,
+              picture: user.picture
+            }
+          }
+        );
+        setLoggedInUserId(userRes.data[0].id)
+      } catch (error) {
+        console.error('Error setting data', error);
+      }
+    }
+
+    if (isAuthenticated && user) {
+      setData();
+    }
+
+  }, [isAuthenticated])
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -69,7 +54,6 @@ const Navbar = () => {
         searchQuery: searchQuery,
       },
     });
-    setSearchQuery("");
   }
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -78,50 +62,42 @@ const Navbar = () => {
     }
   };
 
+  const toggleAvatarDropdown = () => {
+    setAvatarDropdownOpen(!avatarDropdownOpen);
+  };
 
-  return isAuthenticated && (
+  return (!isHome || isAuthenticated) && (
     <>
       <div className="bar">
         <nav>
           <ul className="desktop-nav">
-            <li>
+            <li className="nav-logo-li">
               <a href="/" className="nav-logo">
               </a>
             </li>
-            <li>
-              <Search>
-                <SearchIconWrapper onClick={handleSearchSubmit}>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search content"
-                  inputProps={{ 'aria-label': 'search' }}
-                  value={searchQuery}
-                  onChange={handleSearchInputChange}
-                  onKeyDown={handleSearchSubmitOnEnter}
-                />
-              </Search>
+            <li className="nav-search-li">
+              <SearchBox
+                searchQuery={searchQuery}
+                placeholder='Search content'
+                onSearchInputChange={handleSearchInputChange}
+                onSearchSubmit={handleSearchSubmit}
+                onSearchSubmitOnEnter={handleSearchSubmitOnEnter}
+              />
             </li>
-            <li>
-              Item
+            <li onClick={() => navigate(`/u/${loggedInUserId}/content`)} className="nav-item-li nav-click">
+              Content
             </li>
-            <li>
-              Item
+            <li onClick={() => navigate(`/u/${loggedInUserId}/friends`)} className="nav-item-li nav-click">
+              Friends
             </li>
-            <li>
-              Item
-            </li>
-            <li>
-              Item
-            </li>
-            <li>
-              Item
-            </li>
-            <li>
-              Item
-            </li>
-            <li>
-              <AccountCircleIcon style={{ cursor: 'pointer' }} onClick={() => navigate('/account')} />
+            <li className="nav-avatar-li">
+              {user ? (<>
+                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
+                {avatarDropdownOpen && <DropdownMenu userId={loggedInUserId} closeDropdown={() => setAvatarDropdownOpen(false)} />}
+              </>
+              ) :
+                (<AccountCircleIcon />)}
+
             </li>
           </ul>
         </nav>
