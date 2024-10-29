@@ -51,3 +51,7 @@
 .nav-avatar-li {
   position: relative; /* Make this relative for positioning the dropdown */
 }
+
+.nav-click {
+  cursor: pointer;
+}
