@@ -43,6 +43,34 @@ export const api = {
       );
     }
   },
+  searchMovie: {
+    async fetchMoviesSearch(title: any) {
+      return (
+        await axios.get(`${URL}/search/movie/${title}`)
+      )
+    }
+  },
+  searchTV: {
+    async fetchTVSearch(title: any) {
+      return (
+        await axios.get(`${URL}/search/tv/${title}`)
+      )
+    }
+  },
+  searchVideoGames: {
+    async fetchVideoGameSearch(title: any) {
+      return (
+        await axios.get(`${URL}/search/videoGame/${title}`)
+      )
+    }
+  },
+  searchAll: {
+    async fetchAllSearch(title: any) {
+      return (
+        await axios.get(`${URL}/search/any/${title}`)
+      )
+    }
+  },
 
   // Media API Routes
   media: {
@@ -50,10 +78,10 @@ export const api = {
       const mediaEntity = {
         mediaTitle: media.title,
         mediaDuration: media.pageCount,
-        author: (media.authors === null ? "" : media.authors[0]),
+        author: media.authors ? media.authors[0] : "",
         description: media.description,
         thumbnail: media.thumbnail,
-        mediaType: "Book"
+        mediaType: media.mediaType
       }
       return (
         await axios.post(`${URL}/media/`, mediaEntity)

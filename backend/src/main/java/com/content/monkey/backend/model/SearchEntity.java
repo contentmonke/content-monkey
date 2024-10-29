@@ -14,7 +14,25 @@ public class SearchEntity {
     private String thumbnail;
     private String pageCount;
     private String description;
+    private String mediaType;
 
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    private String releaseDate;
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
 
     // Getters and Setters
     public String getTitle() {

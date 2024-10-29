@@ -153,7 +153,7 @@ function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params
                     <Typography color="error">Please enter a valid rating and description</Typography>
                   }
                   <FormControlLabel
-                    label={`I have started this ${media.mediaType.toLowerCase()}`}
+                    label={`I have started this ${media.mediaType?.toLowerCase()}`}
                     control={
                       <Checkbox
                         checked={startedMedia}
