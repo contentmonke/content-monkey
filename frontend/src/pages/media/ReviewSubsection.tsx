@@ -7,19 +7,21 @@ import ModeCommentRoundedIcon from '@mui/icons-material/ModeCommentRounded';
 import { useState } from "react";
 import Comments from "./Comments";
 import { DateTime } from 'luxon';
+import { formatDate } from "../upload/upload-utils";
 
 type params = {
   reviews: ReviewDTO[];
+  setNeedsUpdate: any;
 }
 
-function ReviewSubsection({ reviews }: params) {
+function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
 
-  const [openComments, setOpenComments] = useState([]);
-  const [commentPage, setCommentPage] = useState(1);
+  // const [openComments, setOpenComments] = useState([]);
+  const [openComments, setOpenComments] = useState(null);
 
   const handleCommentClick = (reviewIndex) => {
-    setOpenComments(indices => [...indices, reviewIndex]);
-    setCommentPage(commentPage + 1);
+    // setOpenComments(indices => [...indices, reviewIndex]);
+    setOpenComments(reviewIndex)
   }
 
   return (
@@ -41,8 +43,8 @@ function ReviewSubsection({ reviews }: params) {
                   precision={0.5}
                   readOnly
                 />
-                {/* <div className="text">{DateTime.fromJSDate(new Date(review.dateCreated), { zone: 'utc' }).toRelative()}</div> */}
-                <div className="text">{DateTime.fromJSDate(new Date(review.dateCreated).getHours() - 4).toRelative()}</div>
+                {/* <div className="text">{DateTime.fromJSDate(new Date(review.dateCreated).getHours() - 4).toRelative(}</div> */}
+                <div className="text">{formatDate(review.dateCreated)}</div>
               </div>
               <div className="text">{review.body}</div>
               <div className="interactive-container">
@@ -63,8 +65,10 @@ function ReviewSubsection({ reviews }: params) {
               </div>
               <Comments
                 commentIds={review.commentIds}
-                open={openComments.includes(index)}
+                // open={openComments.includes(index)}
+                open={openComments === index}
                 reviewId={review.id}
+                setNeedsUpdate={setNeedsUpdate}
               />
             </Container>
           </Container>

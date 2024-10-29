@@ -2,6 +2,7 @@ import { Container, Typography } from "@mui/material";
 import { api } from "../../api/requests";
 import { Media, MediaLabel, MediaType } from "../../models/Models";
 import { fieldContent, fieldLabel, resultImage, resultImageContainer } from "../../style/review-page";
+import { DateTime } from 'luxon';
 
 export async function fetchMedia(media: any, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
   setIsLoading(true);
@@ -37,12 +38,21 @@ export async function fetchMediaList(mediaIds: any, setMediaList: any) {
     })
 }
 
-export async function fetchComments(commentIds: any, setComments: any, setIsLoading: any) {
+export async function fetchComments(commentIds: any, pageNumber: any, setComments: any, setIsLoading: any) {
   setIsLoading(true);
-  api.comments.getComments(commentIds)
+  api.comments.getComments(commentIds, pageNumber, 10)
     .then((response) => {
       console.log(response.data);
-      setComments(response.data);
+      setComments((prevItems) => {
+        const currentItems = prevItems || [];
+        const newItems = []
+        response.data.forEach(element => {
+          if (!currentItems.some(item => item.id === element.id)) {
+            newItems.push(element);
+          }
+        });
+        return [...currentItems, ...newItems]
+      });
     })
     .catch((error) => {
       setComments([]);
@@ -53,7 +63,7 @@ export async function fetchComments(commentIds: any, setComments: any, setIsLoad
     });
 }
 
-export async function createComment(comment: any, setIsLoading: any, setIsSuccess: any, setIsError: any) {
+export async function createComment(comment: any, setBody: any, setIsLoading: any, setIsSuccess: any, setIsError: any, setNeedsUpdate: any) {
   setIsLoading(true);
   api.comments.createComment(comment)
     .then((response) => {
@@ -66,6 +76,8 @@ export async function createComment(comment: any, setIsLoading: any, setIsSucces
     })
     .finally(() => {
       setIsLoading(false)
+      setNeedsUpdate(true)
+      setBody("")
     });
 }
 
@@ -154,4 +166,10 @@ export function handleMediaFields(mediaType: string, media: Media) {
   }
 
   return <></>
+}
+
+export function getRelativeDateString(date: Date) {
+  // convert UTC to LocalTime
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return DateTime.fromJSDate(localDate).toRelative()
 }

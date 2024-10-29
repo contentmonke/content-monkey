@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewEntityDTO {
+public class ReviewEntityDTO implements Comparable<ReviewEntityDTO>{
     private Long id;
     private Long userId;
     private String username;
@@ -51,6 +51,11 @@ public class ReviewEntityDTO {
                 reviewEntity.getStartDate(),
                 reviewEntity.getEndDate()
         );
+    }
+
+    @Override
+    public int compareTo(ReviewEntityDTO other) {
+        return this.dateCreated.compareTo(other.dateCreated);
     }
 
     @Override

@@ -1,12 +1,16 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.model.CommentEntity;
+import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.CommentEntityDTO;
 import com.content.monkey.backend.repository.CommentRepository;
 import com.content.monkey.backend.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.stream.events.Comment;
@@ -47,10 +51,13 @@ public class CommentService {
         return savedComment;
     }
 
-    public List<CommentEntityDTO> getComments(List<Long> commentIds) {
+    public List<CommentEntityDTO> getComments(List<Long> commentIds, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
         try {
             List<CommentEntityDTO> commentEntityDTOS = new ArrayList<>();
-            List<CommentEntity> commentEntities = commentRepository.findAllById(commentIds);
+            Page<CommentEntity> pageResult = commentRepository.findAllByIdWithPagination(commentIds, page);
+            List<CommentEntity> commentEntities = pageResult.getContent();
+
             for (CommentEntity entity: commentEntities ) {
                 UserEntity user = userService.getUser(entity.getUserId());
                 commentEntityDTOS.add(convertCommentEntityToDTO(entity, user.getName()));

@@ -28,8 +28,10 @@ public class CommentController {
     }
 
     @PostMapping("/getComments")
-    public ResponseEntity<List<CommentEntityDTO>> getComments(@RequestBody List<Long> commentIds) {
-        List<CommentEntityDTO> commentEntities = commentService.getComments(commentIds);
+    public ResponseEntity<List<CommentEntityDTO>> getComments(@RequestBody List<Long> commentIds,
+                                                              @RequestParam(defaultValue = "0") int pageNumber,
+                                                              @RequestParam(defaultValue = "10") int pageSize) {
+        List<CommentEntityDTO> commentEntities = commentService.getComments(commentIds, pageNumber, pageSize);
         return ResponseEntity.ok().body(commentEntities);
     }
 

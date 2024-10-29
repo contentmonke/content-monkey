@@ -50,7 +50,7 @@ export const api = {
       const mediaEntity = {
         mediaTitle: media.title,
         mediaDuration: media.pageCount,
-        author: media.authors[0],
+        author: (media.authors === null ? "" : media.authors[0]),
         description: media.description,
         thumbnail: media.thumbnail,
         mediaType: "Book"
@@ -86,9 +86,16 @@ export const api = {
       );
     },
 
-    async getComments(commentIds: any) {
+    async getComments(commentIds: any, pageNumber: any, pageSize: any) {
       return (
-        await axios.post(`${URL}/comments/getComments`, commentIds)
+        await axios.post(`${URL}/comments/getComments`, commentIds,
+          {
+            params: {
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+            }
+
+          })
       );
     }
   }

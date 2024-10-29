@@ -2,32 +2,35 @@ import { AccountCircle, ThumbDown, ThumbUp } from "@mui/icons-material";
 import { Button, Container, Divider, IconButton, Rating } from "@mui/material";
 import { reviewDetail } from "../../style/media-page";
 import { useEffect, useState } from "react";
-import { createComment, fetchComments } from "./media-utils";
+import { fetchComments, getRelativeDateString } from "./media-utils";
 import { Comment } from "../../models/Models";
 import ModeCommentRoundedIcon from '@mui/icons-material/ModeCommentRounded';
-import { DateTime } from 'luxon';
 import CreateComment from "./CreateComment";
-import dayjs from "dayjs";
 import SuccessAlert from "../../components/SuccessAlert";
 import ErrorAlert from "../../components/ErrorAlert";
 import { SmallLoading } from "../../components/Loading";
 import { loadUser } from "../reviews/review-utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
-function Comments({ commentIds, open, reviewId }: any) {
+function Comments({ commentIds, open, reviewId, setNeedsUpdate }: any) {
 
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [commentPage, setCommentPage] = useState(0);
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const { user } = useAuth0();
 
+  const handleMoreCommentsClick = () => {
+    setCommentPage(commentPage + 1);
+  }
+
   useEffect(() => {
-    if (open && comments === null) {
-      fetchComments(commentIds, setComments, setIsLoading);
+    if (open) {
+      fetchComments(commentIds, commentPage, setComments, setIsLoading);
     }
-  }, [open])
+  }, [open, commentIds, commentPage])
 
   useEffect(() => {
     if (user?.name === undefined) {
@@ -55,11 +58,8 @@ function Comments({ commentIds, open, reviewId }: any) {
                   <div className="rating-date">
                     <div className="text">{comment.username}</div>
                     <div className="text">
-                      {DateTime.fromJSDate(new Date(comment.dateCreated)).toRelative()}</div>
+                      {getRelativeDateString(new Date(comment.dateCreated))}</div>
                   </div>
-                  {/* <div className="text">
-                      {DateTime.fromJSDate(new Date(comment.dateCreated), { zone: 'utc' }).toRelative()}</div>
-                  </div> */}
                   <div className="text">{comment.body}</div>
                   <div className="interactive-container">
                     <IconButton size={'small'}>
@@ -82,12 +82,25 @@ function Comments({ commentIds, open, reviewId }: any) {
               <Divider />
             </div>
           ))}
+          {comments?.length < commentIds.length &&
+            <div className="comment-title">
+              <div className="line" />
+              <button
+                className="more-comments"
+                onClick={handleMoreCommentsClick}
+              >
+                Show more comments
+              </button>
+              <div className="line" />
+            </div>
+          }
           <CreateComment
-            userId={userData.id}
+            userId={userData?.id}
             reviewId={reviewId}
             setIsLoading={setIsLoading}
             setIsSuccess={setIsSuccess}
             setIsError={setIsError}
+            setNeedsUpdate={setNeedsUpdate}
           />
           {isLoading && <SmallLoading />}
           <SuccessAlert

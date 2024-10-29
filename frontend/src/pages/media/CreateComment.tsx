@@ -1,25 +1,23 @@
 
 import { AccountCircle } from "@mui/icons-material";
 import { createComment } from "./media-utils";
-import dayjs from "dayjs";
 import { useState } from "react";
+import dayjs from "dayjs";
 
-function CreateComment({ userId, reviewId, setIsLoading, setIsSuccess, setIsError }: any) {
+function CreateComment({ userId, reviewId, setIsLoading, setIsSuccess, setIsError, setNeedsUpdate }: any) {
   const [body, setBody] = useState("");
-
 
   const handleCreateComment = () => {
     const comment = {
       userId: userId,
       reviewId: reviewId,
       body: body,
-      dateCreated: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      dateCreated: dayjs(),
       replyIds: [],
       upVotes: 0,
       downVotes: 0
     }
-    // console.log(dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'))
-    createComment(comment, setIsLoading, setIsSuccess, setIsError)
+    createComment(comment, setBody, setIsLoading, setIsSuccess, setIsError, setNeedsUpdate)
   }
 
   return (
