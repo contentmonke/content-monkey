@@ -13,8 +13,13 @@ const bookFields = [
 
 const movieFields = [
   "Title",
-  "Description",
   "Release Date",
+]
+
+const anyFields = [
+  "Title",
+  "Release Date",
+  "Media Type"
 ]
 
 export function handleSearchFields(mediaType: string, searchEntity: any, location = "") {
@@ -97,7 +102,6 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
 
     const fieldValues = [
       searchEntity.title,
-      searchEntity.description,
       searchEntity.releaseDate,
     ];
 
@@ -151,8 +155,8 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
   if (mediaType === MediaType.UNSELECTED) {
     const fieldValues = [
       searchEntity.title,
-      searchEntity.description,
-      searchEntity.releaseDate ? searchEntity.releaseData : searchEntity.publishedDate,
+      searchEntity.releaseDate ? searchEntity.releaseDate : searchEntity.publishedDate,
+      searchEntity.mediaType
     ];
 
     return (
@@ -164,7 +168,7 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
           </img>
         </Container >
         <Container disableGutters sx={{ mt: 1 }}>
-          {movieFields.map((field, index) => (
+          {anyFields.map((field, index) => (
             <Container disableGutters sx={{ display: 'flex', py: py }} key={index}>
               <Container disableGutters sx={{ width: 'auto' }}>
                 <Typography

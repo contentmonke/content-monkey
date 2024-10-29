@@ -65,6 +65,41 @@ public class MediaService {
 
     }
 
+    public MediaEntityDTO getMediaByTitleAndType(String title, String type, int pageNumber, int pageSize) {
+        List<MediaEntity> mediaEntity = mediaRepository.findByMediaTitleAndMediaType(title, type);
+        if (mediaEntity.isEmpty()) {
+            return null;
+        }
+
+        int numReviews = reviewRepository.countByMediaId(mediaEntity.get(0).getId());
+        List<ReviewEntity> reviewEntities = reviewRepository.findAllByMediaId(
+                mediaEntity.get(0).getId(),
+                PageRequest.of(pageNumber, pageSize)
+        );
+        float sumReviews = reviewRepository.getSumRatings(mediaEntity.get(0).getId());
+        float averageRating = (float) Math.round((sumReviews / (float) numReviews) * 2) / 2;
+
+
+        List<ReviewEntityDTO> reviewEntityDTOs = new ArrayList<>();
+        UserEntity user = null;
+
+        for (ReviewEntity entity: reviewEntities) {
+            user = userService.getUser(entity.getUserId());
+            reviewEntityDTOs.add(
+                    ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+            );
+        }
+
+        MediaEntityDTO mediaEntityDTO = MediaEntityDTO.convertMediaEntityToDTO(
+                mediaEntity.get(0),
+                reviewEntityDTOs,
+                numReviews,
+                averageRating);
+
+        return mediaEntityDTO;
+
+    }
+
     public MediaEntity getMediaByTitleAndAuthor(String title, String author, int pageNumber, int pageSize) {
         List<MediaEntity> mediaEntities = mediaRepository.findByMediaTitleAndAuthor(title, author);
         if (mediaEntities.isEmpty()) {
@@ -114,7 +149,7 @@ public class MediaService {
                 .averageRating(0)
                 .totalRatings(0)
                 .thumbnail(searchEntity.getThumbnail())
-                .mediaType("Book")
+                .mediaType(searchEntity.getMediaType())
                 .build();
         return mediaEntity;
     }

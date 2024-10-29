@@ -51,6 +51,7 @@ public class SearchService {
                     entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());
                     entity.setPageCount(item.getVolumeInfo().getPageCount());
                     entity.setDescription(item.getVolumeInfo().getDescription());
+                    entity.setMediaType("Book");
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -80,6 +81,7 @@ public class SearchService {
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
                     entity.setThumbnail("https://image.tmdb.org/t/p/w500" + item.getPosterPath());
+                    entity.setMediaType("Movie");
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -109,6 +111,7 @@ public class SearchService {
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
                     entity.setThumbnail("https://image.tmdb.org/t/p/w500" + item.getPosterPath());
+                    entity.setMediaType("TV Show");
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -139,6 +142,7 @@ public class SearchService {
                     entity.setReleaseDate(item.getReleaseDate());
                     entity.setDescription(item.getOverview());
                     entity.setThumbnail(item.getPosterPath().getThumbUrl());
+                    entity.setMediaType("Video Game");
                     return entity;
                 })
                 .collect(Collectors.toList());
@@ -169,6 +173,7 @@ public class SearchService {
                     entity.setThumbnail(item.getVolumeInfo().getImageLinks().getThumbnail());
                     entity.setPageCount(item.getVolumeInfo().getPageCount());
                     entity.setDescription(item.getVolumeInfo().getDescription());
+                    entity.setMediaType("Book");
                     return entity;
                 })
                 .toList();

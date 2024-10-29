@@ -40,7 +40,7 @@ function App() {
               <Route path="profile" element={<ProtectedRoute component={EditProfile} />} />
               <Route path="account" element={<ProtectedRoute component={EditAccount} />} />
             </Route>
-            <Route path="/media/:title" element={<MediaPage />} />
+            <Route path="/media/:title/:type" element={<MediaPage />} />
             <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />
           </Routes>
         </Container>

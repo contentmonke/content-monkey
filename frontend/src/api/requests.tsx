@@ -70,14 +70,14 @@ export const api = {
     }
   },
   media: {
-    async fetchMedia(media: any, mediaType: any) {
+    async fetchMedia(media: any) {
       const mediaEntity = {
         mediaTitle: media.title,
         mediaDuration: media.pageCount,
         author: media.authors ? media.authors[0] : null,
         description: media.description,
         thumbnail: media.thumbnail,
-        mediaType: mediaType
+        mediaType: media.mediaType
       }
       return (
         await axios.post(`${URL}/media/`, mediaEntity)

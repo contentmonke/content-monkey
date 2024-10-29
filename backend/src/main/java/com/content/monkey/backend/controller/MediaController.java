@@ -32,7 +32,7 @@ public class MediaController {
     public MediaEntityDTO getMediaByTitle(@RequestBody MediaEntity mediaEntity,
                                           @RequestParam(defaultValue = "0") int pageNumber,
                                           @RequestParam(defaultValue = "10") int pageSize) {
-        MediaEntityDTO result = mediaService.getMediaByTitle(mediaEntity.getMediaTitle(), pageNumber, pageSize);
+        MediaEntityDTO result = mediaService.getMediaByTitleAndType(mediaEntity.getMediaTitle(), mediaEntity.getMediaType(), pageNumber, pageSize);
         if (result == null) {
             mediaEntity.setTotalRatings(0);
             mediaEntity.setAverageRating(0);
