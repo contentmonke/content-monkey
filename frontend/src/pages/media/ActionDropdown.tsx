@@ -41,15 +41,16 @@ function ActionDropdown({ isOpen, setOpen, handleClick }: any) {
         ref={anchorRef}
       >
         <Button
-          sx={{ flexGrow: 1 }}
+          sx={{ flexGrow: 1, borderColor: "#31628F", color: "#31628F" }}
           onClick={handleClick}
         >{options[selectedIndex]}</Button>
         <Button
           size="small"
+          sx={{ borderColor: "#31628F", color: "#31628F" }}
           aria-controls={isOpen ? 'split-button-menu' : undefined}
           onClick={handleDropdown}
         >
-          <ArrowDropDownIcon />
+          <ArrowDropDownIcon color={"#31628F"} />
         </Button>
       </ButtonGroup>
       <Popper
