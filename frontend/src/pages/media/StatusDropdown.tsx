@@ -70,6 +70,11 @@ function StatusDropdown({ isOpen, setOpen, handleClick }: any) {
                   key={option}
                   selected={index === selectedIndex}
                   onClick={() => handleMenuItemClick(index)}
+                  sx={{
+                    bgcolor: index === selectedIndex ? '#d5e5f3' : 'inherit',
+                    '&.Mui-selected': { bgcolor: '#d5e5f3' },
+                    '&.Mui-selected:hover': { bgcolor: '#d5e5f3' },
+                  }}
                 >
                   {option}
                 </MenuItem>
