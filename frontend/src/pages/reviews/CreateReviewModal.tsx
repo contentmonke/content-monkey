@@ -19,10 +19,11 @@ import { ModalHeader } from "./ModalHeader";
 type params = {
   open: boolean,
   setModalOpen: any,
-  media: Media
+  media: Media,
+  setNeedsUpdate: any
 }
 
-function CreateReviewModal({ open, setModalOpen, media }: params) {
+function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params) {
   const [body, setBody] = useState("");
   const [rating, setRating] = useState(0);
   const [startedMedia, setStartedMedia] = useState(false);
@@ -98,6 +99,9 @@ function CreateReviewModal({ open, setModalOpen, media }: params) {
       .catch((error) => {
         console.error(error);
         setIsError(true);
+      })
+      .finally(() => {
+        setNeedsUpdate(true)
       })
   }
 

@@ -11,10 +11,13 @@ import com.content.monkey.backend.repository.ReviewRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,11 +52,17 @@ public class MediaService {
         UserEntity user = null;
 
         for (ReviewEntity entity: reviewEntities) {
-            user = userService.getUser(entity.getUserId());
-            reviewEntityDTOs.add(
-                    ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
-            );
+            try {
+                user = userService.getUser(entity.getUserId());
+                reviewEntityDTOs.add(
+                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+                );
+            } catch(Exception e) {
+                System.out.println("User " + entity.getUserId() + " is not found, skipping this review");
+            }
         }
+
+        Collections.sort(reviewEntityDTOs);
 
         MediaEntityDTO mediaEntityDTO = MediaEntityDTO.convertMediaEntityToDTO(
                 mediaEntity.get(0),
@@ -84,11 +93,17 @@ public class MediaService {
         UserEntity user = null;
 
         for (ReviewEntity entity: reviewEntities) {
-            user = userService.getUser(entity.getUserId());
-            reviewEntityDTOs.add(
-                    ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
-            );
+            try {
+                user = userService.getUser(entity.getUserId());
+                reviewEntityDTOs.add(
+                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+                );
+            } catch(Exception e) {
+                System.out.println("User " + entity.getUserId() + " is not found, skipping this review");
+            }
         }
+
+        Collections.sort(reviewEntityDTOs);
 
         MediaEntityDTO mediaEntityDTO = MediaEntityDTO.convertMediaEntityToDTO(
                 mediaEntity.get(0),

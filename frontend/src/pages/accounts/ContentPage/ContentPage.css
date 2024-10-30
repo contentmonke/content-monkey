@@ -32,8 +32,10 @@
 
 /* Change the active tab color to #31628F */
 .content-page-tab-item.active {
-  color: #31628F; /* Active tab text color */
-  border-bottom: 2px solid #31628F; /* Active tab bottom border color */
+  color: #31628F;
+  /* Active tab text color */
+  border-bottom: 2px solid #31628F;
+  /* Active tab bottom border color */
 }
 
 .content-page-tab-content {
