@@ -17,12 +17,6 @@ interface ReviewEntity {
 const ContentPage: React.FC = () => {
   const { id } = useParams(); // Get the user ID from the URL
   const [allContent, setAllContent] = useState([]);
-  const [favorites, setFavorites] = useState([]);
-  const [tvShows, setTvShows] = useState([]);
-  const [movies, setMovies] = useState([]);
-  const [videoGames, setVideoGames] = useState([]);
-  const [books, setBooks] = useState([]);
-  const [expandedReviewIds, setExpandedReviewIds] = useState<Set<number>>(new Set());
   const location = useLocation();
 
   async function fetchData() {
@@ -84,31 +78,19 @@ const ContentPage: React.FC = () => {
 
         <div className="content-page-tab-content">
           <Routes>
-          <Route
+            <Route
               path="/"
               element={<ListContent reviews={allContent} />}
             />
-            <Route path="movies" element={
-              <ul className="content-page-contentlist">
-                {movies.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
-            <Route path="videogames" element={
-              <ul className="content-page-contentlist">
-                {videoGames.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
-            <Route path="books" element={
-              <ul className="content-page-contentlist">
-                {books.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
+            <Route path="movies"
+              element={<ListContent reviews={allContent} type="Movie" />}
+            />
+            <Route path="videogames"
+              element={<ListContent reviews={allContent} type="Video Game"/>}
+            />
+            <Route path="books"
+              element={<ListContent reviews={allContent} type="Book" />}
+            />
           </Routes>
         </div>
       </div>

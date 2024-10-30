@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateTime } from 'luxon';
 import Rating from '@mui/material/Rating';
 import { IconButton, Typography, Container } from '@mui/material';
@@ -27,6 +27,10 @@ interface ListContentProps {
 const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
   const [expandedReviewIds, setExpandedReviewIds] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(1); // State to track the current page
+
+  useEffect(() => {
+    setPage(1);
+  }, [type]);
 
   const toggleExpansion = (reviewId: number) => {
     setExpandedReviewIds((prev) => {

@@ -21,9 +21,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private CommentService commentService;  // Use CommentService instead of CommentRepository
-
     public UserEntity getUser(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException());

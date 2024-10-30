@@ -56,6 +56,11 @@ const AccountPage: React.FC = () => {
             };
           })
         );
+
+        const sortedReviews = reviewsWithMediaTitles.sort(
+          (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+
         // console.log(userResponse);
         setEmail(userResponse.data.email);
         setName(userResponse.data.name.split('@')[0])
@@ -68,7 +73,7 @@ const AccountPage: React.FC = () => {
         if (userResponse.data.genres != null) {
           setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
         }
-        setReviews(reviewsWithMediaTitles);
+        setReviews(sortedReviews.slice(0, 3));
       } catch (error) {
         console.error('Error fetching data', error);
       }
@@ -154,24 +159,26 @@ const AccountPage: React.FC = () => {
           <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
           <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
           <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
-          <li onClick={() => navigate('/upload')}>Upload Goodreads Data</li>
-      </ul>
-    </div>
-
-    {/* Right Main Content */}
-    <div className="main-content">
-      <div className="favorite-content">
-        <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
-        <hr className="main-divider" />
-        <div className="content-grid">
-          {favoriteContent.map(item => (
-            <div key={item.id} className="content-item">
-              <img src={item.imageUrl} alt={item.title} />
-              <p>{item.title}</p>
-            </div>
-          ))}
-        </div>
+          {(isAuthenticated && user && user.email == email) ?
+            <li onClick={() => navigate('/upload')}>Upload Goodreads Data</li> : (<></>)
+          }
+        </ul>
       </div>
+
+      {/* Right Main Content */}
+      <div className="main-content">
+        <div className="favorite-content">
+          <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
+          <hr className="main-divider" />
+          <div className="content-grid">
+            {favoriteContent.map(item => (
+              <div key={item.id} className="content-item">
+                <img src={item.imageUrl} alt={item.title} />
+                <p>{item.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="recent-reviews">
           <p className="fave-titles" onClick={() => navigate(`/u/${id}/activity`)}>Recent Reviews</p>
@@ -210,29 +217,29 @@ const AccountPage: React.FC = () => {
                     })()}
                   </div>
 
-                {/* Other content like review title and upvotes/downvotes */}
-                <p className="review-title">{review.mediaTitle}</p>
+                  {/* Other content like review title and upvotes/downvotes */}
+                  <p className="review-title">{review.mediaTitle}</p>
 
-                <Container disableGutters>
-                  <IconButton size={'small'}>
-                    <ThumbUp sx={{ width: 15 }} />
-                  </IconButton>
-                  <Typography variant="caption">{review.upVotes}</Typography>
-                  <IconButton>
-                    <ThumbDown sx={{ width: 15 }} />
-                  </IconButton>
-                  <Typography variant="caption">{review.downVotes}</Typography>
-                </Container>
-              </li>
+                  <Container disableGutters>
+                    <IconButton size={'small'}>
+                      <ThumbUp sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{review.upVotes}</Typography>
+                    <IconButton>
+                      <ThumbDown sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{review.downVotes}</Typography>
+                  </Container>
+                </li>
 
-              {/* Add a Divider between each review */}
-              {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
-            </div>
-          ))}
-        </ul>
+                {/* Add a Divider between each review */}
+                {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+              </div>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
-  </div >
+    </div >
   </>
 };
 
