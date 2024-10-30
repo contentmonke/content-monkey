@@ -112,3 +112,25 @@
   transition: .2s ease-in-out;
   border-radius: 3px;
 }
+
+.create-comment-button {
+  z-index: 2;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: var(--button-color, #31628F);
+  width: var(--button-width, 200px);
+  /* Default to 200px if not set */
+  height: 45px;
+  border: 1px solid #D1D1D1;
+  border-radius: 3px;
+  transition: .2s ease-in-out;
+  margin: 0;
+  padding: 0;
+  color: var(--button-textcolor, #ffffff);
+}
+
+.create-comment-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  opacity: 0.6;
+}

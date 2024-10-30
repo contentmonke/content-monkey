@@ -84,6 +84,7 @@ function UploadPage() {
               <li>Navigate to goodreads.com and click "My Books" on the header</li>
               <li>On the left menu bar, there is a section called "Tools" - click "Import and export"</li>
               <li>Click the "Export Library" button to download your csv</li>
+              <li>Click on the link provided below the "Export Library" button</li>
               <li>Upload this csv using the button to the right</li>
             </ul>
           </div>

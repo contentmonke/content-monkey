@@ -93,11 +93,17 @@ public class MediaService {
         UserEntity user = null;
 
         for (ReviewEntity entity: reviewEntities) {
-            user = userService.getUser(entity.getUserId());
-            reviewEntityDTOs.add(
-                    ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
-            );
+            try {
+                user = userService.getUser(entity.getUserId());
+                reviewEntityDTOs.add(
+                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+                );
+            } catch(Exception e) {
+                System.out.println("User " + entity.getUserId() + " is not found, skipping this review");
+            }
         }
+
+        Collections.sort(reviewEntityDTOs);
 
         MediaEntityDTO mediaEntityDTO = MediaEntityDTO.convertMediaEntityToDTO(
                 mediaEntity.get(0),

@@ -37,8 +37,9 @@ function CreateComment({ userId, reviewId, setIsLoading, setIsSuccess, setIsErro
       </div >
       <div className="button-container">
         <button
-          className={'button'}
+          className='create-comment-button'
           style={{ width: '100px', marginLeft: '10px', marginRight: '10px', height: '30px' }}
+          disabled={body === ""}
           onClick={() => handleCreateComment()}
         >
           Create
