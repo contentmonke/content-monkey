@@ -3,6 +3,7 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import org.apache.catalina.User;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -171,4 +172,33 @@ public class UserService {
         }
         return usernames;
     }
+
+/*
+    public List<Object> getUserReviewsAndCommentsChronologically(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Retrieve reviews and comments using the service layer
+        List<ReviewEntity> reviews = reviewService.getReviewsByUserId(userId);
+        List<CommentEntity> comments = commentService.getCommentsByUserId(userId);
+
+        List<Object> combinedList = new ArrayList<>();
+        combinedList.addAll(reviews);
+        combinedList.addAll(comments);
+
+        combinedList.sort((o1, o2) -> {
+            Timestamp date1 = (o1 instanceof ReviewEntity)
+                    ? ((ReviewEntity) o1).getDateCreated()
+                    : ((CommentEntity) o1).getDateCreated();
+            Timestamp date2 = (o2 instanceof ReviewEntity)
+                    ? ((ReviewEntity) o2).getDateCreated()
+                    : ((CommentEntity) o2).getDateCreated();
+
+            return date1.compareTo(date2);
+        });
+
+        return combinedList;
+    } */
 }
