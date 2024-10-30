@@ -1,8 +1,18 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
+import ListContent from './ListContent';
 import './ContentPage.css';
+
+interface ReviewEntity {
+  id: number;
+  body: string;
+  date_created: string;
+  rating: number;
+  upVotes: number;
+  downVotes: number;
+}
 
 const ContentPage: React.FC = () => {
   const { id } = useParams(); // Get the user ID from the URL
@@ -12,26 +22,32 @@ const ContentPage: React.FC = () => {
   const [movies, setMovies] = useState([]);
   const [videoGames, setVideoGames] = useState([]);
   const [books, setBooks] = useState([]);
+  const [expandedReviewIds, setExpandedReviewIds] = useState<Set<number>>(new Set());
   const location = useLocation();
 
   async function fetchData() {
     try {
-      // Example API calls - update with actual endpoints
-      /*
-      const allContentResponse = await axios.get('http://localhost:8080/api/user/content/all');
-      const favoritesResponse = await axios.get('http://localhost:8080/api/user/content/favorites');
-      const tvShowsResponse = await axios.get('http://localhost:8080/api/user/content/tvshows');
-      const moviesResponse = await axios.get('http://localhost:8080/api/user/content/movies');
-      const videoGamesResponse = await axios.get('http://localhost:8080/api/user/content/videogames');
-      const booksResponse = await axios.get('http://localhost:8080/api/user/content/books');
+      const reviewsResponse = await axios.get<ReviewEntity[]>(`http://localhost:8080/api/reviews/userId/${id}`);
 
-      setAllContent(allContentResponse.data);
-      setFavorites(favoritesResponse.data);
-      setTvShows(tvShowsResponse.data);
-      setMovies(moviesResponse.data);
-      setVideoGames(videoGamesResponse.data);
-      setBooks(booksResponse.data); 
-      */
+      const reviewsWithMediaTitles = await Promise.all(
+        reviewsResponse.data.map(async (review: any) => {
+          const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
+          const reviewDate = new Date(review.dateCreated);
+          reviewDate.setHours(reviewDate.getHours() - 4);
+          return {
+            ...review,
+            reviewDate,
+            mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
+            mediaType: mediaResponse.data.mediaType
+          };
+        })
+      );
+
+      const sortedReviews = reviewsWithMediaTitles.sort(
+        (a, b) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime()
+      );
+      console.log(sortedReviews)
+      setAllContent(sortedReviews);
     } catch (err) {
       console.error('Error fetching content data', err);
     }
@@ -65,29 +81,13 @@ const ContentPage: React.FC = () => {
             Books
           </Link>
         </div>
+
         <div className="content-page-tab-content">
           <Routes>
-            <Route path="/" element={
-              <ul className="content-page-contentlist">
-                {allContent.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
-            <Route path="favorites" element={
-              <ul className="content-page-contentlist">
-                {favorites.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
-            <Route path="tvshows" element={
-              <ul className="content-page-contentlist">
-                {tvShows.map((content: any, i: number) => (
-                  <li key={i} className="content-page-contentitem">{content.title}</li>
-                ))}
-              </ul>
-            } />
+          <Route
+              path="/"
+              element={<ListContent reviews={allContent} />}
+            />
             <Route path="movies" element={
               <ul className="content-page-contentlist">
                 {movies.map((content: any, i: number) => (

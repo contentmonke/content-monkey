@@ -173,7 +173,7 @@ const AccountPage: React.FC = () => {
         </div>
 
         <div className="recent-reviews">
-          <p className="fave-titles">Recent Reviews</p>
+          <p className="fave-titles" onClick={() => navigate(`/u/${id}/activity`)}>Recent Reviews</p>
           <hr className="main-divider" />
           <ul>
             {reviews.map((review, index) => (
