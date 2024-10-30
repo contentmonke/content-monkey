@@ -4,9 +4,11 @@ export const fabButton: SxProps<Theme> = {
   position: 'fixed',
   bottom: 30,
   right: 30,
-  backgroundColor: '#99d2ff',
+  color: 'white',
+  backgroundColor: "#31628F",
   '&:hover': {
-    bgcolor: '#5db8ff',
+    bgcolor: "#295680",
+    borderRadius: '5px'
   },
 }
 
@@ -29,9 +31,9 @@ export const modal: SxProps<Theme> = {
 }
 
 export const searchButton: SxProps<Theme> = {
-  bgcolor: '#99d2ff',
-  color: 'black',
-  borderRadius: 0,
+  bgcolor: "#31628F",
+  color: 'white',
+  borderRadius: '3px',
   ml: 1,
   height: 55,
   py: 3,

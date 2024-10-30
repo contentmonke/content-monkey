@@ -12,7 +12,7 @@ import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
 import { useLocation } from 'react-router-dom';
 import CreateReviewButton from "../reviews/CreateReviewButton";
-import {useAuth0} from "@auth0/auth0-react"
+import { useAuth0 } from "@auth0/auth0-react"
 import Button from "../../components/button/Button"
 
 
@@ -25,16 +25,18 @@ function MediaPage() {
   const [labels, setLabels] = useState<MediaLabel | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
+  const [needsUpdate, setNeedsUpdate] = useState(true);
   const location = useLocation(); // Accessing the state passed from the navbar
-  const {user, isAuthenticated, loginWithRedirect} = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
 
   useEffect(() => {
-    if (location && location.state && location.state.result) {
+    if (location && location.state && location.state.result && needsUpdate) {
+      setNeedsUpdate(false);
       fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
       // fetchMedia(null, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
-  }, []);
+  }, [needsUpdate]);
 
 
   const handleStatusClick = (value: any) => {
@@ -85,7 +87,7 @@ function MediaPage() {
                   value={rating}
                   setValue={(event: any) => handleRatingChange(event.target.value)}
                 /> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
-                
+
               </Container>
               <Divider orientation="vertical" sx={{ height: 'auto' }} />
               <Container sx={{ ...rightColumn }}>
@@ -117,13 +119,19 @@ function MediaPage() {
             </Container >
             <Container sx={{ ...mediaReviews }}>
               <h6>Reviews</h6>
-              <ReviewSubsection reviews={media?.reviews} />
+              <ReviewSubsection
+                reviews={media?.reviews}
+                setNeedsUpdate={setNeedsUpdate}
+              />
               {media?.reviews.length === 0 &&
                 <Typography variant="caption">No reviews yet</Typography>
               }
             </Container>
           </Container>
-          <CreateReviewButton media={media} />
+          <CreateReviewButton
+            media={media}
+            setNeedsUpdate={setNeedsUpdate}
+          />
           <ErrorAlert
             message={"Error loading this review"}
             showAlert={isError}

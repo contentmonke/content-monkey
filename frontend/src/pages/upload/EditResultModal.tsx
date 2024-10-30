@@ -85,7 +85,7 @@ function EditResultModal({ open, handleClose, result }: editParams) {
     result.reviewEntity.rating = rating;
     result.reviewEntity.dateCreated = dayjs().toDate();
     result.reviewEntity.startDate = startDate.toDate();
-    result.reviewEntity.endDate = endDate.toDate();
+    result.reviewEntity.endDate = endDate.isValid() ? endDate.toDate() : null;
     console.log(result);
     handleClose();
 

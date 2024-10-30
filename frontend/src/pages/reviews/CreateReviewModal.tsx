@@ -19,10 +19,11 @@ import { ModalHeader } from "./ModalHeader";
 type params = {
   open: boolean,
   setModalOpen: any,
-  media: Media
+  media: Media,
+  setNeedsUpdate: any
 }
 
-function CreateReviewModal({ open, setModalOpen, media }: params) {
+function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params) {
   const [body, setBody] = useState("");
   const [rating, setRating] = useState(0);
   const [startedMedia, setStartedMedia] = useState(false);
@@ -99,6 +100,9 @@ function CreateReviewModal({ open, setModalOpen, media }: params) {
         console.error(error);
         setIsError(true);
       })
+      .finally(() => {
+        setNeedsUpdate(true)
+      })
   }
 
 
@@ -149,7 +153,7 @@ function CreateReviewModal({ open, setModalOpen, media }: params) {
                     <Typography color="error">Please enter a valid rating and description</Typography>
                   }
                   <FormControlLabel
-                    label={`I have started this ${media.mediaType.toLowerCase()}`}
+                    label={`I have started this ${media.mediaType?.toLowerCase()}`}
                     control={
                       <Checkbox
                         checked={startedMedia}

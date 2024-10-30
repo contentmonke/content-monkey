@@ -11,6 +11,17 @@ const bookFields = [
   "Page Count"
 ];
 
+const movieFields = [
+  "Title",
+  "Release Date",
+]
+
+const anyFields = [
+  "Title",
+  "Release Date",
+  "Media Type"
+]
+
 export function handleSearchFields(mediaType: string, searchEntity: any, location = "") {
 
   let minImgSize, maxImgSize, py, fontSize, width;
@@ -25,7 +36,7 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
     minImgSize = 150;
     maxImgSize = 180;
     fontSize = 15;
-    width = 110;
+    width = 120;
     py = 0.5;
   }
 
@@ -49,6 +60,115 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
         </Container >
         <Container disableGutters sx={{ mt: 1 }}>
           {bookFields.map((field, index) => (
+            <Container disableGutters sx={{ display: 'flex', py: py }} key={index}>
+              <Container disableGutters sx={{ width: 'auto' }}>
+                <Typography
+                  sx={{
+                    ...fieldLabel,
+                    fontSize: fontSize,
+                    minWidth: width
+                  }}>
+                  {field}
+                </Typography>
+              </Container>
+              <Container disableGutters sx={{ ...fieldContent }}>
+                {Array.isArray(fieldValues[index]) ?
+                  <>
+                    {fieldValues[index].map((fieldValue, i) => (
+                      <Typography
+                        key={i}
+                        fontSize={fontSize}>
+                        {fieldValue}{(i !== fieldValues[index].length - 1) ? ',\u00A0' : ""}
+                      </Typography>
+                    ))}
+                  </>
+                  :
+                  <Typography
+                    fontSize={fontSize}
+                    textOverflow={'ellipse'}>
+                    {fieldValues[index]}
+                  </Typography>
+                }
+              </Container>
+            </Container>
+          ))}
+        </Container>
+      </Container >
+    );
+  }
+
+  
+  if (mediaType === MediaType.MOVIE || mediaType === MediaType.TV_SHOW || mediaType === MediaType.VIDEO_GAME) {
+
+    const fieldValues = [
+      searchEntity.title,
+      searchEntity.releaseDate,
+    ];
+
+    return (
+      <Container disableGutters sx={{ display: 'flex', maxWidth: '750px' }}>
+        <Container disableGutters sx={{ ...resultImageContainer, minWidth: minImgSize, maxWidth: maxImgSize }}>
+          < img
+            src={searchEntity.thumbnail}
+            style={{ ...resultImage }}>
+          </img>
+        </Container >
+        <Container disableGutters sx={{ mt: 1 }}>
+          {movieFields.map((field, index) => (
+            <Container disableGutters sx={{ display: 'flex', py: py }} key={index}>
+              <Container disableGutters sx={{ width: 'auto' }}>
+                <Typography
+                  sx={{
+                    ...fieldLabel,
+                    fontSize: fontSize,
+                    minWidth: width
+                  }}>
+                  {field}
+                </Typography>
+              </Container>
+              <Container disableGutters sx={{ ...fieldContent }}>
+                {Array.isArray(fieldValues[index]) ?
+                  <>
+                    {fieldValues[index].map((fieldValue, i) => (
+                      <Typography
+                        key={i}
+                        fontSize={fontSize}>
+                        {fieldValue}{(i !== fieldValues[index].length - 1) ? ',\u00A0' : ""}
+                      </Typography>
+                    ))}
+                  </>
+                  :
+                  <Typography
+                    fontSize={fontSize}
+                    textOverflow={'ellipse'}>
+                    {fieldValues[index]}
+                  </Typography>
+                }
+              </Container>
+            </Container>
+          ))}
+        </Container>
+      </Container >
+    );
+  }
+
+  if (mediaType === MediaType.UNSELECTED) {
+    const fieldValues = [
+      searchEntity.title,
+      searchEntity.releaseDate ? searchEntity.releaseDate : searchEntity.publishedDate,
+      searchEntity.mediaType
+    ];
+
+    return (
+      <Container disableGutters sx={{ display: 'flex', maxWidth: '750px' }}>
+        <Container disableGutters sx={{ ...resultImageContainer, minWidth: minImgSize, maxWidth: maxImgSize }}>
+          < img
+            src={searchEntity.thumbnail}
+            style={{ ...resultImage }}>
+          </img>
+        </Container >
+        <Container disableGutters sx={{ mt: 1 }}>
+          {anyFields.map((field, index) => (
             <Container disableGutters sx={{ display: 'flex', py: py }} key={index}>
               <Container disableGutters sx={{ width: 'auto' }}>
                 <Typography

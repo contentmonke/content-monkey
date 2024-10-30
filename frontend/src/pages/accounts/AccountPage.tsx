@@ -56,6 +56,11 @@ const AccountPage: React.FC = () => {
             };
           })
         );
+
+        const sortedReviews = reviewsWithMediaTitles.sort(
+          (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+
         // console.log(userResponse);
         setEmail(userResponse.data.email);
         setName(userResponse.data.name.split('@')[0])
@@ -68,7 +73,7 @@ const AccountPage: React.FC = () => {
         if (userResponse.data.genres != null) {
           setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
         }
-        setReviews(reviewsWithMediaTitles);
+        setReviews(sortedReviews.slice(0, 3));
       } catch (error) {
         console.error('Error fetching data', error);
       }
@@ -154,6 +159,9 @@ const AccountPage: React.FC = () => {
           <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
           <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
           <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
+          {(isAuthenticated && user && user.email == email) ?
+            <li onClick={() => navigate('/upload')}>Upload Goodreads Data</li> : (<></>)
+          }
         </ul>
       </div>
 
@@ -173,7 +181,7 @@ const AccountPage: React.FC = () => {
         </div>
 
         <div className="recent-reviews">
-          <p className="fave-titles">Recent Reviews</p>
+          <p className="fave-titles" onClick={() => navigate(`/u/${id}/activity`)}>Recent Reviews</p>
           <hr className="main-divider" />
           <ul>
             {reviews.map((review, index) => (
