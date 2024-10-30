@@ -1,23 +1,13 @@
 package com.content.monkey.backend.controller;
 
-import com.content.monkey.backend.example.app.model.ExampleEntity;
-import com.content.monkey.backend.example.app.service.ExampleService;
-import com.content.monkey.backend.model.GoogleBooksResponse;
 import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import java.util.*;
 
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,9 +21,38 @@ public class SearchController {
         return searchService.getSearchResults(bookTitle);
     }
 
-    @GetMapping("/specific")
-    public SearchEntity getSearchResultsByTitleAndAuthor(@RequestParam String bookTitle, @RequestParam String author) {
-        return searchService.getSearchResultsByTitleAndAuthor(bookTitle, author);
+    @GetMapping("/movie/{title}")
+    public List<SearchEntity> getMovieSearchResults(@PathVariable("title") String title) {
+        return searchService.getMovieSearchResults(title);
+    }
+
+    @GetMapping("/tv/{title}")
+    public List<SearchEntity> getTvShowSearchResults(@PathVariable("title") String title) {
+        return searchService.getTvShowSearchResults(title);
+    }
+
+    @GetMapping("/videoGame/{title}")
+    public List<SearchEntity> getVideoGameSearchResults(@PathVariable("title") String title) {
+        return searchService.getVideoGameSearchResults(title);
+    }
+
+    @GetMapping("any/{title}")
+    public List<SearchEntity> getAnySearchResults(@PathVariable("title") String title) {
+        List<SearchEntity> results = new ArrayList<>(searchService.getMovieSearchResults(title));
+        results.addAll(searchService.getSearchResults(title));
+        results.addAll(searchService.getTvShowSearchResults(title));
+        results.addAll(searchService.getVideoGameSearchResults(title));
+        LevenshteinDistance levenshtein = new LevenshteinDistance();
+        results.sort(Comparator.comparingInt(m -> levenshtein.apply(m.getTitle(), title)));
+//        results.sort(Comparator.comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder())));
+//        results.sort(Comparator
+//                .comparingInt((SearchEntity m) -> levenshtein.apply(m.getTitle(), title)) // Sort by Levenshtein distance
+//                .thenComparing(Comparator.comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder())))); // Move null thumbnails to the bottom
+
+//        results.sort(Comparator
+//                .comparing(SearchEntity::getThumbnail, Comparator.nullsLast(Comparator.naturalOrder()))
+//                .thenComparingInt(m -> levenshtein.apply(m.getTitle(), title)));
+        return results;
     }
 
 

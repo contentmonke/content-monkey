@@ -29,7 +29,7 @@ function SearchPage() {
   const navigate = useNavigate();
 
   const handleClick = (result: any) => {
-    navigate(`/media/${result.title}`, {
+    navigate(`/media/${result.title}/${result.mediaType}`, {
       state: {
         result: result
       }
@@ -97,6 +97,13 @@ function SearchPage() {
                   variant={'body2'}
                   textAlign={'left'}>
                   Showing Results for '{prevSearch}'
+                </Typography>
+              }
+              {results.length === 0 && !isLoading &&
+                  <Typography
+                    variant={'body2'}
+                    textAlign={'left'}>
+                    No results for '{prevSearch}'
                 </Typography>
               }
               <SearchResults

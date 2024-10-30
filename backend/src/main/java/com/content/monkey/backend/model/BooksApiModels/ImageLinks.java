@@ -1,4 +1,4 @@
-package com.content.monkey.backend.model;
+package com.content.monkey.backend.model.BooksApiModels;
 
 public class ImageLinks {
     private String thumbnail;

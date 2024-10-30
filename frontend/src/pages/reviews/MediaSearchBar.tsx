@@ -20,7 +20,7 @@ function MediaSearchBar({ mediaType, handleMediaChange, title, setTitle, handleS
         sx={{ ...searchButton }}
         startIcon={<SearchIcon />}
         onClick={handleSearchClick}
-        disabled={mediaType === MediaType.UNSELECTED || title === ""}>
+        disabled={title === ""}>
         Search
       </Button>
     </Container>
