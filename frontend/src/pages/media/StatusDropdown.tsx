@@ -2,6 +2,7 @@ import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import { buttonGroup } from "../../style/media-page";
 import React, { useState } from "react";
+import { color } from "three/webgpu";
 
 const options = [
   "Watched",
@@ -36,23 +37,24 @@ function StatusDropdown({ isOpen, setOpen, handleClick }: any) {
   return (
     <>
       <ButtonGroup
+        className="media-button-group"
         variant="contained"
         sx={{ ...buttonGroup }}
         ref={anchorRef}
       >
         <Button
-          sx={{ flexGrow: 1, bgcolor: "#99d2ff" }}
+          sx={{ flexGrow: 1, bgcolor: "#31628F" }}
           onClick={handleClick}
         >{options[selectedIndex]}</Button>
         <Button
           size="small"
-          sx={{ bgcolor: "#99d2ff" }}
+          sx={{ bgcolor: "#31628F" }}
           aria-controls={isOpen ? 'split-button-menu' : undefined}
           onClick={handleDropdown}
         >
           <ArrowDropDownIcon />
         </Button>
-      </ButtonGroup>
+      </ButtonGroup >
       <Popper
         sx={{ zIndex: 1, width: anchorRef.current?.clientWidth }}
         open={isOpen}

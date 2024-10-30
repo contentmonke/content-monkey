@@ -52,6 +52,9 @@ export async function uploadReviews(uploadResults: any, userId: any, setCreatedR
 }
 
 export const formatDate = (date: any) => {
+  if (!date) {
+    return "";
+  }
   const reviewDate = new Date(date);
   reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
   return (

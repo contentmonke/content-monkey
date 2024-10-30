@@ -1,0 +1,136 @@
+.user-info {
+  display: inline-flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  text-align: center;
+  width: 250px;
+  margin-top: 2px;
+  margin-right: 2px;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+.rating-date {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text {
+  font-size: 12px;
+  letter-spacing: 0.03333em;
+  color: black;
+  text-transform: none;
+}
+
+.bold-text {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.03333em;
+  color: black;
+  text-transform: none;
+}
+
+.interactive-container {
+  display: flex;
+  align-items: center;
+}
+
+.comment-profile {
+  width: 60px;
+  display: inline-flex;
+  justify-content: center;
+  margin-top: 2px;
+  /* align-items: center; */
+}
+
+.comment-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background-color: gray;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.write-container {
+  display: flex;
+  height: auto;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+
+.auto-expand {
+  width: 95%;
+  min-height: 40px;
+  padding: 10px;
+  font-size: 1em;
+  line-height: 1.5;
+  overflow: hidden;
+  background-color: #dddcdc;
+  color: black;
+  border: 1px solid #ccc;
+  outline-color: #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: "none";
+}
+
+.auto-expand:focus-visible {
+  outline: none;
+}
+
+.your-profile {
+  width: 55px;
+  display: flex;
+  justify-content: center;
+
+}
+
+.button-container {
+  display: flex;
+  width: 98%;
+  justify-content: right;
+}
+
+.more-comments {
+  color: black;
+  background: none;
+}
+
+.more-comments:hover {
+  background-color: #e7e7e7;
+  transition: .2s ease-in-out;
+  border-radius: 3px;
+}
+
+.create-comment-button {
+  z-index: 2;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: var(--button-color, #31628F);
+  width: var(--button-width, 200px);
+  /* Default to 200px if not set */
+  height: 45px;
+  border: 1px solid #D1D1D1;
+  border-radius: 3px;
+  transition: .2s ease-in-out;
+  margin: 0;
+  padding: 0;
+  color: var(--button-textcolor, #ffffff);
+}
+
+.create-comment-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  opacity: 0.6;
+}
