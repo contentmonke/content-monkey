@@ -3,10 +3,12 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.SearchEntity;
 import com.content.monkey.backend.model.UserEntity;
-import com.content.monkey.backend.model.dto.GoodReadsDTO;
-import com.content.monkey.backend.model.dto.UploadResultDTO;
+import com.content.monkey.backend.model.dto.*;
+import com.content.monkey.backend.repository.CommentRepository;
+import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.ReviewRepository;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -25,12 +27,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private MediaRepository mediaRepository;
     @Autowired
     private CommentService commentService;
     @Autowired
@@ -225,4 +233,109 @@ public class ReviewService {
         return reviewEntities;
     }
 
+    public List<Object> getUserActivities(Long userId) {
+        List<ReviewEntity> reviews = reviewRepository.findByUserId(userId);
+        List<CommentEntity> comments = commentRepository.findByUserId(userId);
+
+        List<Object> activities = new ArrayList<>();
+
+        // Map each review to ReviewWithMediaDTO, including media title
+        for (ReviewEntity review : reviews) {
+            MediaEntity media = mediaRepository.findById(review.getMediaId()).orElse(null);
+            String mediaTitle = (media != null) ? media.getMediaTitle() : "Unknown Media";
+
+            LocalDateTime estDateCreated = review.getDateCreated().minusHours(4);
+            review.setDateCreated(estDateCreated); // Update the date to EST
+
+            activities.add(new ReviewWithMediaDTO(review, mediaTitle));
+        }
+
+        // Map each comment to CommentWithMediaDTO by fetching media title via review
+        for (CommentEntity comment : comments) {
+            ReviewEntity associatedReview = reviewRepository.findById(comment.getReviewId()).orElse(null);
+            String mediaTitle = "Unknown Media";
+            if (associatedReview != null) {
+                MediaEntity media = mediaRepository.findById(associatedReview.getMediaId()).orElse(null);
+                if (media != null) {
+                    mediaTitle = media.getMediaTitle();
+                }
+            }
+
+            // Subtract 4 hours from dateCreated
+            LocalDateTime estDateCreated = comment.getDateCreated().minusHours(4);
+            comment.setDateCreated(estDateCreated); // Update the date to EST
+
+            activities.add(new CommentWithMediaDTO(comment, mediaTitle));
+        }
+
+        // Sort activities by date created in descending order
+        activities.sort((a, b) -> {
+            LocalDateTime dateA = (a instanceof ReviewWithMediaDTO) ? ((ReviewWithMediaDTO) a).getDateCreated() : ((CommentWithMediaDTO) a).getDateCreated();
+            LocalDateTime dateB = (b instanceof ReviewWithMediaDTO) ? ((ReviewWithMediaDTO) b).getDateCreated() : ((CommentWithMediaDTO) b).getDateCreated();
+            return dateB.compareTo(dateA); // Latest to oldest
+        });
+
+        return activities;
+    }
+
+    public List<ActivityWithUser> getFriendsActivities(Long userId) {
+        UserEntity user = userService.getUser(userId);
+        List<String> friendIds = user.getFriendList();
+        List<ActivityWithUser> friendsActivities = new ArrayList<>();
+
+        for (String friendIdStr : friendIds) {
+            try {
+                Long friendId = Long.parseLong(friendIdStr);
+                UserEntity friend = userService.getUser(friendId);
+                String friendName = friend.getName();
+
+                // Fetch friend's reviews and comments
+                List<ReviewEntity> friendReviews = reviewRepository.findByUserId(friendId);
+                List<CommentEntity> friendComments = commentRepository.findByUserId(friendId);
+
+                for (ReviewEntity review : friendReviews) {
+                    MediaEntity media = mediaRepository.findById(review.getMediaId()).orElse(null);
+                    String mediaTitle = (media != null) ? media.getMediaTitle() : "Unknown Media";
+
+                    LocalDateTime estDateCreated = review.getDateCreated().minusHours(4);
+                    review.setDateCreated(estDateCreated); // Update the date to EST
+
+                    friendsActivities.add(new ActivityWithUser(new ReviewWithMediaDTO(review, mediaTitle), friendName));
+                }
+
+                for (CommentEntity comment : friendComments) {
+                    ReviewEntity associatedReview = reviewRepository.findById(comment.getReviewId()).orElse(null);
+                    String mediaTitle = "Unknown Media";
+                    if (associatedReview != null) {
+                        MediaEntity media = mediaRepository.findById(associatedReview.getMediaId()).orElse(null);
+                        if (media != null) {
+                            mediaTitle = media.getMediaTitle();
+                        }
+                    }
+
+                    // Subtract 4 hours from dateCreated
+                    LocalDateTime estDateCreated = comment.getDateCreated().minusHours(4);
+                    comment.setDateCreated(estDateCreated); // Update the date to EST
+
+                    friendsActivities.add(new ActivityWithUser(new CommentWithMediaDTO(comment, mediaTitle), friendName));
+                }
+
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid friend ID format: " + friendIdStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Sort by date, handling potential null values in dateCreated
+        return friendsActivities.stream()
+                .sorted(Comparator.comparing(
+                        activity -> {
+                            LocalDateTime date = activity.getDateCreated();
+                            return (date != null) ? date : LocalDateTime.MIN;  // Use LocalDateTime.MIN if null
+                        },
+                        Comparator.reverseOrder()
+                ))
+                .collect(Collectors.toList());
+    }
 }

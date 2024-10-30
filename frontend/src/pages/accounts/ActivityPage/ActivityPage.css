@@ -2,21 +2,39 @@
   max-width: 900px;
   margin: 0 auto;
   padding-top: 20px;
+  padding-left: 0; /* Ensure no left padding */
+  padding-right: 0; /* Ensure no right padding */
+}
+
+.activity-page-contentlist {
+  padding: 0; /* Remove any extra padding */
+}
+
+.activity-page-ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.activity-item {
+  padding: 15px 0; /* Remove side padding if you need a flush edge */
+  border-bottom: 1px solid #ddd;
 }
 
 .activity-page-tabs-container {
   width: 100%;
   margin-top: 20px;
+  padding: 0; /* Ensure tabs container has no padding */
 }
 
 .activity-page-tabs-header {
   display: flex;
   border-bottom: 2px solid #ccc;
+  padding: 0; /* Remove padding */
 }
 
 .activity-page-tab-item {
   flex: 1;
-  padding: 10px 20px;
   text-align: center;
   cursor: pointer;
   background-color: transparent;
@@ -26,20 +44,67 @@
   color: #000;
 }
 
-.activity-page-tab-item:last-child {
-  border-right: none;
-}
-
 .activity-page-tab-item.active {
   color: #31628F;
   border-bottom: 2px solid #31628F;
 }
 
-.activity-page-tab-content {
+.activity-page-contentlist {
   padding: 10px 0;
 }
 
-.activity-page-contentlist {
-  list-style-type: none;
+.activity-item {
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-item-perp, .activity-item-vict {
+  font-weight: bold;
+}
+
+.activity-item-vict {
+  font-style: italic;
+}
+
+.activity-item-dates {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.85em;
+}
+
+.activity-item-body {
+  margin-top: 10px;
+  overflow: hidden;
+  white-space: pre-wrap;
+}
+
+.activity-item-body.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.activity-item-body.expanded {
+  display: block;
+}
+
+.activity-item-toggle-button {
+  font-size: 0.85em;
+  color: #31628F;
+  background: none;
+  border: none;
+  cursor: pointer;
   padding: 0;
+  margin-top: 5px;
+  text-decoration: underline;
+  text-align: left;
 }
