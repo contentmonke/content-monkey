@@ -97,7 +97,7 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
     );
   }
 
-  
+
   if (mediaType === MediaType.MOVIE || mediaType === MediaType.TV_SHOW || mediaType === MediaType.VIDEO_GAME) {
 
     const fieldValues = [
@@ -212,9 +212,44 @@ export function handleSearchFields(mediaType: string, searchEntity: any, locatio
 export async function loadUser(username: string, setUser: any) {
   api.user.fetchUser(username)
     .then((response) => {
+      if (response.data[0].posts_liked === null) {
+        response.data[0].posts_liked = [];
+      }
+      if (response.data[0].posts_disliked === null) {
+        response.data[0].posts_disliked = [];
+      }
+      console.log(response.data[0])
       setUser(response.data[0])
     })
     .catch(() => {
       console.error("Error retrieving user information")
+    })
+}
+
+export async function updateUpVotes(user: any, reviewId: any, addedVote: any, setUser: any, setNeedsUpdate: any) {
+  api.reviews.updateUpVotes(user.id, reviewId, addedVote)
+    .then((response) => {
+      console.log(response.data);
+      return loadUser(user.name, setUser);
+    })
+    .catch(() => {
+      console.log("error updating upVotes");
+    })
+    .finally(() => {
+      setNeedsUpdate(true)
+    })
+}
+
+export async function updateDownVotes(user: any, reviewId: any, addedVote: any, setUser: any, setNeedsUpdate) {
+  api.reviews.updateDownVotes(user.id, reviewId, addedVote)
+    .then((response) => {
+      console.log(response.data);
+      return loadUser(user.name, setUser);
+    })
+    .catch(() => {
+      console.log("error updating upVotes");
+    })
+    .finally(() => {
+      setNeedsUpdate(true)
     })
 }

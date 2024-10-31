@@ -4,10 +4,12 @@ import { reviewDetail } from "../../style/media-page";
 import { ReviewDTO } from "../../models/Models";
 import "./MediaPage.css";
 import ModeCommentRoundedIcon from '@mui/icons-material/ModeCommentRounded';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Comments from "./Comments";
 import { DateTime } from 'luxon';
 import { formatDate } from "../upload/upload-utils";
+import { useAuth0 } from "@auth0/auth0-react";
+import { loadUser, updateDownVotes, updateUpVotes } from "../reviews/review-utils";
 
 type params = {
   reviews: ReviewDTO[];
@@ -17,11 +19,40 @@ type params = {
 function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
 
   // const [openComments, setOpenComments] = useState([]);
+  const { user } = useAuth0();
+  const [userData, setUserData] = useState<any | undefined>(undefined);
   const [openComments, setOpenComments] = useState(null);
+  const [likedComments, setLikedComments] = useState([]);
+  const [dislikedComments, setDislikedComments] = useState([]);
+
+  useEffect(() => {
+    if (user?.name === undefined) {
+      return;
+    }
+    loadUser(user.name, setUserData);
+  }, [user?.name]);
 
   const handleCommentClick = (reviewIndex) => {
     // setOpenComments(indices => [...indices, reviewIndex]);
     setOpenComments(reviewIndex)
+  }
+
+  const handleUpVote = (review: ReviewDTO, addedVote: boolean) => {
+    if (userData?.posts_disliked.includes(review.id)) {
+      return;
+    }
+    console.log("Upvote");
+    console.log("addedVote = " + addedVote);
+    updateUpVotes(userData, review.id, addedVote, setUserData, setNeedsUpdate);
+  }
+
+  const handleDownVote = (review: ReviewDTO, addedVote: boolean) => {
+    if (userData?.posts_liked.includes(review.id)) {
+      return;
+    }
+    console.log("Downvote");
+    console.log("addedVote = " + addedVote);
+    updateDownVotes(userData, review.id, addedVote, setUserData, setNeedsUpdate);
   }
 
   return (
@@ -48,12 +79,29 @@ function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
               </div>
               <div className="text">{review.body}</div>
               <div className="interactive-container">
-                <IconButton size={'small'}>
-                  <ThumbUp sx={{ width: 15 }} />
+                <IconButton
+                  size={'small'}
+                  // disabled={!userData?.posts_liked.includes(review.id)}
+                  onClick={() => handleUpVote(review, !userData?.posts_liked.includes(review.id))}
+                >
+                  <ThumbUp
+                    sx={{
+                      width: 15,
+                      color: (userData?.posts_liked.includes(review.id) ? '#31628F' : 'grey')
+                    }}
+                  />
                 </IconButton>
                 <div className="text">{review.upVotes}</div>
-                <IconButton >
-                  <ThumbDown sx={{ width: 15 }} />
+                <IconButton
+                  disabled={!userData}
+                  onClick={() => handleDownVote(review, !userData?.posts_disliked.includes(review.id))}
+                >
+                  <ThumbDown
+                    sx={{
+                      width: 15,
+                      color: (userData?.posts_disliked.includes(review.id) ? '#31628F' : 'grey')
+                    }}
+                  />
                 </IconButton>
                 <div className="text">{review.downVotes}</div>
                 <Button
