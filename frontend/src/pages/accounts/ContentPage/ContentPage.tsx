@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
+import { useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import ListContent from './ListContent';
 import './ContentPage.css';
@@ -32,7 +32,8 @@ const ContentPage: React.FC = () => {
             ...review,
             reviewDate,
             mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
-            mediaType: mediaResponse.data.mediaType
+            mediaType: mediaResponse.data.mediaType,
+            mediaThumbnail: mediaResponse.data.thumbnail
           };
         })
       );

@@ -53,6 +53,10 @@ public class UserEntity {
     @Column(name = "comments_liked_by_user")
     private List<Long> comments_liked;
 
+    public List<String> getFriendList() {
+        return friend_list;
+    }
+
     public String getPicture() {
         return picture;
     }

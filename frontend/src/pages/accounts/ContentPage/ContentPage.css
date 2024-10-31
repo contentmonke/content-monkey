@@ -127,3 +127,24 @@
   margin: 0 4px;
   color: #888; /* Match separator color to date text */
 }
+
+/* Container for each review entry */
+.content-page-review-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Thumbnail styles */
+.content-page-review-thumbnail img {
+  width: 80px; /* Fixed width for thumbnail */
+  height: auto;
+  border-radius: 4px;
+  margin-right: 20px;
+}
+
+/* Content container styles */
+.content-page-review-content {
+  flex: 1; /* Fills remaining space */
+}
