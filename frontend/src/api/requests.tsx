@@ -30,6 +30,30 @@ export const api = {
       return (
         await axios.post(`${URL}/reviews/confirmUploads/${userId}`, uploadResults)
       );
+    },
+
+    async updateUpVotes(userId: any, reviewId: number, addedVote: boolean) {
+      console.log(reviewId);
+      return (
+        await axios.get(`${URL}/reviews/upVotes/${userId}`, {
+          params: {
+            reviewId: reviewId,
+            addedVote: addedVote
+          }
+        })
+      );
+    },
+
+    async updateDownVotes(userId: any, reviewId: number, addedVote: boolean) {
+      console.log(reviewId);
+      return (
+        await axios.get(`${URL}/reviews/downVotes/${userId}`, {
+          params: {
+            reviewId: reviewId,
+            addedVote: addedVote
+          }
+        })
+      );
     }
   },
 

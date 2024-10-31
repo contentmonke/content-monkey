@@ -97,6 +97,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserEntity setPicture(Long id, String picture) {
+        UserEntity user = getUser(id);
+        user.setPicture(picture);
+        return userRepository.save(user);
+    }
+
+    public String getPicture(Long id) {
+        UserEntity user = getUser(id);
+        return user.getPicture();
+    }
+
     public UserEntity addReviewIdToUser(Long id, Long reviewId) {
         UserEntity user = getUser(id);
         if (user.getReviewIds() == null) {

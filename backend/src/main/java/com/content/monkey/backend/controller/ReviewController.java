@@ -87,6 +87,34 @@ public class ReviewController {
 
     }
 
+    @GetMapping("/upVotes/{userId}")
+    public ResponseEntity<ReviewEntity> upVotes(@PathVariable Long userId,
+                                                    @RequestParam Long reviewId,
+                                                    @RequestParam boolean addedVote) {
+        ReviewEntity reviewEntity = reviewService.upVotes(userId, reviewId, addedVote);
+        // Successfully updated
+        if (reviewEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
+        // Created new object
+        URI uri = URI.create("/api/reviews/downVotes/" + reviewEntity.getId());
+        return ResponseEntity.created(uri).body(reviewEntity);
+    }
+
+    @GetMapping("/downVotes/{userId}")
+    public ResponseEntity<ReviewEntity> downVotes(@PathVariable Long userId,
+                                                    @RequestParam Long reviewId,
+                                                    @RequestParam boolean addedVote) {
+        ReviewEntity reviewEntity = reviewService.downVotes(userId, reviewId, addedVote);
+        // Successfully updated
+        if (reviewEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
+        // Created new object
+        URI uri = URI.create("/api/reviews/downVotes/" + reviewEntity.getId());
+        return ResponseEntity.created(uri).body(reviewEntity);
+    }
+    
     // Endpoint to get all reviews and comments by user ID (user activities)
     @GetMapping("/userId/{userId}/activity")
     public ResponseEntity<List<Object>> getUserActivities(@PathVariable Long userId) {

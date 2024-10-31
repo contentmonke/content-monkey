@@ -29,10 +29,13 @@ const EditProfile: React.FC = () => {
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
           await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
           const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+          const profilePic = await axios.get('http://localhost:8080/api/user/getPicture', {params: { id: idResponse.data[0].id }});
 
           const biography = userBio.data[0].bio;
           const genres = userBio.data[0].genres;
 
+
+          setProfilePicture(profilePic.data);
           setBio(JSON.parse(biography).biography || 'No biography available.');
           setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
         }
@@ -69,6 +72,22 @@ const EditProfile: React.FC = () => {
       const genreResponse = await axios.put(`http://localhost:8080/api/user/genres/${userId}`, {
         genres: favoriteGenres,
       });
+
+      // Update profile picture
+      console.log(userId);
+      console.log(profilePicture);
+      const pictureResponse = await axios.post(
+          'http://localhost:8080/api/user/updatePicture',
+          {
+              id: userId,
+              picture: profilePicture,
+          },
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          }
+      );
 
       if (bioResponse.status === 200 && genreResponse.status === 200) {
         // Both requests were successful

@@ -40,6 +40,18 @@ public class UserController {
         userService.updatePicture(id, picture);
     }
 
+    @PostMapping("/updatePicture")
+    public void updatePicture(@RequestBody Map<String, Object> requestBody) {
+        Long id = Long.valueOf(requestBody.get("id").toString());
+        String picture = (String) requestBody.get("picture");
+        userService.setPicture(id, picture);
+    }
+
+    @GetMapping("/getPicture")
+    public String getPicture(@RequestParam("id") Long id) {
+        return userService.getPicture(id);
+    }
+
     @GetMapping("/all")
     public List<UserEntity> getAllExamples() {
         List<UserEntity> examples = userService.getAllExamples();
