@@ -1,8 +1,8 @@
-import * as THREE from 'three'
-import { useRef, useState } from 'react'
-import { Canvas, useThree, useFrame } from '@react-three/fiber'
-import { useGLTF, Detailed, Environment } from '@react-three/drei'
-import { EffectComposer, DepthOfField } from '@react-three/postprocessing'
+import * as THREE from 'three';
+import { useRef, useState } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
+import { GLTF } from 'three-stdlib';
 
 type ThreeDModelsProps = {
   index: number
