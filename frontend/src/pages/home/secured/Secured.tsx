@@ -1,26 +1,21 @@
-import './Secured.css';
-
+import { Suspense, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
-import LogoutButton from '../LogoutButton/LogoutButton';
-import Example from '../../../example/ExampleList'
+import Models from './ThreeDModels';
+// Comment the above and uncomment the following to import the WebGL BG lazily for faster loading times
+// const Bananas = lazy(() => import('./Bananas'))
 
 function Secured() {
-  const { user, isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth0();
+  const [speed] = useState(1);
 
   return (
     isAuthenticated && (
-    <>
-      {user?.picture && <img src={user.picture} alt={user?.name} />}
-      <h2>Welcome {user?.name}!</h2>
-      <div>
-        {Object.keys(user!).map((objKey, i) => <p key={i}>{objKey}: {user![objKey]} </p>)}
+      <div className="the-secured-page">
+        <Suspense fallback={null}>
+          <Models speed={speed} />
+        </Suspense>
       </div>
-      <div>
-        <Example />
-      </div>
-      <LogoutButton />
-    </>
     )
   );
 }

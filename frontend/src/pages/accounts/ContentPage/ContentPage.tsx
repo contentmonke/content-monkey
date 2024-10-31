@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
+import { useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import ListContent from './ListContent';
 import './ContentPage.css';

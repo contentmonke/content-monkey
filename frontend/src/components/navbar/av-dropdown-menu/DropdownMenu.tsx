@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './DropdownMenu.css'; // Styling for dropdown
 
 interface DropdownMenuProps {
@@ -12,7 +11,7 @@ interface DropdownMenuProps {
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ closeDropdown, userId }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const { user, logout, loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const { logout, loginWithRedirect, isAuthenticated } = useAuth0();
 
   const navAndReload = (page: string) => {
     navigate(page, { replace: true });
