@@ -5,6 +5,8 @@ import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.UserEntity;
+import com.content.monkey.backend.model.MediaEntity;
+import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,8 @@ import java.util.List;
 
 @Service
 public class UserService {
-
+    @Autowired
+    private MediaRepository mediaRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -182,6 +185,31 @@ public class UserService {
             usernames.add(getUserById);
         }
         return usernames;
+    }
+
+    public List<String> getFavorites(Long id) {
+        UserEntity user = getUser(id);
+
+        if (user.getFavoriteMedia() == null || user.getFavoriteMedia().isEmpty()) {
+            return null;
+        }
+        List<Long> favorite_media = user.getFavoriteMedia();
+        List<String> favorite_titles = new ArrayList<>();
+        for(int i = 0; i < favorite_media.size(); i++) {
+            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).getFirst().getMediaTitle());
+        }
+        return favorite_titles;
+    }
+
+    public void setFavorites(Long id, List<String> favorites) {
+        UserEntity user = getUser(id);
+        List<Long> favorite_media = new ArrayList<>();
+
+        for(int i = 0; i < favorites.size(); i++) {
+            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).getFirst().getId());
+        }
+        user.setFavoriteMedia(favorite_media);
+        userRepository.save(user);
     }
 
 /*

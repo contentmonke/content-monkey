@@ -47,6 +47,10 @@ public class MediaEntity {
         return mediaTitle;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setMediaTitle(String mediaTitle) {
         this.mediaTitle = mediaTitle;
     }
