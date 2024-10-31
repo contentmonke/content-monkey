@@ -8,6 +8,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Avatar } from '@mui/material';
 import DropdownMenu from './av-dropdown-menu/DropdownMenu';
 import axios from 'axios';
+import ProfilePicture from '../../pages/settings/profile/ProfilePicture';
 
 const Navbar = () => {
   const location = useLocation();
@@ -15,7 +16,7 @@ const Navbar = () => {
   const { user, isAuthenticated } = useAuth0();
   const [searchQuery, setSearchQuery] = useState('');
   const isHome = location.pathname === '/'
-
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
 
@@ -24,14 +25,15 @@ const Navbar = () => {
       try {
         // YOU CAN GET RID OF THIS CODE ONCE EVERYONE HAS A DEFAUL PROFILE PIC
         const userRes = await axios.post('http://localhost:8080/api/user/', user);
-        await axios.post('http://localhost:8080/api/user/setPicture', null,
+        console.log(userRes.data[0].id);
+        const picture = await axios.get('http://localhost:8080/api/user/getPicture',
           {
             params: {
               id: userRes.data[0].id,
-              picture: user.picture
             }
           }
         );
+        setProfilePicture(picture.data);
         setLoggedInUserId(userRes.data[0].id)
       } catch (error) {
         console.error('Error setting data', error);
@@ -54,6 +56,7 @@ const Navbar = () => {
         searchQuery: searchQuery,
       },
     });
+    setSearchQuery("");
   }
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,7 +95,7 @@ const Navbar = () => {
             </li>
             <li className="nav-avatar-li">
               {user ? (<>
-                <Avatar src={user.picture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
+                <Avatar src={profilePicture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
                 {avatarDropdownOpen && <DropdownMenu userId={loggedInUserId} closeDropdown={() => setAvatarDropdownOpen(false)} />}
               </>
               ) :

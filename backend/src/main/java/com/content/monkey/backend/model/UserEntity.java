@@ -73,6 +73,7 @@ public class UserEntity {
         return this.email;
     }
 
+
     //TODO - Add fields
     public UserEntity() {
     }
