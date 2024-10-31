@@ -8,8 +8,8 @@ import { Container, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Ensure you have @mui/icons-material installed
 import ConfirmButton from './../../../components/ConfirmButton.tsx';
 
-const SortableItem: React.FC<{ id: string; favorite: string; onDelete: (id: string) => void }> = ({ id, favorite, onDelete }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+const SortableItem: React.FC<{ favId: string; favorite: string; onDelete: (favId: string) => void }> = ({ favId, favorite, onDelete }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id:favId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -25,12 +25,11 @@ const SortableItem: React.FC<{ id: string; favorite: string; onDelete: (id: stri
         <p className="content-page-review-title" style={{ margin: 0 }}>
           {favorite}
         </p>
-        <IconButton onClick={() => onDelete(id)} aria-label="delete" style={{ padding: 0 }}>
+        <IconButton onClick={() => onDelete(favId)} aria-label="delete" style={{ padding: 0 }}>
           <DeleteIcon />
         </IconButton>
       </div>
       <Container disableGutters className="review-vote-container">
-        {/* Additional content here if needed */}
       </Container>
     </li>
   );
@@ -78,8 +77,22 @@ const FavoritesPage: React.FC = () => {
     }
   };
 
-  const deleteFavorite = (id: string) => {
-    setFavorites((prevFavorites) => prevFavorites.filter((favorite) => favorite !== id));
+  const deleteFavorite = async (favId: string) => {
+    try {
+      const updatedFavorites = favorites.filter((favorite) => favorite !== favId);
+      console.log(updatedFavorites);
+      setFavorites(updatedFavorites);
+
+      await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
+        id: parseInt(id),
+        favorites: updatedFavorites,
+      });
+
+      alert('Favorite deleted and updated successfully!');
+    } catch (error) {
+      console.error('Error updating favorites after deletion:', error);
+      alert('Failed to update favorites.');
+    }
   };
 
   return (
@@ -88,7 +101,7 @@ const FavoritesPage: React.FC = () => {
         <ul className="content-page-reviews-list">
           {favorites.length > 0 ? (
             favorites.map((favorite) => (
-              <SortableItem key={favorite} id={favorite} favorite={favorite} onDelete={deleteFavorite} />
+              <SortableItem key={favorite} favId={favorite} favorite={favorite} onDelete={deleteFavorite} />
             ))
           ) : (
             <p>No favorites found.</p>

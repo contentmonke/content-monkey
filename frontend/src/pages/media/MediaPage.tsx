@@ -12,8 +12,13 @@ import ErrorAlert from "../../components/ErrorAlert";
 import { UhOh } from "../../components/UhOh";
 import { useLocation } from 'react-router-dom';
 import CreateReviewButton from "../reviews/CreateReviewButton";
-import { useAuth0 } from "@auth0/auth0-react"
-import Button from "../../components/button/Button"
+import { useAuth0 } from "@auth0/auth0-react";
+import Button from "../../components/button/Button";
+import IconButton from '@mui/material/IconButton';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 function MediaPage() {
@@ -28,15 +33,31 @@ function MediaPage() {
   const [needsUpdate, setNeedsUpdate] = useState(true);
   const location = useLocation(); // Accessing the state passed from the navbar
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
-
+  const [favorited, setFavorited] = useState(false);
 
   useEffect(() => {
+
+
     if (location && location.state && location.state.result && needsUpdate) {
       setNeedsUpdate(false);
       fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
       // fetchMedia(null, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
-  }, [needsUpdate]);
+    const fetchFavorites = async () => {
+                try {
+                  if (!isLoading && user?.name && media) {
+                    const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+                    const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + idResponse.data[0].id);
+                    if (favoritesResponse.data.includes(media.mediaTitle)) {
+                        setFavorited(true);
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error fetching favorites:', error);
+                }
+            }
+    fetchFavorites();
+  }, [needsUpdate, media, user]);
 
 
   const handleStatusClick = (value: any) => {
@@ -48,6 +69,41 @@ function MediaPage() {
   const handleRatingChange = (value: any) => {
     setRating(parseFloat(value));
   }
+
+  const handleToggle = async () => {
+      try {
+        const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+        const userId = idResponse.data[0].id;
+        const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + userId);
+
+
+        if (favorited) {
+          // remove from favorites
+          const index = favoritesResponse.data.indexOf(media.mediaTitle);
+
+          if (index > -1) {
+            favoritesResponse.data.splice(index, 1);
+          }
+          await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
+                  id: userId,
+                  favorites: favoritesResponse.data,
+                });
+        } else {
+          // add to favorites
+          favoritesResponse.data.push(media.mediaTitle);
+          await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
+                  id: parseInt(userId),
+                  favorites: favoritesResponse.data,
+                });
+        }
+
+        setFavorited(!favorited);
+      } catch (error) {
+        console.error('Error toggling favorite:', error);
+      }
+    };
+
+
 
   return (
     <>
@@ -87,6 +143,12 @@ function MediaPage() {
                   value={rating}
                   setValue={(event: any) => handleRatingChange(event.target.value)}
                 /> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
+
+
+                <h6 style={{ ...rateField }}>Favorite</h6>
+                {isAuthenticated ? <IconButton onClick={handleToggle} color="primary" aria-label="toggle favorite">
+                {favorited ? <StarIcon /> : <StarBorderIcon />}
+                </IconButton> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
 
               </Container>
               <Divider orientation="vertical" sx={{ height: 'auto' }} />
