@@ -14,4 +14,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     @Query("SELECT e FROM CommentEntity e WHERE e.id IN :ids")
     Page<CommentEntity> findAllByIdWithPagination(@Param("ids") List<Long> ids, Pageable pageable);
+
+    List<CommentEntity> findByUserId(Long userId);
 }

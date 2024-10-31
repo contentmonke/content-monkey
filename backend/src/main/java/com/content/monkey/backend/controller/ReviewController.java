@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.content.monkey.backend.model.dto.ActivityWithUser;
 
 import java.io.IOException;
 import java.net.URI;
@@ -86,7 +87,44 @@ public class ReviewController {
 
     }
 
+    @GetMapping("/upVotes/{userId}")
+    public ResponseEntity<ReviewEntity> upVotes(@PathVariable Long userId,
+                                                    @RequestParam Long reviewId,
+                                                    @RequestParam boolean addedVote) {
+        ReviewEntity reviewEntity = reviewService.upVotes(userId, reviewId, addedVote);
+        // Successfully updated
+        if (reviewEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
+        // Created new object
+        URI uri = URI.create("/api/reviews/downVotes/" + reviewEntity.getId());
+        return ResponseEntity.created(uri).body(reviewEntity);
+    }
 
+    @GetMapping("/downVotes/{userId}")
+    public ResponseEntity<ReviewEntity> downVotes(@PathVariable Long userId,
+                                                    @RequestParam Long reviewId,
+                                                    @RequestParam boolean addedVote) {
+        ReviewEntity reviewEntity = reviewService.downVotes(userId, reviewId, addedVote);
+        // Successfully updated
+        if (reviewEntity == null) {
+            return ResponseEntity.noContent().build();
+        }
+        // Created new object
+        URI uri = URI.create("/api/reviews/downVotes/" + reviewEntity.getId());
+        return ResponseEntity.created(uri).body(reviewEntity);
+    }
+    
+    // Endpoint to get all reviews and comments by user ID (user activities)
+    @GetMapping("/userId/{userId}/activity")
+    public ResponseEntity<List<Object>> getUserActivities(@PathVariable Long userId) {
+        List<Object> activities = reviewService.getUserActivities(userId);
+        return ResponseEntity.ok(activities);
+    }
 
-
+    @GetMapping("/userId/{userId}/friends/activity")
+    public ResponseEntity<List<ActivityWithUser>> getFriendsActivities(@PathVariable Long userId) {
+        List<ActivityWithUser> activities = reviewService.getFriendsActivities(userId);
+        return ResponseEntity.ok(activities);
+    }
 }

@@ -37,7 +37,8 @@ const ContentPage: React.FC = () => {
             ...review,
             reviewDate,
             mediaTitle: mediaResponse.data.mediaTitle,  // Add the media title to the review object
-            mediaType: mediaResponse.data.mediaType
+            mediaType: mediaResponse.data.mediaType,
+            mediaThumbnail: mediaResponse.data.thumbnail
           };
         })
       );

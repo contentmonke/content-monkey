@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useNavigate, useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { CSS } from '@dnd-kit/utilities';
-import { Container } from '@mui/material';
+import { Container, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete'; // Ensure you have @mui/icons-material installed
 import ConfirmButton from './../../../components/ConfirmButton.tsx';
 
-const SortableItem: React.FC<{ id: string; favorite: string }> = ({ id, favorite }) => {
+const SortableItem: React.FC<{ id: string; favorite: string; onDelete: (id: string) => void }> = ({ id, favorite, onDelete }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -17,8 +18,16 @@ const SortableItem: React.FC<{ id: string; favorite: string }> = ({ id, favorite
 
   return (
     <li ref={setNodeRef} style={style} {...attributes} {...listeners} className="content-page-review-item">
-      <div className="content-page-review-header">
-        <p className="content-page-review-title">{favorite}</p>
+      <div
+        className="content-page-review-header"
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
+        <p className="content-page-review-title" style={{ margin: 0 }}>
+          {favorite}
+        </p>
+        <IconButton onClick={() => onDelete(id)} aria-label="delete" style={{ padding: 0 }}>
+          <DeleteIcon />
+        </IconButton>
       </div>
       <Container disableGutters className="review-vote-container">
         {/* Additional content here if needed */}
@@ -69,13 +78,17 @@ const FavoritesPage: React.FC = () => {
     }
   };
 
+  const deleteFavorite = (id: string) => {
+    setFavorites((prevFavorites) => prevFavorites.filter((favorite) => favorite !== id));
+  };
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={favorites} strategy={verticalListSortingStrategy}>
         <ul className="content-page-reviews-list">
           {favorites.length > 0 ? (
             favorites.map((favorite) => (
-              <SortableItem key={favorite} id={favorite} favorite={favorite} />
+              <SortableItem key={favorite} id={favorite} favorite={favorite} onDelete={deleteFavorite} />
             ))
           ) : (
             <p>No favorites found.</p>

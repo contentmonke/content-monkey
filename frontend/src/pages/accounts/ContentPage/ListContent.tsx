@@ -17,6 +17,7 @@ interface ReviewEntity {
   reviewDate: string;
   mediaTitle: string;
   mediaType: string;
+  mediaThumbnail: string;
 }
 
 interface ListContentProps {
@@ -59,58 +60,63 @@ const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
       <ul className="content-page-reviews-list">
         {reviewsToDisplay.map((review) => (
           <li key={review.id} className="content-page-review-item">
-            <div className="content-page-review-header">
-              <p className="content-page-review-title">{review.mediaTitle}</p>
-              <Rating
-                size="small"
-                sx={{ my: 0, mr: 1, mb: 0.5 }}
-                value={review.rating}
-                precision={0.5}
-                readOnly
-              />
+            <div className="content-page-review-thumbnail">
+              <img src={review.mediaThumbnail} alt="Thumbnail" />
             </div>
-            <div className="content-page-dates-container">
-              <p className="content-page-review-date">
-                {DateTime.fromJSDate(new Date(review.reviewDate)).toRelative()}
-              </p>
-              <p className="content-page-absolute-date">
-                {DateTime.fromJSDate(new Date(review.reviewDate)).toLocaleString(DateTime.DATETIME_MED)}
-              </p>
-            </div>
-            <div className="content-page-date-range">
-              {review.startDate && (
-                <p className="content-page-start-date">
-                  Started: {DateTime.fromJSDate(new Date(review.startDate)).toFormat('MMM dd, yyyy')}
+            <div className="content-page-review-content">
+              <div className="content-page-review-header">
+                <p className="content-page-review-title">{review.mediaTitle}</p>
+                <Rating
+                  size="small"
+                  sx={{ my: 0, mr: 1, mb: 0.5 }}
+                  value={review.rating}
+                  precision={0.5}
+                  readOnly
+                />
+              </div>
+              <div className="content-page-dates-container">
+                <p className="content-page-review-date">
+                  {DateTime.fromJSDate(new Date(review.reviewDate)).toRelative()}
                 </p>
-              )}
-              {review.endDate && review.startDate && <span className="content-page-date-separator"> - </span>}
-              {review.endDate && (
-                <p className="content-page-end-date">
-                  Finished: {DateTime.fromJSDate(new Date(review.endDate)).toFormat('MMM dd, yyyy')}
+                <p className="content-page-absolute-date">
+                  {DateTime.fromJSDate(new Date(review.reviewDate)).toLocaleString(DateTime.DATETIME_MED)}
                 </p>
+              </div>
+              <div className="content-page-date-range">
+                {review.startDate && (
+                  <p className="content-page-start-date">
+                    Started: {DateTime.fromJSDate(new Date(review.startDate)).toFormat('MMM dd, yyyy')}
+                  </p>
+                )}
+                {review.endDate && review.startDate && <span className="content-page-date-separator"> - </span>}
+                {review.endDate && (
+                  <p className="content-page-end-date">
+                    Finished: {DateTime.fromJSDate(new Date(review.endDate)).toFormat('MMM dd, yyyy')}
+                  </p>
+                )}
+              </div>
+              <div className={`content-page-review-body ${expandedReviewIds.has(review.id) ? 'expanded' : 'collapsed'}`}>
+                {review.body}
+              </div>
+              {review.body.split('\n').length > 3 && (
+                <button
+                  onClick={() => toggleExpansion(review.id)}
+                  className="content-page-toggle-button"
+                >
+                  {expandedReviewIds.has(review.id) ? 'See Less' : 'See More'}
+                </button>
               )}
+              <Container disableGutters className="review-vote-container">
+                <IconButton size="small">
+                  <ThumbUp sx={{ width: 15 }} />
+                </IconButton>
+                <Typography variant="caption">{review.upVotes}</Typography>
+                <IconButton size="small">
+                  <ThumbDown sx={{ width: 15 }} />
+                </IconButton>
+                <Typography variant="caption">{review.downVotes}</Typography>
+              </Container>
             </div>
-            <div className={`content-page-review-body ${expandedReviewIds.has(review.id) ? 'expanded' : 'collapsed'}`}>
-              {review.body}
-            </div>
-            {review.body.split('\n').length > 3 && (
-              <button
-                onClick={() => toggleExpansion(review.id)}
-                className="content-page-toggle-button"
-              >
-                {expandedReviewIds.has(review.id) ? 'See Less' : 'See More'}
-              </button>
-            )}
-            <Container disableGutters className="review-vote-container">
-              <IconButton size="small">
-                <ThumbUp sx={{ width: 15 }} />
-              </IconButton>
-              <Typography variant="caption">{review.upVotes}</Typography>
-              <IconButton size="small">
-                <ThumbDown sx={{ width: 15 }} />
-              </IconButton>
-              <Typography variant="caption">{review.downVotes}</Typography>
-            </Container>
           </li>
         ))}
       </ul>
