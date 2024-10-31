@@ -8,6 +8,7 @@ import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.GoodReadsDTO;
 import com.content.monkey.backend.model.dto.UploadResultDTO;
 import com.content.monkey.backend.repository.ReviewRepository;
+import com.content.monkey.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -39,6 +40,8 @@ public class ReviewService {
     private MediaService mediaService;
     @Autowired
     private SearchService searchService;
+    @Autowired
+    private UserRepository userRepository;
 
     // HELPER FUNCTIONS
     private static LocalDateTime formatGoodReadsDate(String date) {
@@ -223,6 +226,63 @@ public class ReviewService {
             );
         }
         return reviewEntities;
+    }
+
+    public ReviewEntity upVotes(Long userId, Long reviewId, boolean addedVote) {
+        List<ReviewEntity> reviewEntities = reviewRepository.findByid(reviewId);
+        if (reviewEntities.size() == 0) {
+            return null;
+        }
+        ReviewEntity reviewEntity = reviewEntities.get(0);
+        reviewEntity.setUpVotes(reviewEntity.getUpVotes() + (addedVote ? 1 : -1));
+        System.out.println("Setting reviewUpvotes to " + reviewEntity.getUpVotes());
+        ReviewEntity updatedReview = reviewRepository.save(reviewEntity);
+        try {
+            UserEntity user = userService.getUser(userId);
+            if (user.getPosts_liked() == null) {
+                user.setPosts_liked(new ArrayList<>());
+            }
+            if (addedVote) {
+                user.getPosts_liked().add(reviewId);
+            } else {
+                user.getPosts_liked().remove(reviewId);
+            }
+            System.out.println("Setting user's liked posts to " + user.getPosts_liked());
+            userRepository.save(user);
+        } catch(Exception e) {
+            System.out.println("Error updating the user's upVotes");
+        }
+        return updatedReview;
+//        return null;
+    }
+
+    public ReviewEntity downVotes(Long userId, Long reviewId, boolean addedVote) {
+        List<ReviewEntity> reviewEntities = reviewRepository.findByid(reviewId);
+        if (reviewEntities.size() == 0) {
+            return null;
+        }
+        ReviewEntity reviewEntity = reviewEntities.get(0);
+        reviewEntity.setDownVotes(reviewEntity.getDownVotes() + (addedVote ? 1 : -1));
+        System.out.println("Setting reviewDownvotes to " + reviewEntity.getDownVotes());
+        ReviewEntity updatedReview = reviewRepository.save(reviewEntity);
+        try {
+            UserEntity user = userService.getUser(userId);
+            if (user.getPosts_disliked() == null) {
+                user.setPosts_disliked(new ArrayList<>());
+            }
+            if (addedVote) {
+                user.getPosts_disliked().add(reviewId);
+            } else {
+                user.getPosts_disliked().remove(reviewId);
+            }
+            System.out.println("Setting user's disliked posts to " + user.getPosts_disliked());
+            userRepository.save(user);
+        } catch(Exception e) {
+            System.out.println("Error updating the user's downvotes");
+            System.out.println(e);
+        }
+//        return null;
+        return updatedReview;
     }
 
 }
