@@ -44,6 +44,10 @@
   color: #000;
 }
 
+.activity-page-tab-item:last-child {
+  border-right: none;
+}
+
 .activity-page-tab-item.active {
   color: #31628F;
   border-bottom: 2px solid #31628F;
