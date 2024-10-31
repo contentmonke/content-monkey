@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
+import java.util.ArrayList;
 
 import java.net.URI;
 import java.util.List;
@@ -50,6 +51,18 @@ public class UserController {
     @GetMapping("/getPicture")
     public String getPicture(@RequestParam("id") Long id) {
         return userService.getPicture(id);
+    }
+
+    @GetMapping("/getFavorites")
+    public List<String> getFavorites(@RequestParam("id") Long id)  {
+        return userService.getFavorites(id);
+    }
+
+    @PostMapping("/setfavoritemedia")
+    public void setFavoriteMedia(@RequestBody Map<String, Object> request) {
+        Long id = ((Number) request.get("id")).longValue();
+        List<String> favorites = (List<String>) request.get("favorites");
+        userService.setFavorites(id, favorites);
     }
 
     @GetMapping("/all")

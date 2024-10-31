@@ -50,6 +50,17 @@ public class UserEntity {
     @Column(name = "comments_liked_by_user")
     private List<Long> comments_liked;
 
+    @Column(name = "favorite_media")
+    private List<Long> favorite_media;
+
+    public List<Long> getFavoriteMedia() {
+        return favorite_media;
+    }
+
+    public void setFavoriteMedia(List<Long> new_favorite) {
+        this.favorite_media = new_favorite;
+    }
+
     public String getPicture() {
         return picture;
     }
