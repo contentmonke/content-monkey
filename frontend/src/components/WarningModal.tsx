@@ -13,8 +13,22 @@ function WarningModal({ open, setOpen, handleConfirm }: any) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)}>No</Button>
-        <Button onClick={handleConfirm}>Yes</Button>
+        <Button onClick={() => setOpen(false)}
+          sx={{
+            color: "#31628F", // Text color
+            "&:hover": {
+              backgroundColor: "rgba(49, 98, 143, 0.1)", // Hover background color
+            },
+          }}
+        >No</Button>
+        <Button onClick={handleConfirm}
+          sx={{
+            color: "#31628F", // Text color
+            "&:hover": {
+              backgroundColor: "rgba(49, 98, 143, 0.1)", // Hover background color
+            },
+          }}
+        >Yes</Button>
       </DialogActions>
     </Dialog>
   );
