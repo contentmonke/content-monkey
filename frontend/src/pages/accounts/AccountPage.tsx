@@ -48,18 +48,20 @@ const AccountPage: React.FC = () => {
         const userResponse = await axios.get(`http://localhost:8080/api/user/${id}`);
         const favoriteContent = await axios.get(`http://localhost:8080/api/user/getFavorites?id=${id}`);
         setProfileContent(favoriteContent.data);
-        const mappedFavorites = await Promise.all(
-            favoriteContent.data.map(async (element) => {
-                // Make the API call to fetch imageUrl for each element
-                const response = await axios.get(`http://localhost:8080/api/search/any/${element}`);
+        const mappedFavorites = favoriteContent.data
+            ? await Promise.all(
+                favoriteContent.data.map(async (element) => {
+                    // Make the API call to fetch imageUrl for each element
+                    const response = await axios.get(`http://localhost:8080/api/search/any/${element}`);
 
-                // Return an object with title and imageUrl based on API responses
-                return {
-                    title: element,
-                    imageUrl: response.data[0].thumbnail // Assuming the API response returns only the imageUrl or adjust as necessary
-                };
-            })
-        );
+                    // Return an object with title and imageUrl based on API responses with null check
+                    return {
+                        title: element,
+                        imageUrl: response.data?.[0]?.thumbnail || null // Using optional chaining for safety
+                    };
+                })
+              )
+            : [];
         setProfileContent(mappedFavorites);
         console.log(mappedFavorites);
         console.log(favoriteContent.data);
