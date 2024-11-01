@@ -52,7 +52,7 @@ const FriendsPage: React.FC = () => {
 
   const fetchUserByEmail = async (email: string) => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/user/email?email=`+ email);
+        const response = await axios.get(`http://localhost:8080/api/user/emaillike/`+ email);
         setEmailQuery(response.data);
         setSearchResult(response.data);
         console.log(typeof searchResult);
@@ -66,7 +66,8 @@ const FriendsPage: React.FC = () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/user/`+id);
         setIdQuery(response.data);
-        setSearchResult(response.data);
+        setSearchResult([response.data]);
+        console.log(response.data);
 
       } catch (err) {
         setError('Error fetching user by email');
@@ -75,7 +76,7 @@ const FriendsPage: React.FC = () => {
     };
     const fetchUserByName = async (name: string) => {
       try {
-        const response = await axios.post(`http://localhost:8080/api/user/name/`+ name);
+        const response = await axios.get(`http://localhost:8080/api/user/name/`+ name);
         setNameQuery(response.data);
         console.log(response.data);
         setSearchResult(response.data);
@@ -196,25 +197,27 @@ const FriendsPage: React.FC = () => {
             placeholder="Search users..."
           />
           <Dropdown onSelectChange={handleOptionChange}/>
-          {searchResult && Object.keys(searchResult).length > 0 ? (
-              <ul className="friends-list">
-                  <li
-                      className="friend-item"
-                      onClick={() => goToFriendProfile(searchResult.id)} // Navigate on click
-                      style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
-                  >
-                      {searchResult.name} {/* Display the name directly from the object */}
-                  </li>
-              </ul>
-          ) : (
-              <ul className="friends-list">
-                  <li
-                      className="friend-item"
-                  >
-                  No Results
-                                    </li>
-              </ul>
-          )}
+          {searchResult && searchResult.length > 0 ? (
+    <ul className="friends-list">
+        {searchResult.map((item, index) => (
+            <li
+                key={index} // Unique key for each item
+                className="friend-item"
+                onClick={() => goToFriendProfile(item.id)} // Navigate on click
+                style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+            >
+                {item.name} {/* Display the name directly from the array element */}
+            </li>
+        ))}
+    </ul>
+    ) : (
+    <ul className="friends-list">
+        <li className="friend-item">
+            No Results
+        </li>
+    </ul>
+    )}
+
 
         </div>
         <div className="tabs-container">
