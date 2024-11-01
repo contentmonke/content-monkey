@@ -32,19 +32,37 @@ const AccountPage: React.FC = () => {
   const [isDisabledRequest, setIsDisabledRequest] = useState(false);
   const [isDisabledBlock, setIsDisabledBlock] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [profileContent, setProfileContent] = useState([]);
 
 
   // Mock data for favorite content and reviews
-  const favoriteContent = [
-    { id: 1, title: 'Inception', imageUrl: 'https://via.placeholder.com/150' },
-    { id: 2, title: 'Breaking Bad', imageUrl: 'https://via.placeholder.com/150' },
-    { id: 3, title: 'The Witcher 3', imageUrl: 'https://via.placeholder.com/150' },
-  ];
+//   const favoriteContent = [
+//     { id: 1, title: 'Inception', imageUrl: 'https://via.placeholder.com/150' },
+//     { id: 2, title: 'Breaking Bad', imageUrl: 'https://via.placeholder.com/150' },
+//     { id: 3, title: 'The Witcher 3', imageUrl: 'https://via.placeholder.com/150' },
+//   ];
 
   useEffect(() => {
     async function fetchData() {
       try {
         const userResponse = await axios.get(`http://localhost:8080/api/user/${id}`);
+        const favoriteContent = await axios.get(`http://localhost:8080/api/user/getFavorites?id=${id}`);
+        setProfileContent(favoriteContent.data);
+        const mappedFavorites = await Promise.all(
+            favoriteContent.data.map(async (element) => {
+                // Make the API call to fetch imageUrl for each element
+                const response = await axios.get(`http://localhost:8080/api/search/any/${element}`);
+
+                // Return an object with title and imageUrl based on API responses
+                return {
+                    title: element,
+                    imageUrl: response.data[0].thumbnail // Assuming the API response returns only the imageUrl or adjust as necessary
+                };
+            })
+        );
+        setProfileContent(mappedFavorites);
+        console.log(mappedFavorites);
+        console.log(favoriteContent.data);
         //await axios.post('http://localhost:8080/api/user/', { name: user?.name });
         //const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
         //await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
@@ -114,7 +132,7 @@ const AccountPage: React.FC = () => {
           setLoggedInUserId(curr_user.data[0].id);
           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
           setLoggedInBlock(curr_user.data[0].blocked_users);
-          console.log(curr_user.data[0].blocked_users);
+          //console.log(curr_user.data[0].blocked_users);
           setLoggedInUserFriends(curr_user.data[0].friend_list);
           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
           console.log("loggedInUserFriends", loggedInUserFriends);
@@ -213,12 +231,12 @@ const AccountPage: React.FC = () => {
           <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
           <hr className="main-divider" />
           <div className="content-grid">
-            {favoriteContent.map(item => (
-              <div key={item.id} className="content-item">
-                <img src={item.imageUrl} alt={item.title} />
-                <p>{item.title}</p>
-              </div>
-            ))}
+              {profileContent.map(item => (
+                  <div key={item.id} className="content-item">
+                      <img src={item.imageUrl} alt={item.title} className="content-image" />
+                      <p>{item.title}</p>
+                  </div>
+              ))}
           </div>
         </div>
 

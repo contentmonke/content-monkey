@@ -4,13 +4,14 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import SearchBox from '../../../components/SeachBox';
+import Dropdown from '../../../components/SearchUserDropdown';
 import './FriendsPage.css';
 import { CheckCircle, Cancel, Delete } from '@mui/icons-material';
+
 
 const FriendsPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth0();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loggedInUserId, setLoggedInUserId] = useState(0);
@@ -18,6 +19,14 @@ const FriendsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [blockedUsers, setBlockedUsers] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [selectedOption, setSelectedOption] = useState<string>('email');
+  const [emailQuery, setEmailQuery] = useState([]);
+  const [idQuery, setIdQuery] = useState([]);
+  const [nameQuery, setNameQuery] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const [googleContacts, setGoogleContacts] = useState([]);
+  const [error, setError] = useState('');
 
 
   const handleTabChange = (index: number) => setActiveTab(index);
@@ -41,6 +50,65 @@ const FriendsPage: React.FC = () => {
     }
   }
 
+  const fetchUserByEmail = async (email: string) => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/email?email=`+ email);
+        setEmailQuery(response.data);
+        setSearchResult(response.data);
+        console.log(typeof searchResult);
+
+      } catch (err) {
+        setError('Error fetching user by email');
+        console.error('Error:', err);
+      }
+    };
+    const fetchUserById = async (id: string) => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/`+id);
+        setIdQuery(response.data);
+        setSearchResult(response.data);
+
+      } catch (err) {
+        setError('Error fetching user by email');
+        console.error('Error:', err);
+      }
+    };
+    const fetchUserByName = async (name: string) => {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/user/name/`+ name);
+        setNameQuery(response.data);
+        console.log(response.data);
+        setSearchResult(response.data);
+
+      } catch (err) {
+        setError('Error fetching user by email');
+        console.error('Error:', err);
+      }
+    };
+    const fetchGoogleContacts = async () => {
+                if (isAuthenticated) {
+                    try {
+                        const accessToken = await getAccessTokenSilently({
+                            audience: 'https://people.googleapis.com/',
+                            scope: 'https://www.googleapis.com/auth/contacts.readonly'
+                        });
+                        const response = await axios.get('https://people.googleapis.com/v1/people/me/connections', {
+                            headers: {
+                                Authorization: `Bearer ${accessToken}`
+                            },
+                            params: {
+                                personFields: 'names'
+                            }
+                        });
+                        setGoogleContacts(response.data.connections || []);
+                        console.log(response.data.connections);
+                    } catch (err) {
+                        console.error('Error fetching Google Contacts:', err);
+                        setError('Failed to fetch contacts.');
+                    }
+                }
+            };
+
   const goToFriendProfile = (friendId: number) => {
     navigate(`/u/${friendId}`);
   };
@@ -49,9 +117,23 @@ const FriendsPage: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
+
+
+
   const handleSearchSubmit = () => {
     // Implement search submit logic here
-    console.log(`Searching for: ${searchQuery}`);
+
+    console.log(`Searching for: ${searchQuery} under ` + selectedOption);
+    if (selectedOption === 'email') {
+            fetchUserByEmail(searchQuery);
+            console.log(emailQuery);
+        } else if (selectedOption === 'id') {
+            fetchUserById(searchQuery);
+            console.log(idQuery);
+        } else {
+            fetchUserByName(searchQuery);
+            console.log(nameQuery);
+        }
   };
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -90,10 +172,15 @@ const FriendsPage: React.FC = () => {
       }
     };
 
+    const handleOptionChange = (selectedOption: string) => {
+        setSelectedOption(selectedOption);
+    };
+
 
   useEffect(() => {
     fetchData();
-  }, [id, user]);
+    fetchGoogleContacts();
+  }, [id, user, isAuthenticated, getAccessTokenSilently]);
 
   return (
     <div className="friends-page-container">
@@ -108,6 +195,27 @@ const FriendsPage: React.FC = () => {
             inputWidth="25ch"
             placeholder="Search users..."
           />
+          <Dropdown onSelectChange={handleOptionChange}/>
+          {searchResult && Object.keys(searchResult).length > 0 ? (
+              <ul className="friends-list">
+                  <li
+                      className="friend-item"
+                      onClick={() => goToFriendProfile(searchResult.id)} // Navigate on click
+                      style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                  >
+                      {searchResult.name} {/* Display the name directly from the object */}
+                  </li>
+              </ul>
+          ) : (
+              <ul className="friends-list">
+                  <li
+                      className="friend-item"
+                  >
+                  No Results
+                                    </li>
+              </ul>
+          )}
+
         </div>
         <div className="tabs-container">
           <div className="tabs-header">
@@ -121,6 +229,9 @@ const FriendsPage: React.FC = () => {
             )}
             <div className={`tab-item ${activeTab === 2 ? 'active' : ''}`} onClick={() => handleTabChange(2)}>
               Blocked
+            </div>
+            <div className={`tab-item ${activeTab === 3 ? 'active' : ''}`} onClick={() => handleTabChange(3)}>
+              Google Contacts
             </div>
           </div>
           <div className="tab-content">
@@ -174,6 +285,22 @@ const FriendsPage: React.FC = () => {
                                   </li>
                                 ))}
                               </ul>
+                {successMessage && (
+                <div className="success-message">
+                  <p>{successMessage}</p>
+                </div>
+                )}
+              </div>
+            )}
+            {activeTab === 3 && (
+              <div className="tab-content">
+                <ul>
+                {googleContacts.map(contact => (
+                    <li key={contact.resourceName}>
+                        {contact.names?.[0]?.displayName} ({contact.emailAddresses?.[0]?.value})
+                    </li>
+                ))}
+                </ul>
                 {successMessage && (
                 <div className="success-message">
                   <p>{successMessage}</p>
