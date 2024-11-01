@@ -22,10 +22,10 @@ public class ActivityWithUser {
 
     // Helper method to get the dateCreated based on the activity type
     public java.time.LocalDateTime getDateCreated() {
-        if (activity instanceof ReviewEntity) {
-            return ((ReviewEntity) activity).getDateCreated();
-        } else if (activity instanceof CommentEntity) {
-            return ((CommentEntity) activity).getDateCreated();
+        if (activity instanceof ReviewWithMediaDTO) {
+            return ((ReviewWithMediaDTO) activity).getDateCreated();
+        } else if (activity instanceof CommentWithMediaDTO) {
+            return ((CommentWithMediaDTO) activity).getDateCreated();
         }
         return null;
     }

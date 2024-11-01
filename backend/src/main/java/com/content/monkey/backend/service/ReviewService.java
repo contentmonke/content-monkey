@@ -388,8 +388,7 @@ public class ReviewService {
         }
 
         // Sort by date, handling potential null values in dateCreated
-        return friendsActivities.stream()
-                .sorted(Comparator.comparing(
+        return friendsActivities.stream().sorted(Comparator.comparing(
                         activity -> {
                             LocalDateTime date = activity.getDateCreated();
                             return (date != null) ? date : LocalDateTime.MIN;  // Use LocalDateTime.MIN if null
