@@ -108,7 +108,7 @@ const ActivityPage: React.FC = () => {
                         <div className={`activity-item-body ${expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'}`}>
                           {activity.body}
                         </div>
-                        {activity.body.split('\n').length > 1 && (
+                        {((activity.body.split('\n').length > 1) || (activity.body.length > 120)) && (
                           <button
                             onClick={() => toggleExpansion(activity.id)}
                             className="activity-item-toggle-button"

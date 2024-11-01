@@ -4,6 +4,7 @@ import com.content.monkey.backend.exceptions.ReviewNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.ReviewRepository;
+import com.content.monkey.backend.repository.CommentRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.client.RestTemplate;
+import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,6 +38,8 @@ public class ReviewServiceTests {
     @Mock
     private UserService userService;
     @Mock
+    private CommentRepository commentRepository;
+    @Mock
     private CommentService commentService;
     @InjectMocks
     private ReviewService reviewService;
@@ -45,6 +49,7 @@ public class ReviewServiceTests {
 
     @BeforeEach
     public void init() {
+        MockitoAnnotations.openMocks(this);
         reviewEntity = ReviewEntity.builder()
                 .userId(1L)
                 .commentIds(new ArrayList<>())
@@ -158,5 +163,69 @@ public class ReviewServiceTests {
 
         reviewService.deleteReview(reviewId);
     }
+/*
+    @Test
+    public void testGetFriendsActivities() {
+        // Mock user and friends list
+        Long userId = 1L;
+        Long friendId = 2L;
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setFriendList(Collections.singletonList(String.valueOf(friendId)));
 
+        UserEntity friend = new UserEntity();
+        friend.setId(friendId);
+        friend.setName("FriendName");
+
+        // Mock activities
+        ReviewEntity review = new ReviewEntity();
+        review.setDateCreated(LocalDateTime.now().minusDays(1));
+        review.setUserId(friendId);
+
+        CommentEntity comment = new CommentEntity();
+        comment.setDateCreated(LocalDateTime.now().minusDays(2));
+        comment.setUserId(friendId);
+
+        // Define behavior for mocks
+        when(userService.getUser(userId)).thenReturn(user);
+        when(userService.getUser(friendId)).thenReturn(friend);
+        when(reviewRepository.findByUserId(friendId)).thenReturn(Collections.singletonList(review));
+        when(commentRepository.findByUserId(friendId)).thenReturn(Collections.singletonList(comment));
+
+        // Execute the method to be tested
+        List<ActivityWithUser> result = reviewService.getFriendsActivities(userId);
+
+        // Verify the result
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("FriendName", result.get(0).getUserName());
+        assertTrue(result.get(0).getActivity().getDateCreated().isAfter(result.get(1).getActivity().getDateCreated()));
+
+        // Verify interactions with mocks
+        verify(userService, times(1)).getUser(userId);
+        verify(userService, times(1)).getUser(friendId);
+        verify(reviewRepository, times(1)).findByUserId(friendId);
+        verify(commentRepository, times(1)).findByUserId(friendId);
+    }
+
+    @Test
+    public void testGetFriendsActivities_InvalidFriendId() {
+        // Mock user with invalid friend ID
+        Long userId = 1L;
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setFriendList(Collections.singletonList("invalidId"));
+
+        when(userService.getUser(userId)).thenReturn(user);
+
+        // Execute the method to be tested
+        List<ActivityWithUser> result = reviewService.getFriendsActivities(userId);
+
+        // Verify result is empty due to invalid friend ID
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify interactions with mocks
+        verify(userService, times(1)).getUser(userId);
+    } */
 }
