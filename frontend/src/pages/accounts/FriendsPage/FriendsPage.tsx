@@ -4,8 +4,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import SearchBox from '../../../components/SeachBox';
-import { CheckCircle, Cancel } from '@mui/icons-material';
 import './FriendsPage.css';
+import { CheckCircle, Cancel, Delete } from '@mui/icons-material';
 
 const FriendsPage: React.FC = () => {
   const { id } = useParams();
@@ -16,6 +16,9 @@ const FriendsPage: React.FC = () => {
   const [loggedInUserId, setLoggedInUserId] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [blockedUsers, setBlockedUsers] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
 
   const handleTabChange = (index: number) => setActiveTab(index);
 
@@ -23,6 +26,10 @@ const FriendsPage: React.FC = () => {
     try {
       const friendsList = await axios.get(`http://localhost:8080/api/user/friend_list/${id}`);
       setFriends(friendsList.data);
+
+      const blockedList = await axios.get(`http://localhost:8080/api/user/getBlockedUsers?userId=${id}`);
+      console.log(blockedList);
+      setBlockedUsers(blockedList.data);
 
       const requestList = await axios.get(`http://localhost:8080/api/user/friend_requests/${id}`);
       setRequests(requestList.data);
@@ -72,6 +79,17 @@ const FriendsPage: React.FC = () => {
     }
     fetchData();
   };
+
+  const handleUnblockUser = async (blockedUser: string, index: number) => {
+      try {
+        await axios.post(`http://localhost:8080/api/user/unblockUser?userId=${id}&blockId=${blockedUser}`);
+        setBlockedUsers(blockedUsers.filter((_, i) => i !== index));
+        setSuccessMessage("User No Longer Blocked")
+      } catch (err) {
+        console.error('Error unblocking user', err);
+      }
+    };
+
 
   useEffect(() => {
     fetchData();
@@ -140,8 +158,27 @@ const FriendsPage: React.FC = () => {
               </ul>
             )}
             {activeTab === 2 && (
-              <div className="blocked-content">
-                <p>No blocked users yet.</p>
+              <div className="tab-content">
+                <ul className="friends-list">
+                                {blockedUsers.map((f: any, i: number) => (
+                                  <li
+                                    key={i}
+                                    className="friend-item"
+                                    style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                                  >
+                                    {f}
+                                    <Delete
+                                      onClick={() => handleUnblockUser(f, i)}
+                                      style={{ color: '#FF3E3E', cursor: 'pointer', marginLeft: '10px' }}
+                                    />
+                                  </li>
+                                ))}
+                              </ul>
+                {successMessage && (
+                <div className="success-message">
+                  <p>{successMessage}</p>
+                </div>
+                )}
               </div>
             )}
           </div>

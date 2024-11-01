@@ -138,6 +138,21 @@ public class UserController {
         return userService.acceptRequest(from, to, decision);
     }
 
+    @PostMapping("/blockUser")
+    public void blockUser(@RequestParam("blockId") Long blockId, @RequestParam("userId") Long userId)  {
+        userService.blockUser(blockId, userId);
+    }
+
+    @PostMapping("/unblockUser")
+    public void blockUser(@RequestParam("blockId") String blockedUser, @RequestParam("userId") Long userId)  {
+        userService.unblockUser(blockedUser, userId);
+    }
+
+    @GetMapping("/getBlockedUsers")
+    public List<String> getBlockedUsers(@RequestParam("userId") Long userId)  {
+        return userService.getBlockedUsers(userId);
+    }
+
     /*
     @GetMapping("/{userId}/activity")
     public List<Object> getUserActivity(@PathVariable Long userId) {
