@@ -102,6 +102,11 @@ public class UserController {
         return users;
     }
 
+    @GetMapping("/email")
+    public UserEntity getUserById(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email);
+    }
+
     @GetMapping("/{id}")
     public UserEntity getUserById(@PathVariable Long id) {
         return userService.getUser(id);

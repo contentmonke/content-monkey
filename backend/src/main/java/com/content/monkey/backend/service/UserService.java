@@ -218,6 +218,11 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public UserEntity getUserByEmail(String email) {
+        List<UserEntity> user = userRepository.findByEmail(email);
+        return user.getFirst();
+    }
+
     public void unblockUser(String blockedUser, Long userId) {
         UserEntity user = getUser(userId);
         UserEntity blockedUserE = getSingleUser(blockedUser).getFirst();
