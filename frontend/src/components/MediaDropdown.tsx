@@ -4,12 +4,23 @@ import { MediaType } from "../models/Models";
 function MediaDropdown({ mediaType, onChange }: any) {
   return (
     <FormControl sx={{ minWidth: 95, mr: 1 }}>
-      <InputLabel id="media-field-id">Media Type</InputLabel>
+      <InputLabel id="media-field-id"
+        sx={{
+          "&.Mui-focused": {
+            color: "#31628F",
+          },
+        }}
+      >Media Type</InputLabel>
       <Select
         value={mediaType}
         label={"Media Type"}
         labelId="media-field-id"
         onChange={(event) => onChange(event.target.value)}
+        sx={{
+          "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#31628F",
+          },
+        }}
       >
         <MenuItem value={MediaType.UNSELECTED}>-----</MenuItem>
         <MenuItem value={MediaType.BOOK}>Book</MenuItem>

@@ -16,7 +16,7 @@ const Search = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(1),
     width: 'auto',
-  },
+  }
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -67,7 +67,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
             width: '100%',
             [theme.breakpoints.up('md')]: {
               width: inputWidth, // Dynamic width via prop
-            },
+            }
           }),
         }}
       />

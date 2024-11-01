@@ -15,7 +15,21 @@ function MediaSearchBar({ mediaType, handleMediaChange, title, setTitle, handleS
         fullWidth
         label="Search media"
         value={title}
-        onChange={(event) => setTitle(event.target.value)} />
+        onChange={(event) => setTitle(event.target.value)}
+        sx={{
+          mb: 1,
+          "& .MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: "#31628F",
+            },
+          },
+          "& .MuiInputLabel-root": {
+            "&.Mui-focused": {
+              color: "#31628F", // Change label color on focus
+            },
+          },
+        }}
+      />
       <Button variant="contained"
         sx={{ ...searchButton }}
         startIcon={<SearchIcon />}

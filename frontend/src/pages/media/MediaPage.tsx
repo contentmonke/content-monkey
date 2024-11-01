@@ -44,18 +44,18 @@ function MediaPage() {
       // fetchMedia(null, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
     const fetchFavorites = async () => {
-                try {
-                  if (!isLoading && user?.name && media) {
-                    const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-                    const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + idResponse.data[0].id);
-                    if (favoritesResponse.data.includes(media.mediaTitle)) {
-                        setFavorited(true);
-                    }
-                  }
-                } catch (error) {
-                  console.error('Error fetching favorites:', error);
-                }
-            }
+      try {
+        if (!isLoading && user?.name && media) {
+          const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+          const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + idResponse.data[0].id);
+          if (favoritesResponse.data.includes(media.mediaTitle)) {
+            setFavorited(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+      }
+    }
     fetchFavorites();
   }, [needsUpdate, media, user]);
 
@@ -71,37 +71,37 @@ function MediaPage() {
   }
 
   const handleToggle = async () => {
-      try {
-        const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-        const userId = idResponse.data[0].id;
-        const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + userId);
+    try {
+      const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+      const userId = idResponse.data[0].id;
+      const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + userId);
 
 
-        if (favorited) {
-          // remove from favorites
-          const index = favoritesResponse.data.indexOf(media.mediaTitle);
+      if (favorited) {
+        // remove from favorites
+        const index = favoritesResponse.data.indexOf(media.mediaTitle);
 
-          if (index > -1) {
-            favoritesResponse.data.splice(index, 1);
-          }
-          await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
-                  id: userId,
-                  favorites: favoritesResponse.data,
-                });
-        } else {
-          // add to favorites
-          favoritesResponse.data.push(media.mediaTitle);
-          await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
-                  id: parseInt(userId),
-                  favorites: favoritesResponse.data,
-                });
+        if (index > -1) {
+          favoritesResponse.data.splice(index, 1);
         }
-
-        setFavorited(!favorited);
-      } catch (error) {
-        console.error('Error toggling favorite:', error);
+        await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
+          id: userId,
+          favorites: favoritesResponse.data,
+        });
+      } else {
+        // add to favorites
+        favoritesResponse.data.push(media.mediaTitle);
+        await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
+          id: parseInt(userId),
+          favorites: favoritesResponse.data,
+        });
       }
-    };
+
+      setFavorited(!favorited);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
 
 
 
@@ -146,8 +146,14 @@ function MediaPage() {
 
 
                 <h6 style={{ ...rateField }}>Favorite</h6>
-                {isAuthenticated ? <IconButton onClick={handleToggle} color="primary" aria-label="toggle favorite">
-                {favorited ? <StarIcon /> : <StarBorderIcon />}
+                {isAuthenticated ? <IconButton onClick={handleToggle} aria-label="toggle favorite"
+                  sx={{
+                    color: favorited ? "#31628F" : "rgba(49, 98, 143, 0.5)", // Active/Inactive color
+                    "&:hover": {
+                      color: "#274b73" // Darker hover color
+                    }
+                  }}>
+                  {favorited ? <StarIcon /> : <StarBorderIcon />}
                 </IconButton> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
 
               </Container>
