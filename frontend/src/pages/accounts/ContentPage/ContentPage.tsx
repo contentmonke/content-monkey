@@ -88,17 +88,20 @@ const ContentPage: React.FC = () => {
               path="/"
               element={<ListContent reviews={allContent} />}
             />
+            <Route path="tvshows"
+              element={<ListContent reviews={allContent} type="TV Show" />}
+            />
             <Route path="movies"
               element={<ListContent reviews={allContent} type="Movie" />}
             />
             <Route
               path="favorites"
               element={
-                  <FavoritesPage/>
-                }
+                <FavoritesPage />
+              }
             />
             <Route path="videogames"
-              element={<ListContent reviews={allContent} type="Video Game"/>}
+              element={<ListContent reviews={allContent} type="Video Game" />}
             />
             <Route path="books"
               element={<ListContent reviews={allContent} type="Book" />}
