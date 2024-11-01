@@ -2,8 +2,13 @@ package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.exceptions.ReviewNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
+import com.content.monkey.backend.model.dto.ActivityWithUser;
+import com.content.monkey.backend.model.CommentEntity;
+import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.ReviewRepository;
+import com.content.monkey.backend.repository.MediaRepository;
+import com.content.monkey.backend.repository.CommentRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,16 +16,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.client.RestTemplate;
+import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,15 +49,20 @@ public class ReviewServiceTests {
     @Mock
     private UserService userService;
     @Mock
+    private CommentRepository commentRepository;
+    @Mock
     private CommentService commentService;
     @InjectMocks
     private ReviewService reviewService;
     private ReviewEntity reviewEntity;
+    @Mock
+    private MediaRepository mediaRepository;
     @MockBean
     private RestTemplate restTemplate;
 
     @BeforeEach
     public void init() {
+        MockitoAnnotations.openMocks(this);
         reviewEntity = ReviewEntity.builder()
                 .userId(1L)
                 .commentIds(new ArrayList<>())
@@ -159,4 +177,76 @@ public class ReviewServiceTests {
         reviewService.deleteReview(reviewId);
     }
 
+    @Test
+    public void testGetFriendsActivities() {
+        // Setup mock data
+        Long userId = 1L;
+        Long friendId = 2L;
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setFriend_list(Collections.singletonList(String.valueOf(friendId))); // Use `setFriend_list` here
+
+        UserEntity friend = new UserEntity();
+        friend.setId(friendId);
+        friend.setName("FriendName");
+
+        // Mock ReviewEntity and CommentEntity data
+        ReviewEntity review = new ReviewEntity();
+        review.setDateCreated(LocalDateTime.now().minusDays(1));
+        review.setUserId(friendId);
+        review.setMediaId(10L); // Set a media ID for the review
+
+        CommentEntity comment = new CommentEntity();
+        comment.setDateCreated(LocalDateTime.now().minusDays(2));
+        comment.setUserId(friendId);
+
+        // Mock media response
+        MediaEntity media = new MediaEntity();
+        media.setId(10L);
+        media.setMediaTitle("Sample Media Title");
+
+        // Define behavior for mocks
+        when(userService.getUser(userId)).thenReturn(user);
+        when(userService.getUser(friendId)).thenReturn(friend);
+        when(reviewRepository.findByUserId(friendId)).thenReturn(Collections.singletonList(review));
+        when(commentRepository.findByUserId(friendId)).thenReturn(Collections.singletonList(comment));
+        when(mediaRepository.findById(10L)).thenReturn(Optional.of(media)); // Mock media repository
+
+        // Execute the method to be tested
+        List<ActivityWithUser> result = reviewService.getFriendsActivities(userId);
+
+        // Verify the result
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("FriendName", result.get(0).getUserName());
+        assertTrue(result.get(0).getDateCreated().isAfter(result.get(1).getDateCreated()));
+
+        // Verify interactions with mocks
+        verify(userService, times(1)).getUser(userId);
+        verify(userService, times(1)).getUser(friendId);
+        verify(reviewRepository, times(1)).findByUserId(friendId);
+        verify(commentRepository, times(1)).findByUserId(friendId);
+        verify(mediaRepository, times(1)).findById(10L);
+    }
+
+    @Test
+    public void testGetFriendsActivities_InvalidFriendId() {
+        // Mock user with invalid friend ID
+        Long userId = 1L;
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setFriend_list(Collections.singletonList("invalidId"));
+
+        when(userService.getUser(userId)).thenReturn(user);
+
+        // Execute the method to be tested
+        List<ActivityWithUser> result = reviewService.getFriendsActivities(userId);
+
+        // Verify result is empty due to invalid friend ID
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify interactions with mocks
+        verify(userService, times(1)).getUser(userId);
+    }
 }

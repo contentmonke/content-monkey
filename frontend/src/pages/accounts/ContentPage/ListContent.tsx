@@ -98,7 +98,7 @@ const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
               <div className={`content-page-review-body ${expandedReviewIds.has(review.id) ? 'expanded' : 'collapsed'}`}>
                 {review.body}
               </div>
-              {review.body.split('\n').length > 3 && (
+              {((review.body.length > 200) || (review.body.split("\n").length > 2)) && (
                 <button
                   onClick={() => toggleExpansion(review.id)}
                   className="content-page-toggle-button"
