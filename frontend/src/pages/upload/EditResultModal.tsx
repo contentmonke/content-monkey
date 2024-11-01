@@ -172,6 +172,19 @@ function EditResultModal({ open, handleClose, result }: editParams) {
                     label={"What are your thoughts?"}
                     multiline
                     rows={8}
+                    sx={{
+                      mb: 1,
+                      "& .MuiOutlinedInput-root": {
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#31628F",
+                        },
+                      },
+                      "& .MuiInputLabel-root": {
+                        "&.Mui-focused": {
+                          color: "#31628F", // Change label color on focus
+                        },
+                      },
+                    }}
                     value={body}
                     onChange={(event) => setBody(event.target.value)} />
                   {isInvalidArgs &&
@@ -183,6 +196,12 @@ function EditResultModal({ open, handleClose, result }: editParams) {
                       <Checkbox
                         checked={startedMedia}
                         onChange={() => setStartedMedia(!startedMedia)}
+                        sx={{
+                          color: "#31628F", // Default color
+                          "&.Mui-checked": {
+                            color: "#31628F", // Color when checked
+                          },
+                        }}
                       />
                     }
                   />
@@ -192,6 +211,9 @@ function EditResultModal({ open, handleClose, result }: editParams) {
                     direction={'row'}
                     alignContent={'center'}
                     spacing={2}
+                    sx={{
+                      mt: 2
+                    }}
                   >
                     <DatePickerField label={"Start Date"} value={startDate} setValue={setStartDate} />
                     <DatePickerField label={"End Date"} value={endDate} setValue={setEndDate} />
