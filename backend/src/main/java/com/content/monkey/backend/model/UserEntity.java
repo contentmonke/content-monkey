@@ -1,5 +1,6 @@
 package com.content.monkey.backend.model;
 
+import com.content.monkey.backend.exceptions.UserAlreadyBlocked;
 import jakarta.persistence.*;
 import lombok.*;
 import org.apache.catalina.User;
@@ -53,6 +54,9 @@ public class UserEntity {
     @Column(name = "comments_liked_by_user")
     private List<Long> comments_liked;
 
+    @Column(name = "blocked_users")
+    private List<Long> blocked_users;
+
     public List<String> getFriendList() {
         return friend_list;
     }
@@ -86,6 +90,33 @@ public class UserEntity {
 
     public String getEmail() {
         return this.email;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public List<Long> setBlockedUsers(Long id) throws UserAlreadyBlocked {
+        if (blocked_users.contains(id)) {
+            System.out.println("Not adding bc of duplicate");
+            throw new UserAlreadyBlocked("User already blocked");
+        }
+        this.blocked_users.add(id);
+        this.friend_list.remove(id.toString());
+        return blocked_users;
+    }
+
+    public List<Long> updateBlockedUsers(List<Long> id) throws UserAlreadyBlocked {
+        this.blocked_users = id;
+        return this.blocked_users;
+    }
+
+    public List<Long> getBlockedUsers() {
+        return blocked_users;
     }
 
 

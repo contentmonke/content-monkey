@@ -212,6 +212,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void blockUser(Long blockId, Long userId) {
+        UserEntity user = getUser(userId);
+        user.setBlockedUsers(blockId);
+        userRepository.save(user);
+    }
+
+    public void unblockUser(String blockedUser, Long userId) {
+        UserEntity user = getUser(userId);
+        UserEntity blockedUserE = getSingleUser(blockedUser).getFirst();
+        List<Long> newBlockedUsers = user.getBlockedUsers();
+        newBlockedUsers.remove(blockedUserE.getId());
+        user.updateBlockedUsers(newBlockedUsers);
+        userRepository.save(user);
+    }
+
+    public List<String> getBlockedUsers(Long userId) {
+        UserEntity user = getUser(userId);
+        List<String> blocked_users = new ArrayList<>();
+        for (int i = 0; i < user.getBlockedUsers().size(); i++) {
+            UserEntity userById = getUser(user.getBlockedUsers().get(i));
+            blocked_users.add(userById.getName());
+        }
+        return blocked_users;
+    }
+
 /*
     public List<Object> getUserReviewsAndCommentsChronologically(Long userId) {
         UserEntity user = userRepository.findById(userId).orElse(null);

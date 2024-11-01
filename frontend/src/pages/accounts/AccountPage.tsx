@@ -27,8 +27,12 @@ const AccountPage: React.FC = () => {
   const [reviews, setReviews] = useState([]);
   const [loggedInUserId, setLoggedInUserId] = useState(0);
   const [loggedInUserFriendRequests, setLoggedInUserFriendRequests] = useState([]);
+  const [loggedInBlock, setLoggedInBlock] = useState([]);
   const [loggedInUserFriends, setLoggedInUserFriends] = useState([]);
   const [isDisabledRequest, setIsDisabledRequest] = useState(false);
+  const [isDisabledBlock, setIsDisabledBlock] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
 
   // Mock data for favorite content and reviews
   const favoriteContent = [
@@ -46,7 +50,6 @@ const AccountPage: React.FC = () => {
         //await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
         //const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
         const recentReviews = await axios.get(`http://localhost:8080/api/reviews/userId/${id}`);
-
         const reviewsWithMediaTitles = await Promise.all(
           recentReviews.data.map(async (review: any) => {
             const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);
@@ -82,33 +85,36 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    try {
-      const getUser = async () => {
-        if (isLoading === false && user !== null) {
-          const curr_user = await axios.post("http://localhost:8080/api/user/", user)
-          console.log(curr_user.data[0])
-          setLoggedInUserId(curr_user.data[0].id);
-          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
-          setLoggedInUserFriends(curr_user.data[0].friend_list);
-          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
-          console.log("loggedInUserFriends", loggedInUserFriends);
-        }
-      }
-      getUser()
-    } catch (err) {
-      console.log("Error getting logged in user", err)
-    }
-  }, [isLoading, user])
+//   useEffect(() => {
+//     try {
+//       const getUser = async () => {
+//         if (isLoading === false && user !== null) {
+//           const curr_user = await axios.post("http://localhost:8080/api/user/", user)
+//           console.log(curr_user.data[0])
+//           setLoggedInUserId(curr_user.data[0].id);
+//           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+//           setLoggedInUserFriends(curr_user.data[0].friend_list);
+//           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
+//           console.log("loggedInUserFriends", loggedInUserFriends);
+//         }
+//       }
+//       getUser()
+//     } catch (err) {
+//       console.log("Error getting logged in user", err)
+//     }
+//   }, [isLoading, user])
 
   useEffect(() => {
     try {
       const getUser = async () => {
         if (isLoading === false && user !== null) {
           const curr_user = await axios.post("http://localhost:8080/api/user/", user)
-          console.log(curr_user.data[0])
+          console.log(curr_user.data[0]);
+          console.log("here!");
           setLoggedInUserId(curr_user.data[0].id);
           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+          setLoggedInBlock(curr_user.data[0].blocked_users);
+          console.log(curr_user.data[0].blocked_users);
           setLoggedInUserFriends(curr_user.data[0].friend_list);
           setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
           console.log("loggedInUserFriends", loggedInUserFriends);
@@ -130,6 +136,26 @@ const AccountPage: React.FC = () => {
     }
   }
 
+  const handleBlockRequest = async () => {
+    try {
+      console.log('ID to block:', id);
+      console.log('Logged-in User ID:', loggedInUserId);
+
+      const response = await axios.post(`http://localhost:8080/api/user/blockUser?blockId=${id}&userId=${loggedInUserId}`);
+      setSuccessMessage('User blocked successfully');
+      setIsDisabledBlock(true);
+      console.log('User blocked successfully:', response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error('Error blocking user:', error.response.data);
+        setSuccessMessage('User Already Blocked!');
+      } else {
+        console.error('Error blocking user:', error.message);
+        setSuccessMessage('User Already Blocked!');
+      }
+    }
+  };
+
   return <>
     <div className="profile-container">
       {/* Left Sidebar */}
@@ -144,16 +170,32 @@ const AccountPage: React.FC = () => {
             </div>
           ))}
         </div>
-        {(isAuthenticated && user && user.email == email) ?
-          <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
-          :
-          loggedInUserFriends?.includes(id) === false && <Button
-            onClick={() => handleFriendRequest()}
-            label={loggedInUserFriendRequests?.includes(id) || isDisabledRequest ? "Requested" : "Request"}
-            width="230px"
-            disabled={loggedInUserFriendRequests?.includes(id) || isDisabledRequest}
-          />
-        }
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {(isAuthenticated && user && user.email === email) ? (
+            <Button onClick={() => navigate('/settings/profile')} label="Edit Profile" width="230px" />
+          ) : (
+            <>
+              <Button
+                onClick={() => handleFriendRequest()}
+                label={loggedInUserFriendRequests?.includes(id) || isDisabledRequest ? "Requested" : "Request"}
+                width="230px"
+                disabled={loggedInUserFriendRequests?.includes(id) || isDisabledRequest}
+              />
+              {/* Block */}
+              <Button
+                onClick={() => handleBlockRequest()}
+                label="Block"
+                width="230px"
+                disabled={loggedInBlock?.includes(id) || isDisabledBlock}
+              />
+              {successMessage && (
+                        <div className="success-message">
+                          <p>{successMessage}</p>
+                        </div>
+              )}
+            </>
+          )}
+        </div>
         <hr />
         <ul className="sidebar-menu">
           <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
