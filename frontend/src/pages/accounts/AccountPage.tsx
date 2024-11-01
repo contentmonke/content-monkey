@@ -48,6 +48,20 @@ const AccountPage: React.FC = () => {
         const userResponse = await axios.get(`http://localhost:8080/api/user/${id}`);
         const favoriteContent = await axios.get(`http://localhost:8080/api/user/getFavorites?id=${id}`);
         setProfileContent(favoriteContent.data);
+        const mappedFavorites = await Promise.all(
+            favoriteContent.data.map(async (element) => {
+                // Make the API call to fetch imageUrl for each element
+                const response = await axios.get(`http://localhost:8080/api/search/any/${element}`);
+
+                // Return an object with title and imageUrl based on API responses
+                return {
+                    title: element,
+                    imageUrl: response.data[0].thumbnail // Assuming the API response returns only the imageUrl or adjust as necessary
+                };
+            })
+        );
+        setProfileContent(mappedFavorites);
+        console.log(mappedFavorites);
         console.log(favoriteContent.data);
         //await axios.post('http://localhost:8080/api/user/', { name: user?.name });
         //const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
@@ -217,12 +231,12 @@ const AccountPage: React.FC = () => {
           <p className="fave-titles" onClick={() => navigate(`/u/${id}/content/favorites`)} >Favorite Content</p>
           <hr className="main-divider" />
           <div className="content-grid">
-            {profileContent.map(item => (
-              <div key={item.id} className="content-item">
-                {item}
-                <p>{item.title}</p>
-              </div>
-            ))}
+              {profileContent.map(item => (
+                  <div key={item.id} className="content-item">
+                      <img src={item.imageUrl} alt={item.title} className="content-image" />
+                      <p>{item.title}</p>
+                  </div>
+              ))}
           </div>
         </div>
 
