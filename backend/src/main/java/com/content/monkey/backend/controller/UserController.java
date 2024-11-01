@@ -102,6 +102,11 @@ public class UserController {
         return users;
     }
 
+    @GetMapping("/email")
+    public UserEntity getUserById(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email);
+    }
+
     @GetMapping("/{id}")
     public UserEntity getUserById(@PathVariable Long id) {
         return userService.getUser(id);
@@ -136,6 +141,21 @@ public class UserController {
     @PostMapping("/friend_accept/{from}/{to}")
     public UserEntity acceptRequest(@PathVariable Long from, @PathVariable Long to, @RequestParam boolean decision) {
         return userService.acceptRequest(from, to, decision);
+    }
+
+    @PostMapping("/blockUser")
+    public void blockUser(@RequestParam("blockId") Long blockId, @RequestParam("userId") Long userId)  {
+        userService.blockUser(blockId, userId);
+    }
+
+    @PostMapping("/unblockUser")
+    public void blockUser(@RequestParam("blockId") String blockedUser, @RequestParam("userId") Long userId)  {
+        userService.unblockUser(blockedUser, userId);
+    }
+
+    @GetMapping("/getBlockedUsers")
+    public List<String> getBlockedUsers(@RequestParam("userId") Long userId)  {
+        return userService.getBlockedUsers(userId);
     }
 
     /*
