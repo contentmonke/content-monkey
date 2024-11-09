@@ -1,11 +1,18 @@
 package com.content.monkey.backend.service;
 
+import com.content.monkey.backend.chatgpt.ChatGPTRequest;
+import com.content.monkey.backend.chatgpt.ChatGPTResponse;
+import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -262,6 +269,22 @@ public class UserService {
         }
 
         return username;
+    }
+
+        @Value("${openai.model}")
+    private String model;
+
+    @Value(("${openai.api.url}"))
+    private String apiURL;
+
+    @Qualifier("chat")
+    @Autowired
+    private RestTemplate template;
+    public String chatResponse() {
+        String prompt = "describe red";
+        ChatGPTRequest request=new ChatGPTRequest(model, prompt);
+        ChatGPTResponse chatGptResponse = template.postForObject(apiURL, request, ChatGPTResponse.class);
+        return chatGptResponse.getChoices().get(0).getMessage().getContent();
     }
 
     public UserEntity updateUsername(Long userId, String newUsername) {

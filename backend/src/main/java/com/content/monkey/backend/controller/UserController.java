@@ -1,12 +1,25 @@
 package com.content.monkey.backend.controller;
 
+import com.content.monkey.backend.chatgpt.ChatGPTRequest;
+import com.content.monkey.backend.chatgpt.ChatGPTResponse;
+import com.content.monkey.backend.example.app.model.ExampleEntity;
+import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import com.content.monkey.backend.service.UserService;
 import com.content.monkey.backend.service.Auth0Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
+import java.util.ArrayList;
 
 import java.util.*;
 
@@ -181,5 +194,10 @@ public class UserController {
 
         UserEntity updatedUser = userService.updateUsername(userId, username);
         return ResponseEntity.ok(updatedUser);
+    }
+
+        @GetMapping("/chat/{id}")
+    public String chat(@PathVariable Long id){
+        return userService.chatResponse();
     }
 }
