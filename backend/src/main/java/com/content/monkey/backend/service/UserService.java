@@ -196,7 +196,7 @@ public class UserService {
         List<Long> favorite_media = user.getFavoriteMedia();
         List<String> favorite_titles = new ArrayList<>();
         for(int i = 0; i < favorite_media.size(); i++) {
-            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).getFirst().getMediaTitle());
+            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).get(0).getMediaTitle());
         }
         return favorite_titles;
     }
@@ -206,7 +206,7 @@ public class UserService {
         List<Long> favorite_media = new ArrayList<>();
 
         for(int i = 0; i < favorites.size(); i++) {
-            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).getFirst().getId());
+            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).get(0).getId());
         }
         user.setFavoriteMedia(favorite_media);
         userRepository.save(user);
@@ -220,12 +220,12 @@ public class UserService {
 
     public UserEntity getUserByEmail(String email) {
         List<UserEntity> user = userRepository.findByEmail(email);
-        return user.getFirst();
+        return user.get(0);
     }
 
     public void unblockUser(String blockedUser, Long userId) {
         UserEntity user = getUser(userId);
-        UserEntity blockedUserE = getSingleUser(blockedUser).getFirst();
+        UserEntity blockedUserE = getSingleUser(blockedUser).get(0);
         List<Long> newBlockedUsers = user.getBlockedUsers();
         newBlockedUsers.remove(blockedUserE.getId());
         user.updateBlockedUsers(newBlockedUsers);

@@ -1,0 +1,10 @@
+
+.goodreads-container {
+  display: flex;
+  justify-content: right;
+}
+
+.goodreads-redirect {
+  background: none;
+  color: grey;
+}
