@@ -1,6 +1,5 @@
 package com.content.monkey.backend.service;
 
-import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.CommentEntity;
@@ -35,6 +34,7 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
+        created.setUsername(generateUniqueUsername(created.getName()));
         return userRepository.save(created);
     }
 
@@ -242,32 +242,31 @@ public class UserService {
         return blocked_users;
     }
 
-/*
-    public List<Object> getUserReviewsAndCommentsChronologically(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
+    public String generateUniqueUsername(String name) {
+        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        baseUsername = baseUsername.substring(0, Math.min(baseUsername.length(), 32));
+        String username = baseUsername;
+        int suffix = 1;
+
+        while (userRepository.existsByUsername(username)) {
+            username = baseUsername + suffix;
+            if (username.length() > 32) {
+                username = username.substring(0, 32);
+            }
+            suffix++;
         }
 
-        // Retrieve reviews and comments using the service layer
-        List<ReviewEntity> reviews = reviewService.getReviewsByUserId(userId);
-        List<CommentEntity> comments = commentService.getCommentsByUserId(userId);
+        return username;
+    }
 
-        List<Object> combinedList = new ArrayList<>();
-        combinedList.addAll(reviews);
-        combinedList.addAll(comments);
+    public UserEntity updateUsername(Long userId, String newUsername) {
+        UserEntity user = getUser(userId);
+        user.setUsername(newUsername);
 
-        combinedList.sort((o1, o2) -> {
-            Timestamp date1 = (o1 instanceof ReviewEntity)
-                    ? ((ReviewEntity) o1).getDateCreated()
-                    : ((CommentEntity) o1).getDateCreated();
-            Timestamp date2 = (o2 instanceof ReviewEntity)
-                    ? ((ReviewEntity) o2).getDateCreated()
-                    : ((CommentEntity) o2).getDateCreated();
+        return userRepository.save(user); // Saves updated user with new username
+    }
 
-            return date1.compareTo(date2);
-        });
-
-        return combinedList;
-    } */
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }

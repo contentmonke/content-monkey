@@ -17,7 +17,7 @@ const FriendsPage: React.FC = () => {
   const [loggedInUserId, setLoggedInUserId] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [blockedUsers, setBlockedUsers] = useState('');
+  const [blockedUsers, setBlockedUsers] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
   const [selectedOption, setSelectedOption] = useState<string>('email');
   const [emailQuery, setEmailQuery] = useState([]);
@@ -25,7 +25,6 @@ const FriendsPage: React.FC = () => {
   const [nameQuery, setNameQuery] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const [googleContacts, setGoogleContacts] = useState([]);
   const [error, setError] = useState('');
 
 
@@ -51,64 +50,41 @@ const FriendsPage: React.FC = () => {
   }
 
   const fetchUserByEmail = async (email: string) => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/user/emaillike/`+ email);
-        setEmailQuery(response.data);
-        setSearchResult(response.data);
-        console.log(typeof searchResult);
+    try {
+      const response = await axios.get(`http://localhost:8080/api/user/emaillike/` + email);
+      setEmailQuery(response.data);
+      setSearchResult(response.data);
+      console.log(typeof searchResult);
 
-      } catch (err) {
-        setError('Error fetching user by email');
-        console.error('Error:', err);
-      }
-    };
-    const fetchUserById = async (id: string) => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/user/`+id);
-        setIdQuery(response.data);
-        setSearchResult([response.data]);
-        console.log(response.data);
+    } catch (err) {
+      setError('Error fetching user by email');
+      console.error('Error:', err);
+    }
+  };
+  const fetchUserById = async (id: string) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/user/` + id);
+      setIdQuery(response.data);
+      setSearchResult([response.data]);
+      console.log(response.data);
 
-      } catch (err) {
-        setError('Error fetching user by email');
-        console.error('Error:', err);
-      }
-    };
-    const fetchUserByName = async (name: string) => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/user/name/`+ name);
-        setNameQuery(response.data);
-        console.log(response.data);
-        setSearchResult(response.data);
+    } catch (err) {
+      setError('Error fetching user by email');
+      console.error('Error:', err);
+    }
+  };
+  const fetchUserByName = async (name: string) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/user/name/` + name);
+      setNameQuery(response.data);
+      console.log(response.data);
+      setSearchResult(response.data);
 
-      } catch (err) {
-        setError('Error fetching user by email');
-        console.error('Error:', err);
-      }
-    };
-    const fetchGoogleContacts = async () => {
-                if (isAuthenticated) {
-                    try {
-                        const accessToken = await getAccessTokenSilently({
-                            audience: 'https://people.googleapis.com/',
-                            scope: 'https://www.googleapis.com/auth/contacts.readonly'
-                        });
-                        const response = await axios.get('https://people.googleapis.com/v1/people/me/connections', {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`
-                            },
-                            params: {
-                                personFields: 'names'
-                            }
-                        });
-                        setGoogleContacts(response.data.connections || []);
-                        console.log(response.data.connections);
-                    } catch (err) {
-                        console.error('Error fetching Google Contacts:', err);
-                        setError('Failed to fetch contacts.');
-                    }
-                }
-            };
+    } catch (err) {
+      setError('Error fetching user by email');
+      console.error('Error:', err);
+    }
+  };
 
   const goToFriendProfile = (friendId: number) => {
     navigate(`/u/${friendId}`);
@@ -119,22 +95,20 @@ const FriendsPage: React.FC = () => {
   };
 
 
-
-
   const handleSearchSubmit = () => {
     // Implement search submit logic here
 
     console.log(`Searching for: ${searchQuery} under ` + selectedOption);
     if (selectedOption === 'email') {
-            fetchUserByEmail(searchQuery);
-            console.log(emailQuery);
-        } else if (selectedOption === 'id') {
-            fetchUserById(searchQuery);
-            console.log(idQuery);
-        } else {
-            fetchUserByName(searchQuery);
-            console.log(nameQuery);
-        }
+      fetchUserByEmail(searchQuery);
+      console.log(emailQuery);
+    } else if (selectedOption === 'id') {
+      fetchUserById(searchQuery);
+      console.log(idQuery);
+    } else {
+      fetchUserByName(searchQuery);
+      console.log(nameQuery);
+    }
   };
 
   const handleSearchSubmitOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -164,23 +138,22 @@ const FriendsPage: React.FC = () => {
   };
 
   const handleUnblockUser = async (blockedUser: string, index: number) => {
-      try {
-        await axios.post(`http://localhost:8080/api/user/unblockUser?userId=${id}&blockId=${blockedUser}`);
-        setBlockedUsers(blockedUsers.filter((_, i) => i !== index));
-        setSuccessMessage("User No Longer Blocked")
-      } catch (err) {
-        console.error('Error unblocking user', err);
-      }
-    };
+    try {
+      await axios.post(`http://localhost:8080/api/user/unblockUser?userId=${id}&blockId=${blockedUser}`);
+      setBlockedUsers(blockedUsers.filter((_, i) => i !== index));
+      setSuccessMessage("User No Longer Blocked")
+    } catch (err) {
+      console.error('Error unblocking user', err);
+    }
+  };
 
-    const handleOptionChange = (selectedOption: string) => {
-        setSelectedOption(selectedOption);
-    };
+  const handleOptionChange = (selectedOption: string) => {
+    setSelectedOption(selectedOption);
+  };
 
 
   useEffect(() => {
     fetchData();
-    fetchGoogleContacts();
   }, [id, user, isAuthenticated, getAccessTokenSilently]);
 
   return (
@@ -196,27 +169,27 @@ const FriendsPage: React.FC = () => {
             inputWidth="25ch"
             placeholder="Search users..."
           />
-          <Dropdown onSelectChange={handleOptionChange}/>
+          <Dropdown onSelectChange={handleOptionChange} />
           {searchResult && searchResult.length > 0 ? (
-    <ul className="friends-list">
-        {searchResult.map((item, index) => (
-            <li
-                key={index} // Unique key for each item
-                className="friend-item"
-                onClick={() => goToFriendProfile(item.id)} // Navigate on click
-                style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
-            >
-                {item.name} {/* Display the name directly from the array element */}
-            </li>
-        ))}
-    </ul>
-    ) : (
-    <ul className="friends-list">
-        <li className="friend-item">
-            No Results
-        </li>
-    </ul>
-    )}
+            <ul className="friends-list">
+              {searchResult.map((item, index) => (
+                <li
+                  key={index} // Unique key for each item
+                  className="friend-item"
+                  onClick={() => goToFriendProfile(item.id)} // Navigate on click
+                  style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                >
+                  {item.name} {/* Display the name directly from the array element */}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="friends-list">
+              <li className="friend-item">
+                No Results
+              </li>
+            </ul>
+          )}
 
 
         </div>
@@ -233,12 +206,9 @@ const FriendsPage: React.FC = () => {
             <div className={`tab-item ${activeTab === 2 ? 'active' : ''}`} onClick={() => handleTabChange(2)}>
               Blocked
             </div>
-            <div className={`tab-item ${activeTab === 3 ? 'active' : ''}`} onClick={() => handleTabChange(3)}>
-              Google Contacts
-            </div>
           </div>
           <div className="tab-content">
-          {activeTab === 0 && (
+            {activeTab === 0 && (
               <ul className="friends-list">
                 {friends.map((f: any, i: number) => (
                   <li
@@ -274,40 +244,24 @@ const FriendsPage: React.FC = () => {
             {activeTab === 2 && (
               <div className="tab-content">
                 <ul className="friends-list">
-                                {blockedUsers.map((f: any, i: number) => (
-                                  <li
-                                    key={i}
-                                    className="friend-item"
-                                    style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
-                                  >
-                                    {f}
-                                    <Delete
-                                      onClick={() => handleUnblockUser(f, i)}
-                                      style={{ color: '#FF3E3E', cursor: 'pointer', marginLeft: '10px' }}
-                                    />
-                                  </li>
-                                ))}
-                              </ul>
-                {successMessage && (
-                <div className="success-message">
-                  <p>{successMessage}</p>
-                </div>
-                )}
-              </div>
-            )}
-            {activeTab === 3 && (
-              <div className="tab-content">
-                <ul>
-                {googleContacts.map(contact => (
-                    <li key={contact.resourceName}>
-                        {contact.names?.[0]?.displayName} ({contact.emailAddresses?.[0]?.value})
+                  {blockedUsers.map((f: any, i: number) => (
+                    <li
+                      key={i}
+                      className="friend-item"
+                      style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                    >
+                      {f}
+                      <Delete
+                        onClick={() => handleUnblockUser(f, i)}
+                        style={{ color: '#FF3E3E', cursor: 'pointer', marginLeft: '10px' }}
+                      />
                     </li>
-                ))}
+                  ))}
                 </ul>
                 {successMessage && (
-                <div className="success-message">
-                  <p>{successMessage}</p>
-                </div>
+                  <div className="success-message">
+                    <p>{successMessage}</p>
+                  </div>
                 )}
               </div>
             )}

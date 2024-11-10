@@ -2,7 +2,6 @@ import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import { buttonGroup } from "../../style/media-page";
 import React, { useState } from "react";
-import { color } from "three/webgpu";
 
 const options = [
   "Watched",

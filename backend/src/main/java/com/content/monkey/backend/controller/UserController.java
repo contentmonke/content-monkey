@@ -1,6 +1,5 @@
 package com.content.monkey.backend.controller;
 
-import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
@@ -10,13 +9,12 @@ import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.NoSuchElementException;
+
+import java.util.*;
+
 import org.springframework.http.HttpStatus;
-import java.util.Map;
-import java.util.ArrayList;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,9 +28,13 @@ public class UserController {
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
         List<UserEntity> users = userService.getSingleUser(user.getName());
+
         if (users.isEmpty()) {
-            users.add(createExampleEntity(user));
+            // Save the new user directly with createUserEntity
+            UserEntity newUser = userService.createUserEntity(user);
+            users.add(newUser);
         }
+
         return users;
     }
 
@@ -70,11 +72,6 @@ public class UserController {
         List<UserEntity> examples = userService.getAllExamples();
         //System.out.println("Fetched examples: " + examples.toString());
         return examples;
-    }
-
-    public UserEntity createExampleEntity(@RequestBody UserEntity example) {
-        UserEntity created = userService.createUserEntity(example);
-        return created;
     }
 
     @DeleteMapping("/{id}/{authID}")
@@ -158,9 +155,25 @@ public class UserController {
         return userService.getBlockedUsers(userId);
     }
 
-    /*
-    @GetMapping("/{userId}/activity")
-    public List<Object> getUserActivity(@PathVariable Long userId) {
-        return userService.getUserReviewsAndCommentsChronologically(userId);
-    } */
+    @GetMapping("/check-username")
+    public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
+        boolean isUnique = !userService.existsByUsername(username);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isUnique", isUnique);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{userId}/username")
+    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam String newUsername) {
+        if (newUsername.length() > 32 || !newUsername.matches("^[a-zA-Z0-9_]+$")) {
+            return ResponseEntity.badRequest().body("Username must be alphanumeric (with underscores) and up to 32 characters.");
+        }
+
+        if (userService.existsByUsername(newUsername)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is already taken.");
+        }
+
+        UserEntity updatedUser = userService.updateUsername(userId, newUsername);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

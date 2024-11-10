@@ -36,6 +36,9 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "picture")
     private String picture;
 
@@ -99,6 +102,8 @@ public class UserEntity {
     public Long getId() {
         return this.id;
     }
+
+
 
     public List<Long> setBlockedUsers(Long id) throws UserAlreadyBlocked {
         if (blocked_users.contains(id)) {
