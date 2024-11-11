@@ -196,8 +196,9 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-        @GetMapping("/chat/{id}")
+
+    @GetMapping("/chat/{id}")
     public String chat(@PathVariable Long id){
-        return userService.chatResponse();
+        return userService.chatResponse(id);
     }
 }

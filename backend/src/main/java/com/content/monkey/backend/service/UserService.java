@@ -2,7 +2,6 @@ package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
-import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.MediaRepository;
@@ -10,7 +9,6 @@ import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -280,11 +278,96 @@ public class UserService {
     @Qualifier("chat")
     @Autowired
     private RestTemplate template;
-    public String chatResponse() {
-        String prompt = "describe red";
-        ChatGPTRequest request=new ChatGPTRequest(model, prompt);
-        ChatGPTResponse chatGptResponse = template.postForObject(apiURL, request, ChatGPTResponse.class);
-        return chatGptResponse.getChoices().get(0).getMessage().getContent();
+    public String chatResponse(Long id) {
+        UserEntity user = getUser(id);
+        List<Long> favMedia = user.getFavoriteMedia();
+        List<MediaEntity> books = new ArrayList<>();
+        List<MediaEntity> tvShows = new ArrayList<>();
+        List<MediaEntity> movies = new ArrayList<>();
+        List<MediaEntity> games = new ArrayList<>();
+        List<Optional<MediaEntity>> medias = new ArrayList<>();
+        for (Long i : favMedia) {
+            medias.add(mediaRepository.findById(i));
+//            System.out.println(mediaRepository.findById(i));
+        }
+        label:
+        for (int i = 0; i < medias.size(); i++) {
+            if (medias.get(i).isPresent()) {
+                MediaEntity m = medias.get(i).get();
+                switch (m.getMediaType()) {
+                    case "Book":
+                        books.add(m);
+                        break;
+                    case "Movie":
+                        movies.add(m);
+                        break;
+                    case "TV Show":
+                        tvShows.add(m);
+                        break;
+                    case "Video Game":
+                        games.add(m);
+                        break;
+                    default:
+                        break label;
+                }
+            }
+        }
+        String prompt = returnBookTitles(books) + returnGamesTitles(games) + returnTVShowTitles(tvShows) + returnMovieTitles(movies);
+        System.out.println(prompt);
+
+//        String prompt = "describe red";
+//        ChatGPTRequest request=new ChatGPTRequest(model, prompt);
+//        ChatGPTResponse chatGptResponse = template.postForObject(apiURL, request, ChatGPTResponse.class);
+//        return chatGptResponse.getChoices().get(0).getMessage().getContent();
+        return "";
+    }
+
+    public String returnBookTitles(List<MediaEntity> books) {
+        if (books.isEmpty()) {
+            return "";
+        }
+        StringBuilder prompt = new StringBuilder("Given I like the following books, give me 3 more book recommendations. Give your response as a java array.");
+        for (int i = 0; i < books.size(); i++) {
+            prompt.append(books.get(i).getMediaTitle());
+            prompt.append(",");
+        }
+        return prompt.toString();
+    }
+
+    public String returnTVShowTitles(List<MediaEntity> shows) {
+        if (shows.isEmpty()) {
+            return "";
+        }
+        StringBuilder prompt = new StringBuilder("Given I like the following TV shows, give me 3 more tv show recommendations. Give your response as a java array.");
+        for (int i = 0; i < shows.size(); i++) {
+            prompt.append(shows.get(i).getMediaTitle());
+            prompt.append(",");
+        }
+        return prompt.toString();
+    }
+
+    public String returnGamesTitles(List<MediaEntity> games) {
+        if (games.isEmpty()) {
+            return "";
+        }
+        StringBuilder prompt = new StringBuilder("Given I like the following video games, give me 3 more video game recommendations. Give your response as a java array.");
+        for (int i = 0; i < games.size(); i++) {
+            prompt.append(games.get(i).getMediaTitle());
+            prompt.append(",");
+        }
+        return prompt.toString();
+    }
+
+    public String returnMovieTitles(List<MediaEntity> movies) {
+        if (movies.isEmpty()) {
+            return "";
+        }
+        StringBuilder prompt = new StringBuilder("Given I like the following movies, give me 3 more movie recommendations. Give your response as a java array.");
+        for (int i = 0; i < movies.size(); i++) {
+            prompt.append(movies.get(i).getMediaTitle());
+            prompt.append(",");
+        }
+        return prompt.toString();
     }
 
     public UserEntity updateUsername(Long userId, String newUsername) {
