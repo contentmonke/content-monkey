@@ -2,7 +2,6 @@ package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
-import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;

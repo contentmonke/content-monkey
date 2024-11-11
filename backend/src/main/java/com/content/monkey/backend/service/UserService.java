@@ -3,6 +3,7 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
