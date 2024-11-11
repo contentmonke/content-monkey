@@ -13,6 +13,7 @@ import com.content.monkey.backend.model.dto.ActivityWithUser;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -126,5 +127,18 @@ public class ReviewController {
     public ResponseEntity<List<ActivityWithUser>> getFriendsActivities(@PathVariable Long userId) {
         List<ActivityWithUser> activities = reviewService.getFriendsActivities(userId);
         return ResponseEntity.ok(activities);
+    }
+
+    @GetMapping("/activity-summary")
+    public ResponseEntity<Map<String, Map<String, Integer>>> getActivitySummary(
+            @RequestParam Long userId, @RequestParam int year) {
+        Map<String, Map<String, Integer>> summary = reviewService.getActivitySummary(userId, year);
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/oldest-review-year")
+    public ResponseEntity<Integer> getOldestReviewYear(@RequestParam Long userId) {
+        int oldestYear = reviewService.getOldestReviewYear(userId);
+        return ResponseEntity.ok(oldestYear);
     }
 }

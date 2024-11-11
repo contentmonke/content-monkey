@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
-import { IconButton, Typography, Container } from '@mui/material';
+import { useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import ListContent from './ListContent';
 import FavoritesPage from './FavoritesPage';
@@ -19,15 +18,12 @@ interface ReviewEntity {
 const ContentPage: React.FC = () => {
   const { id } = useParams(); // Get the user ID from the URL
   const [allContent, setAllContent] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const location = useLocation();
 
   async function fetchData() {
     try {
       const reviewsResponse = await axios.get<ReviewEntity[]>(`http://localhost:8080/api/reviews/userId/${id}`);
 
-      const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=${id}`);
-      setFavorites(favoritesResponse.data ?? []);
       const reviewsWithMediaTitles = await Promise.all(
         reviewsResponse.data.map(async (review: any) => {
           const mediaResponse = await axios.get(`http://localhost:8080/api/media/id/${review.mediaId}`);

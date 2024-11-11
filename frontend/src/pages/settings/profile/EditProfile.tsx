@@ -1,98 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import SettingsSidebar from '../sidebar/SettingsSidebar'; // Import the sidebar
-import '../Settings.css'; // Import your custom CSS
-import { TextField } from '@mui/material';
+import SettingsSidebar from '../sidebar/SettingsSidebar';
+import '../Settings.css';
+import { TextField, FormHelperText } from '@mui/material';
 import Button from '../../../components/button/Button';
 import ProfilePicture from './ProfilePicture';
 import EditIcon from '@mui/icons-material/Edit';
 import EditGenresModal from './EditGenresModal';
 import SuccessAlert from '../../../components/SuccessAlert';
 import ErrorAlert from '../../../components/ErrorAlert';
-
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const EditProfile: React.FC = () => {
   const { user, isLoading } = useAuth0();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [bio, setBio] = useState('No biography available.');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
         if (!isLoading && user?.name) {
-          await axios.post('http://localhost:8080/api/user/', { name: user?.name });
-          const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
-          await axios.put('http://localhost:8080/api/user/email/' + idResponse.data[0].id, { email: user?.email });
-          const userBio = await axios.post('http://localhost:8080/api/user/name/' + user.name);
-          const profilePic = await axios.get('http://localhost:8080/api/user/getPicture', {params: { id: idResponse.data[0].id }});
+          const idResponse = await axios.post(`http://localhost:8080/api/user/name/${user.name}`);
+          const userId = idResponse.data[0].id;
 
-          const biography = userBio.data[0].bio;
-          const genres = userBio.data[0].genres;
-
+          const userBio = await axios.post(`http://localhost:8080/api/user/name/${user.name}`);
+          const profilePic = await axios.get('http://localhost:8080/api/user/getPicture', { params: { id: userId } });
 
           setProfilePicture(profilePic.data);
-          setBio(JSON.parse(biography).biography || 'No biography available.');
-          setFavoriteGenres(JSON.parse(genres).genres || 'No Genres available.');
+          setBio(JSON.parse(userBio.data[0].bio).biography || 'No biography available.');
+          setFavoriteGenres(JSON.parse(userBio.data[0].genres).genres || 'No Genres available.');
+          setUsername(userBio.data[0].username);
         }
       } catch (error) {
         console.error('Error fetching data', error);
       }
     }
-
     fetchData();
   }, [user?.name]);
 
-  const handleOpenGenresModal = () => {
-    setModalOpen(true); // Open the modal
-  };
-
-  const handleCloseGenresModal = () => {
-    setModalOpen(false); // Close the modal
+  // Handle username validation
+  const validateUsername = async (value: string) => {
+    setUsername(value);
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      setUsernameError("Username can only contain alphanumeric characters and underscores.");
+    } else if (value.length > 32) {
+      setUsernameError("Username cannot exceed 32 characters.");
+    } else {
+      setUsernameError('')
+    }
   };
 
   const handleBioChange = (event: React.ChangeEvent<HTMLInputElement>) => setBio(event.target.value);
 
   const handleUpdate = async () => {
+    if (usernameError) return;
+
     try {
-      // Make the POST request to get the user details
-      const userEdit = await axios.post('http://localhost:8080/api/user/name/' + user.name);
+      // Check for uniqueness
+      const response = await axios.get(`http://localhost:8080/api/user/check-username`, { params: { username } });
+      if (!response.data.isUnique) {  // Updated to match backend response
+        setUsernameError("Username is already taken.");
+        return;
+      } else {
+        setUsernameError('');
+      }
+    } catch (error) {
+      setUsernameError("Error checking username availability.");
+      return;
+    }
+
+    try {
+      const userEdit = await axios.post(`http://localhost:8080/api/user/name/${user.name}`);
       const userId = userEdit.data[0].id;
 
-      // Update biography
-      const bioResponse = await axios.put(`http://localhost:8080/api/user/${userId}/biography`, {
-        biography: bio,
-      });
+      // Update bio
+      await axios.put(`http://localhost:8080/api/user/${userId}/biography`, { biography: bio });
 
-      // Update favorite genres
-      const genreResponse = await axios.put(`http://localhost:8080/api/user/genres/${userId}`, {
-        genres: favoriteGenres,
-      });
+      // Update genres
+      await axios.put(`http://localhost:8080/api/user/genres/${userId}`, { genres: favoriteGenres });
 
       // Update profile picture
-      console.log(userId);
-      console.log(profilePicture);
-      const pictureResponse = await axios.post(
-          'http://localhost:8080/api/user/updatePicture',
-          {
-              id: userId,
-              picture: profilePicture,
-          },
-          {
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          }
-      );
+      await axios.post('http://localhost:8080/api/user/updatePicture', { id: userId, picture: profilePicture });
 
-      if (bioResponse.status === 200 && genreResponse.status === 200) {
-        // Both requests were successful
-        setIsSuccess(true);
-      }
+      // Update username
+      await axios.put(`http://localhost:8080/api/user/${userId}/username?username=${username}`);
+
+      setIsSuccess(true);
     } catch (error) {
       setIsError(true);
     }
@@ -100,19 +99,32 @@ const EditProfile: React.FC = () => {
 
   return (
     <div className="main-content-settings">
-      <SettingsSidebar /> {/* Sidebar on the left */}
+      <SettingsSidebar />
       <div className="settings-content-layout">
         <h1>Profile</h1>
+
+        <div className="username-field">
+          <label className="settings-prof-pic-label" htmlFor="username">Username</label>
+          <TextField
+            value={username}
+            onChange={(e) => validateUsername(e.target.value)}
+            error={!!usernameError}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: '#31628F',
+                },
+              },
+            }}
+            fullWidth
+          />
+          <FormHelperText error>{usernameError}</FormHelperText>
+        </div>
 
         <div className="pic-and-bio-field">
           <div className="profile-picture-section">
             <label className="settings-prof-pic-label" htmlFor="profile-picture">Profile Picture</label>
-            <div>
-              <ProfilePicture
-                profilePicture={profilePicture}
-                setProfilePicture={setProfilePicture}
-              />
-            </div>
+            <ProfilePicture profilePicture={profilePicture} setProfilePicture={setProfilePicture} />
           </div>
 
           <div className="bio-field">
@@ -125,14 +137,14 @@ const EditProfile: React.FC = () => {
               variant="outlined"
               placeholder="Tell us something about yourself..."
               value={bio}
+              onChange={handleBioChange}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '&.Mui-focused fieldset': {
-                    borderColor: '#31628F', // Border color when focused
+                    borderColor: '#31628F',
                   },
                 },
               }}
-              onChange={handleBioChange}
             />
           </div>
         </div>
@@ -140,7 +152,7 @@ const EditProfile: React.FC = () => {
         <div className="profile-field">
           <div className="genre-title-settings">
             <label className="genre-setttings" htmlFor="genres">Favorite Genres</label>
-            <button onClick={() => handleOpenGenresModal()}><EditIcon /> </button>
+            <button onClick={() => setModalOpen(true)}><EditIcon /></button>
           </div>
 
           <div>
@@ -153,26 +165,26 @@ const EditProfile: React.FC = () => {
         </div>
 
         <div className="save-button">
-          <Button label='Update Profile' onClick={() => handleUpdate()} />
+          <Button label='Update Profile' onClick={handleUpdate} />
         </div>
       </div>
       <EditGenresModal
         open={modalOpen}
-        handleClose={handleCloseGenresModal}
+        handleClose={() => setModalOpen(false)}
         favoriteGenres={favoriteGenres}
         setFavoriteGenres={setFavoriteGenres}
       />
       <SuccessAlert
-        message={"Profile updated successfully."}
+        message="Profile updated successfully."
         showAlert={isSuccess}
         setShowAlert={setIsSuccess}
       />
       <ErrorAlert
-        message={"Failed to update profile. Try again later."}
+        message="Failed to update profile. Try again later."
         showAlert={isError}
         setShowAlert={setIsError}
       />
-    </div >
+    </div>
   );
 };
 

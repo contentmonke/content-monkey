@@ -1,0 +1,49 @@
+/* ActivityChart.css */
+
+.activity-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.year-selector {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-right: 0;
+  border-radius: 8px;
+}
+
+.year-button {
+  color: #000000; /* Unselected text color */
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: normal;
+  border: none;
+  background: none;
+  transition: background-color 0.1s, color 0.1s;
+  cursor: pointer;
+}
+
+.year-button.selected {
+  color: #ffffff; /* Selected text color */
+  font-weight: bold;
+  background-color: #31628F; /* Selected background color */
+  border-radius: 4px;
+}
+
+.year-button:hover {
+  color: #7b7b7b; /* Hover text color */
+}
+
+.year-button.selected:hover {
+  color: #ffffff; /* Selected text color */
+}
+
+.expand-button {
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #31628F;
+}

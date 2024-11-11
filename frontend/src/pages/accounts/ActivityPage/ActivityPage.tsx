@@ -20,7 +20,7 @@ const ActivityPage: React.FC = () => {
     const fetchUsername = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/user/${id}`);
-        const fetchedUsername = response.data.name;
+        const fetchedUsername = response.data.username;
         setUsername(user && user.name === response.data.name ? 'You' : fetchedUsername);
       } catch (error) {
         console.error("Error fetching username", error);
@@ -86,7 +86,7 @@ const ActivityPage: React.FC = () => {
                     {userActivities.map((activity: any, index: number) => (
                       <li key={index} className="activity-item">
                         <div className="activity-item-header">
-                          <span className="activity-item-perp">You</span> {activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
+                          <span className="activity-item-perp">{username}</span> {activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
                           {activity.rating && (
                             <Rating
                               size="small"
@@ -99,10 +99,10 @@ const ActivityPage: React.FC = () => {
                         </div>
                         <div className="activity-item-dates">
                           <span className="activity-relative-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated)).toRelative()}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toRelative()}
                           </span>
                           <span className="activity-absolute-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated)).toLocaleString(DateTime.DATETIME_MED)}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toLocaleString(DateTime.DATETIME_MED)}
                           </span>
                         </div>
                         <div className={`activity-item-body ${expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'}`}>
@@ -143,10 +143,10 @@ const ActivityPage: React.FC = () => {
                         </div>
                         <div className="activity-item-dates">
                           <span className="activity-relative-date">
-                            {DateTime.fromJSDate(new Date(activityWithUser.activity.dateCreated)).toRelative()}
+                            {DateTime.fromJSDate(new Date(activityWithUser.activity.dateCreated)).minus({hours: 1}).toRelative()}
                           </span>
                           <span className="activity-absolute-date">
-                            {DateTime.fromJSDate(new Date(activityWithUser.activity.dateCreated)).toLocaleString(DateTime.DATETIME_MED)}
+                            {DateTime.fromJSDate(new Date(activityWithUser.activity.dateCreated)).minus({hours: 1}).toLocaleString(DateTime.DATETIME_MED)}
                           </span>
                         </div>
                         <div className={`activity-item-body ${expandedActivityIds.has(activityWithUser.activity.id) ? 'expanded' : 'collapsed'}`}>
