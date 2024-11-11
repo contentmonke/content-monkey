@@ -1,5 +1,5 @@
-import { AccountCircle, ThumbDown, ThumbUp } from "@mui/icons-material";
-import { Button, Container, Divider, IconButton, Rating, Typography } from "@mui/material";
+import { ThumbDown, ThumbUp } from "@mui/icons-material";
+import { Avatar, Button, Container, Divider, IconButton, Rating, Typography } from "@mui/material";
 import { reviewDetail } from "../../style/media-page";
 import { ReviewDTO } from "../../models/Models";
 import "./MediaPage.css";
@@ -62,9 +62,9 @@ function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
           <Divider />
           <Container disableGutters sx={{ display: 'flex', my: 1 }}>
             <div className="user-info">
-              <AccountCircle fontSize="large" />
+              <Avatar src={review.picture ? review.picture : 'https://via.placeholder.com/150'} alt={review.username} style={{ marginBottom: '5px', width: '35px', height: '35px' }}/>
               <Typography variant="caption">{review.username}</Typography>
-            </div>
+            </div> 
             <Container disableGutters sx={{ ...reviewDetail }}>
               <div className="rating-date">
                 <Rating

@@ -12,7 +12,7 @@ const UserNavBar: React.FC = () => {
   const userId = pathParts[2]; // Get the second part of the path, which is the user ID
 
   // State for storing user details
-  const [userName, setUserName] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [userProfilePicture, setUserProfilePicture] = useState<string>('');
 
   // Fetch user details based on userId
@@ -23,10 +23,9 @@ const UserNavBar: React.FC = () => {
         
         // Assuming userResponse.data contains user information
         const profilePic = userResponse.data.picture; // Profile picture URL
-        const name = userResponse.data.name.split('@')[0]; // Extract name from email by splitting at '@'
 
         setUserProfilePicture(profilePic);
-        setUserName(name);
+        setUsername(userResponse.data.username);
       } catch (error) {
         console.error("Error fetching user details", error);
       }
@@ -49,7 +48,7 @@ const UserNavBar: React.FC = () => {
             alt="User Avatar"
             className="user-navbar-avatar"
           />
-          <span className="user-navbar-username">{userName || "User"}</span>
+          <span className="user-navbar-username">{username || "User"}</span>
         </div>
 
         <ul className="user-navbar-menu">

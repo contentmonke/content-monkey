@@ -76,10 +76,10 @@ const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
               </div>
               <div className="content-page-dates-container">
                 <p className="content-page-review-date">
-                  {DateTime.fromJSDate(new Date(review.reviewDate)).toRelative()}
+                  {DateTime.fromJSDate(new Date(review.reviewDate)).minus({hours: 1}).toRelative()}
                 </p>
                 <p className="content-page-absolute-date">
-                  {DateTime.fromJSDate(new Date(review.reviewDate)).toLocaleString(DateTime.DATETIME_MED)}
+                  {DateTime.fromJSDate(new Date(review.reviewDate)).minus({hours: 1}).toLocaleString(DateTime.DATETIME_MED)}
                 </p>
               </div>
               <div className="content-page-date-range">

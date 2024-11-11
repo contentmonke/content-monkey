@@ -36,8 +36,6 @@ function MediaPage() {
   const [favorited, setFavorited] = useState(false);
 
   useEffect(() => {
-
-
     if (location && location.state && location.state.result && needsUpdate) {
       setNeedsUpdate(false);
       fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
@@ -102,8 +100,6 @@ function MediaPage() {
       console.error('Error toggling favorite:', error);
     }
   };
-
-
 
   return (
     <>

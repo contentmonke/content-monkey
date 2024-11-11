@@ -18,6 +18,7 @@ public class CommentEntityDTO {
     private Long id;
     private Long userId;
     private String username;
+    private String picture;
     private Long reviewId;
     private String body;
     private LocalDateTime dateCreated;
@@ -25,12 +26,13 @@ public class CommentEntityDTO {
     private int upVotes;
     private int downVotes;
 
-    public static CommentEntityDTO convertCommentEntityToDTO(CommentEntity commentEntity, String username) {
+    public static CommentEntityDTO convertCommentEntityToDTO(CommentEntity commentEntity, String username, String picture) {
 
         return new CommentEntityDTO(
                 commentEntity.getId(),
                 commentEntity.getUserId(),
                 username,
+                picture,
                 commentEntity.getReviewId(),
                 commentEntity.getBody(),
                 commentEntity.getDateCreated(),

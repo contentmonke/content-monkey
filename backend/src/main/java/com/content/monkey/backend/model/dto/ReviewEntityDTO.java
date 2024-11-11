@@ -25,6 +25,7 @@ public class ReviewEntityDTO implements Comparable<ReviewEntityDTO>{
     private Long id;
     private Long userId;
     private String username;
+    private String picture;
     private List<Long> commentIds;
     private LocalDateTime dateCreated;
     private String body;
@@ -35,12 +36,13 @@ public class ReviewEntityDTO implements Comparable<ReviewEntityDTO>{
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    public static ReviewEntityDTO convertReviewEntityToDTO(ReviewEntity reviewEntity, String username) {
+    public static ReviewEntityDTO convertReviewEntityToDTO(ReviewEntity reviewEntity, String username, String picture) {
 
         return new ReviewEntityDTO(
                 reviewEntity.getId(),
                 reviewEntity.getUserId(),
                 username,
+                picture,
                 reviewEntity.getCommentIds(),
                 reviewEntity.getDateCreated(),
                 reviewEntity.getBody(),

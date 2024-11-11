@@ -347,7 +347,7 @@ public class ReviewService {
             try {
                 Long friendId = Long.parseLong(friendIdStr);
                 UserEntity friend = userService.getUser(friendId);
-                String friendName = friend.getName();
+                String friendName = friend.getUsername();
 
                 // Fetch friend's reviews and comments
                 List<ReviewEntity> friendReviews = reviewRepository.findByUserId(friendId);

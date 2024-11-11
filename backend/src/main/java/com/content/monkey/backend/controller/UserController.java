@@ -1,22 +1,16 @@
 package com.content.monkey.backend.controller;
 
-import com.content.monkey.backend.example.app.model.ExampleEntity;
-import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import com.content.monkey.backend.service.UserService;
 import com.content.monkey.backend.service.Auth0Service;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.NoSuchElementException;
-import org.springframework.http.HttpStatus;
-import java.util.Map;
-import java.util.ArrayList;
 
-import java.net.URI;
-import java.util.List;
+import java.util.*;
+
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,9 +24,13 @@ public class UserController {
     @PostMapping("/")
     public List<UserEntity> getUser(@RequestBody UserEntity user) {
         List<UserEntity> users = userService.getSingleUser(user.getName());
+
         if (users.isEmpty()) {
-            users.add(createExampleEntity(user));
+            // Save the new user directly with createUserEntity
+            UserEntity newUser = userService.createUserEntity(user);
+            users.add(newUser);
         }
+
         return users;
     }
 
@@ -72,11 +70,6 @@ public class UserController {
         return examples;
     }
 
-    public UserEntity createExampleEntity(@RequestBody UserEntity example) {
-        UserEntity created = userService.createUserEntity(example);
-        return created;
-    }
-
     @DeleteMapping("/{id}/{authID}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id, @PathVariable String authID) {
         try {
@@ -93,6 +86,21 @@ public class UserController {
         return userService.updateBiography(id, biography);
     }
 
+    @GetMapping("/email")
+    public UserEntity getUserByEmail(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email);
+    }
+
+    @GetMapping("/username-search")
+    public List<UserEntity> getUserByUsernameSearch(@RequestParam("username") String username) {
+        return userService.getUserByUsernameSearch(username);
+    }
+
+    @GetMapping("/id-search")
+    public List<UserEntity> getUserByIdSearch(@RequestParam("id") Long id) {
+        return userService.getUserByIdSearch(id);
+    }
+
     @PostMapping("/name/{name}")
     public List<UserEntity> getUserbyName(@PathVariable String name) {
         List<UserEntity> users = userService.getSingleUser(name);
@@ -100,11 +108,6 @@ public class UserController {
             return null;
         }
         return users;
-    }
-
-    @GetMapping("/email")
-    public UserEntity getUserById(@RequestParam("email") String email) {
-        return userService.getUserByEmail(email);
     }
 
     @GetMapping("/{id}")
@@ -158,9 +161,25 @@ public class UserController {
         return userService.getBlockedUsers(userId);
     }
 
-    /*
-    @GetMapping("/{userId}/activity")
-    public List<Object> getUserActivity(@PathVariable Long userId) {
-        return userService.getUserReviewsAndCommentsChronologically(userId);
-    } */
+    @GetMapping("/check-username")
+    public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
+        boolean isUnique = !userService.existsByUsername(username);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isUnique", isUnique);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{userId}/username")
+    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam String username) {
+        if (username.length() > 32 || !username.matches("^[a-zA-Z0-9_]+$")) {
+            return ResponseEntity.badRequest().body("Username must be alphanumeric (with underscores) and up to 32 characters.");
+        }
+
+        if (userService.existsByUsername(username)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is already taken.");
+        }
+
+        UserEntity updatedUser = userService.updateUsername(userId, username);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

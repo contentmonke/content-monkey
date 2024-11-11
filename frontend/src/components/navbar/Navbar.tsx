@@ -8,7 +8,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Avatar } from '@mui/material';
 import DropdownMenu from './av-dropdown-menu/DropdownMenu';
 import axios from 'axios';
-import ProfilePicture from '../../pages/settings/profile/ProfilePicture';
 
 const Navbar = () => {
   const location = useLocation();

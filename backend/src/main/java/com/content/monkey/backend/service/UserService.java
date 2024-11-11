@@ -1,21 +1,16 @@
 package com.content.monkey.backend.service;
 
-import com.content.monkey.backend.example.app.model.ExampleEntity;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
-import com.content.monkey.backend.model.ReviewEntity;
-import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.UserEntity;
-import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -35,6 +30,7 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
+        created.setUsername(generateUniqueUsername(created.getName()));
         return userRepository.save(created);
     }
 
@@ -61,6 +57,15 @@ public class UserService {
         } else {
             throw new NoSuchElementException("User not found");
         }
+    }
+
+    public List<UserEntity> getUserByUsernameSearch(String username) {
+        // Using repository to search for usernames containing the given keyword
+        return userRepository.findClosestMatchByUsername(username);
+    }
+
+    public List<UserEntity> getUserByIdSearch(Long id) {
+        return userRepository.findClosestMatchById(id);
     }
 
     public UserEntity updateBiography(Long id, String biography) {
@@ -237,37 +242,36 @@ public class UserService {
         List<String> blocked_users = new ArrayList<>();
         for (int i = 0; i < user.getBlockedUsers().size(); i++) {
             UserEntity userById = getUser(user.getBlockedUsers().get(i));
-            blocked_users.add(userById.getName());
+            blocked_users.add(userById.getUsername());
         }
         return blocked_users;
     }
 
-/*
-    public List<Object> getUserReviewsAndCommentsChronologically(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
+    public String generateUniqueUsername(String name) {
+        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        baseUsername = baseUsername.substring(0, Math.min(baseUsername.length(), 32));
+        String username = baseUsername;
+        int suffix = 1;
+
+        while (userRepository.existsByUsername(username)) {
+            username = baseUsername + suffix;
+            if (username.length() > 32) {
+                username = username.substring(0, 32);
+            }
+            suffix++;
         }
 
-        // Retrieve reviews and comments using the service layer
-        List<ReviewEntity> reviews = reviewService.getReviewsByUserId(userId);
-        List<CommentEntity> comments = commentService.getCommentsByUserId(userId);
+        return username;
+    }
 
-        List<Object> combinedList = new ArrayList<>();
-        combinedList.addAll(reviews);
-        combinedList.addAll(comments);
+    public UserEntity updateUsername(Long userId, String newUsername) {
+        UserEntity user = getUser(userId);
+        user.setUsername(newUsername);
 
-        combinedList.sort((o1, o2) -> {
-            Timestamp date1 = (o1 instanceof ReviewEntity)
-                    ? ((ReviewEntity) o1).getDateCreated()
-                    : ((CommentEntity) o1).getDateCreated();
-            Timestamp date2 = (o2 instanceof ReviewEntity)
-                    ? ((ReviewEntity) o2).getDateCreated()
-                    : ((CommentEntity) o2).getDateCreated();
+        return userRepository.save(user); // Saves updated user with new username
+    }
 
-            return date1.compareTo(date2);
-        });
-
-        return combinedList;
-    } */
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }
