@@ -92,6 +92,7 @@
 }
 
 .content-page-review-title {
+  cursor: pointer;
   margin: 0;
   padding: 0;
   font-weight: 500;
@@ -138,6 +139,7 @@
 
 /* Thumbnail styles */
 .content-page-review-thumbnail img {
+  cursor: pointer;
   width: 80px; /* Fixed width for thumbnail */
   height: auto;
   border-radius: 4px;
