@@ -218,7 +218,6 @@ export async function loadUser(username: string, setUser: any) {
       if (response.data[0].posts_disliked === null) {
         response.data[0].posts_disliked = [];
       }
-      console.log(response.data[0])
       setUser(response.data[0])
     })
     .catch(() => {

@@ -55,7 +55,7 @@ public class MediaService {
             try {
                 user = userService.getUser(entity.getUserId());
                 reviewEntityDTOs.add(
-                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getUsername(), user.getPicture())
                 );
             } catch(Exception e) {
                 System.out.println("User " + entity.getUserId() + " is not found, skipping this review");
@@ -96,7 +96,7 @@ public class MediaService {
             try {
                 user = userService.getUser(entity.getUserId());
                 reviewEntityDTOs.add(
-                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getName())
+                        ReviewEntityDTO.convertReviewEntityToDTO(entity, user.getUsername(), user.getPicture())
                 );
             } catch(Exception e) {
                 System.out.println("User " + entity.getUserId() + " is not found, skipping this review");

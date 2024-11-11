@@ -86,7 +86,7 @@ const AccountPage: React.FC = () => {
 
         // console.log(userResponse);
         setEmail(userResponse.data.email);
-        setName(userResponse.data.name.split('@')[0])
+        setName(userResponse.data.username);
         if (userResponse.data.picture != null) {
           setProfilePicture(userResponse.data.picture);
         }

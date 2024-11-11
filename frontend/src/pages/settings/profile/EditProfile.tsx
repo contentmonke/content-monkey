@@ -64,7 +64,7 @@ const EditProfile: React.FC = () => {
     try {
       // Check for uniqueness
       const response = await axios.get(`http://localhost:8080/api/user/check-username`, { params: { username } });
-      if (!response.data.available) {
+      if (!response.data.isUnique) {  // Updated to match backend response
         setUsernameError("Username is already taken.");
         return;
       } else {
@@ -89,7 +89,7 @@ const EditProfile: React.FC = () => {
       await axios.post('http://localhost:8080/api/user/updatePicture', { id: userId, picture: profilePicture });
 
       // Update username
-      await axios.put(`http://localhost:8080/api/user/${userId}/username`, { username });
+      await axios.put(`http://localhost:8080/api/user/${userId}/username?username=${username}`);
 
       setIsSuccess(true);
     } catch (error) {

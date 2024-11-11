@@ -60,7 +60,7 @@ public class CommentService {
 
             for (CommentEntity entity: commentEntities ) {
                 UserEntity user = userService.getUser(entity.getUserId());
-                commentEntityDTOS.add(convertCommentEntityToDTO(entity, user.getName()));
+                commentEntityDTOS.add(convertCommentEntityToDTO(entity, user.getUsername(), user.getPicture()));
             }
             return commentEntityDTOS;
 

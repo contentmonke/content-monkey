@@ -1,20 +1,16 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.exceptions.UserNotFoundException;
-import com.content.monkey.backend.model.ReviewEntity;
-import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.UserEntity;
-import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -61,6 +57,15 @@ public class UserService {
         } else {
             throw new NoSuchElementException("User not found");
         }
+    }
+
+    public List<UserEntity> getUserByUsernameSearch(String username) {
+        // Using repository to search for usernames containing the given keyword
+        return userRepository.findClosestMatchByUsername(username);
+    }
+
+    public List<UserEntity> getUserByIdSearch(Long id) {
+        return userRepository.findClosestMatchById(id);
     }
 
     public UserEntity updateBiography(Long id, String biography) {
@@ -237,7 +242,7 @@ public class UserService {
         List<String> blocked_users = new ArrayList<>();
         for (int i = 0; i < user.getBlockedUsers().size(); i++) {
             UserEntity userById = getUser(user.getBlockedUsers().get(i));
-            blocked_users.add(userById.getName());
+            blocked_users.add(userById.getUsername());
         }
         return blocked_users;
     }

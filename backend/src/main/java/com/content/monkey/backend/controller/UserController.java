@@ -1,11 +1,9 @@
 package com.content.monkey.backend.controller;
 
-import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import com.content.monkey.backend.service.UserService;
 import com.content.monkey.backend.service.Auth0Service;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 import org.springframework.http.HttpStatus;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/user")
@@ -90,6 +86,21 @@ public class UserController {
         return userService.updateBiography(id, biography);
     }
 
+    @GetMapping("/email")
+    public UserEntity getUserByEmail(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email);
+    }
+
+    @GetMapping("/username-search")
+    public List<UserEntity> getUserByUsernameSearch(@RequestParam("username") String username) {
+        return userService.getUserByUsernameSearch(username);
+    }
+
+    @GetMapping("/id-search")
+    public List<UserEntity> getUserByIdSearch(@RequestParam("id") Long id) {
+        return userService.getUserByIdSearch(id);
+    }
+
     @PostMapping("/name/{name}")
     public List<UserEntity> getUserbyName(@PathVariable String name) {
         List<UserEntity> users = userService.getSingleUser(name);
@@ -97,11 +108,6 @@ public class UserController {
             return null;
         }
         return users;
-    }
-
-    @GetMapping("/email")
-    public UserEntity getUserById(@RequestParam("email") String email) {
-        return userService.getUserByEmail(email);
     }
 
     @GetMapping("/{id}")
@@ -164,16 +170,16 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/username")
-    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam String newUsername) {
-        if (newUsername.length() > 32 || !newUsername.matches("^[a-zA-Z0-9_]+$")) {
+    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam String username) {
+        if (username.length() > 32 || !username.matches("^[a-zA-Z0-9_]+$")) {
             return ResponseEntity.badRequest().body("Username must be alphanumeric (with underscores) and up to 32 characters.");
         }
 
-        if (userService.existsByUsername(newUsername)) {
+        if (userService.existsByUsername(username)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is already taken.");
         }
 
-        UserEntity updatedUser = userService.updateUsername(userId, newUsername);
+        UserEntity updatedUser = userService.updateUsername(userId, username);
         return ResponseEntity.ok(updatedUser);
     }
 }

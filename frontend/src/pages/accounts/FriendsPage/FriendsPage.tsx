@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import SearchBox from '../../../components/SeachBox';
 import Dropdown from '../../../components/SearchUserDropdown';
+import ErrorAlert from '../../../components/ErrorAlert';
 import './FriendsPage.css';
 import { CheckCircle, Cancel, Delete } from '@mui/icons-material';
 
@@ -19,13 +20,11 @@ const FriendsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
-  const [selectedOption, setSelectedOption] = useState<string>('email');
-  const [emailQuery, setEmailQuery] = useState([]);
-  const [idQuery, setIdQuery] = useState([]);
-  const [nameQuery, setNameQuery] = useState([]);
+  const [selectedOption, setSelectedOption] = useState<string>('username');
   const [searchResult, setSearchResult] = useState([]);
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [error, setError] = useState('');
+  const [isError, setIsError] = useState(false);
 
 
   const handleTabChange = (index: number) => setActiveTab(index);
@@ -45,44 +44,31 @@ const FriendsPage: React.FC = () => {
       const currUserResponse = await axios.post("http://localhost:8080/api/user/", user);
       setLoggedInUserId(currUserResponse.data[0].id);
     } catch (err) {
-      console.error('Error fetching data', err);
+      setError('Error fetching data')
     }
   }
 
-  const fetchUserByEmail = async (email: string) => {
+  const fetchUserByUsername = async (username: string) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/user/emaillike/` + email);
-      setEmailQuery(response.data);
+      const response = await axios.get('http://localhost:8080/api/user/username-search', {
+        params: { username }
+      });
       setSearchResult(response.data);
-      console.log(typeof searchResult);
-
     } catch (err) {
-      setError('Error fetching user by email');
-      console.error('Error:', err);
+      setError('Error fetching user by username');
+      setIsError(true);
     }
   };
+
   const fetchUserById = async (id: string) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/user/` + id);
-      setIdQuery(response.data);
-      setSearchResult([response.data]);
-      console.log(response.data);
-
-    } catch (err) {
-      setError('Error fetching user by email');
-      console.error('Error:', err);
-    }
-  };
-  const fetchUserByName = async (name: string) => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/user/name/` + name);
-      setNameQuery(response.data);
-      console.log(response.data);
+      const response = await axios.get('http://localhost:8080/api/user/id-search', {
+        params: { id }
+      });
       setSearchResult(response.data);
-
     } catch (err) {
-      setError('Error fetching user by email');
-      console.error('Error:', err);
+      setError('Error fetching user by ID');
+      setIsError(true);
     }
   };
 
@@ -94,20 +80,11 @@ const FriendsPage: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
-
   const handleSearchSubmit = () => {
-    // Implement search submit logic here
-
-    console.log(`Searching for: ${searchQuery} under ` + selectedOption);
-    if (selectedOption === 'email') {
-      fetchUserByEmail(searchQuery);
-      console.log(emailQuery);
-    } else if (selectedOption === 'id') {
+    if (selectedOption === 'id') {
       fetchUserById(searchQuery);
-      console.log(idQuery);
     } else {
-      fetchUserByName(searchQuery);
-      console.log(nameQuery);
+      fetchUserByUsername(searchQuery);
     }
   };
 
@@ -122,7 +99,8 @@ const FriendsPage: React.FC = () => {
       await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=true`);
       setRequests(requests.filter((_, i) => i !== index));
     } catch (err) {
-      console.log("Error accepting friend request", err);
+      setError('Error accepting friend request')
+      setIsError(true);
     }
     fetchData();
   };
@@ -132,7 +110,8 @@ const FriendsPage: React.FC = () => {
       await axios.post(`http://localhost:8080/api/user/friend_accept/${from}/${id}?decision=false`);
       setRequests(requests.filter((_, i) => i !== index));
     } catch (err) {
-      console.log("Error declining friend request", err);
+      setError('Error declining friend request')
+      setIsError(true);
     }
     fetchData();
   };
@@ -143,14 +122,14 @@ const FriendsPage: React.FC = () => {
       setBlockedUsers(blockedUsers.filter((_, i) => i !== index));
       setSuccessMessage("User No Longer Blocked")
     } catch (err) {
-      console.error('Error unblocking user', err);
+      setError('Error unblocking user')
+      setIsError(true);
     }
   };
 
   const handleOptionChange = (selectedOption: string) => {
     setSelectedOption(selectedOption);
   };
-
 
   useEffect(() => {
     fetchData();
@@ -179,7 +158,7 @@ const FriendsPage: React.FC = () => {
                   onClick={() => goToFriendProfile(item.id)} // Navigate on click
                   style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
                 >
-                  {item.name} {/* Display the name directly from the array element */}
+                  {item.username} {/* Display the name directly from the array element */}
                 </li>
               ))}
             </ul>
@@ -190,7 +169,6 @@ const FriendsPage: React.FC = () => {
               </li>
             </ul>
           )}
-
 
         </div>
         <div className="tabs-container">
@@ -217,7 +195,7 @@ const FriendsPage: React.FC = () => {
                     onClick={() => goToFriendProfile(f.id)} // Navigate on click
                     style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
                   >
-                    {f.name}
+                    {f.username}
                   </li>
                 ))}
               </ul>
@@ -226,7 +204,7 @@ const FriendsPage: React.FC = () => {
               <ul className="requests-list">
                 {requests.map((r: any, i: number) => (
                   <li key={i} className="request-item">
-                    {r.name}
+                    {r.username}
                     <div className="request-icons">
                       <CheckCircle
                         onClick={() => handleAcceptRequest(r.id, i)}
@@ -268,6 +246,12 @@ const FriendsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ErrorAlert
+        message={error}
+        showAlert={isError}
+        setShowAlert={setIsError}
+      />
     </div>
   );
 };

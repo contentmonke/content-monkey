@@ -1,5 +1,5 @@
-import { AccountCircle, ThumbDown, ThumbUp } from "@mui/icons-material";
-import { Button, Container, Divider, IconButton, Rating } from "@mui/material";
+import { ThumbDown, ThumbUp } from "@mui/icons-material";
+import { Button, Container, Divider, IconButton, Avatar } from "@mui/material";
 import { reviewDetail } from "../../style/media-page";
 import { useEffect, useState } from "react";
 import { fetchComments, getRelativeDateString } from "./media-utils";
@@ -52,7 +52,7 @@ function Comments({ commentIds, open, reviewId, setNeedsUpdate }: any) {
             <div key={index}>
               <Container disableGutters sx={{ display: 'flex', my: 1 }}>
                 <div className="comment-profile">
-                  <AccountCircle fontSize="large" />
+                  <Avatar src={comment.picture ? comment.picture : 'https://via.placeholder.com/150'} alt={comment.username} style={{width: '30px', height: '30px' }}/>
                 </div>
                 <Container disableGutters sx={{ ...reviewDetail }}>
                   <div className="rating-date">
@@ -95,6 +95,7 @@ function Comments({ commentIds, open, reviewId, setNeedsUpdate }: any) {
             </div>
           }
           <CreateComment
+            picture={userData?.picture}
             userId={userData?.id}
             reviewId={reviewId}
             setIsLoading={setIsLoading}

@@ -1,10 +1,10 @@
 
-import { AccountCircle } from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 import { createComment } from "./media-utils";
 import { useState } from "react";
 import dayjs from "dayjs";
 
-function CreateComment({ userId, reviewId, setIsLoading, setIsSuccess, setIsError, setNeedsUpdate }: any) {
+function CreateComment({ picture, userId, reviewId, setIsLoading, setIsSuccess, setIsError, setNeedsUpdate }: any) {
   const [body, setBody] = useState("");
 
   const handleCreateComment = () => {
@@ -24,7 +24,7 @@ function CreateComment({ userId, reviewId, setIsLoading, setIsSuccess, setIsErro
     <>
       <div className="write-container">
         <div className="your-profile">
-          <AccountCircle fontSize="large" />
+          <Avatar src={picture ? picture : 'https://via.placeholder.com/150'} alt={userId} style={{ width: '35px', height: '35px' }} />
         </div>
         <div style={{ flexGrow: 1, overflowY: 'auto' }}>
           <textarea
