@@ -30,7 +30,6 @@ function ThreeDModels({ index, z, speed }: ThreeDModelsProps) {
 
   // Load the models
   const { nodes, materials } = useGLTF('/banana-v1-transformed.glb') as BananaGLTF
-  console.log(materials)
 
   // Random positioning and rotation data
   const [data] = useState({
