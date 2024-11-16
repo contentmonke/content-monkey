@@ -1,5 +1,6 @@
 package com.content.monkey.backend.controller;
 
+import com.content.monkey.backend.model.ListEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
 import com.content.monkey.backend.service.UserService;
@@ -181,5 +182,17 @@ public class UserController {
 
         UserEntity updatedUser = userService.updateUsername(userId, username);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/{userId}/add-list")
+    public ResponseEntity<UserEntity> addListToUser(@PathVariable Long userId, @RequestParam Long listId) {
+        UserEntity updatedUser = userService.addListToUser(userId, listId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/{userId}/lists")
+    public ResponseEntity<List<ListEntity>> getUserLists(@PathVariable Long userId) {
+        List<ListEntity> lists = userService.getUserLists(userId);
+        return ResponseEntity.ok(lists);
     }
 }

@@ -1,7 +1,9 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.ListEntity;
 import com.content.monkey.backend.model.UserEntity;
+import com.content.monkey.backend.repository.ListRepository;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class UserService {
     private MediaRepository mediaRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ListRepository listRepository;
 
     public UserEntity getUser(Long id) {
         UserEntity user = userRepository.findById(id)
@@ -273,5 +277,30 @@ public class UserService {
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    public UserEntity addListToUser(Long userId, Long listId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        List<Long> listIds = user.getListIds();
+        if (listIds == null) {
+            listIds = new ArrayList<>();
+            user.setListIds(listIds);
+        }
+
+        if (!listIds.contains(listId)) {
+            listIds.add(listId);
+            user.setListIds(listIds);
+        }
+
+        return userRepository.save(user);
+    }
+
+    public List<ListEntity> getUserLists(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return listRepository.findAllById(user.getListIds());
     }
 }
