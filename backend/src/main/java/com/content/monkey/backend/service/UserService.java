@@ -5,18 +5,17 @@ import com.content.monkey.backend.chatgpt.ChatGPTResponse;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.UserEntity;
+import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -270,7 +269,7 @@ public class UserService {
         return username;
     }
 
-        @Value("${openai.model}")
+    @Value("${openai.model}")
     private String model;
 
     @Value(("${openai.api.url}"))
@@ -279,8 +278,15 @@ public class UserService {
     @Qualifier("chat")
     @Autowired
     private RestTemplate template;
-    public String chatResponse(Long id) {
+    public List<MediaEntity> chatResponse(Long id) {
         UserEntity user = getUser(id);
+        String[] media_recs = user.getMediaRecs();
+        if (media_recs != null) {
+//            return user.getMediaRecs();
+            // iterate through and fetch media objects then return those media objects as 2d array to front end.
+            List<String> mediaAsArrList = new ArrayList<>(Arrays.asList(media_recs));
+            return returnListOfMedia(mediaAsArrList);
+        }
         List<Long> favMedia = user.getFavoriteMedia();
         List<MediaEntity> books = new ArrayList<>();
         List<MediaEntity> tvShows = new ArrayList<>();
@@ -313,21 +319,75 @@ public class UserService {
                 }
             }
         }
+
         String prompt = returnBookTitles(books) + returnGamesTitles(games) + returnTVShowTitles(tvShows) + returnMovieTitles(movies);
         System.out.println(prompt);
-
-//        String prompt = "describe red";
-//        ChatGPTRequest request=new ChatGPTRequest(model, prompt);
-//        ChatGPTResponse chatGptResponse = template.postForObject(apiURL, request, ChatGPTResponse.class);
-//        return chatGptResponse.getChoices().get(0).getMessage().getContent();
-        return "";
+        // Use mediaService.getMediaByTitleAndType from media controller to find the media entity. Then return the media entities to the frontend
+        // to use the fetchMedia to fetch the link and pass the state.
+        if (prompt.isEmpty()) {
+            return null;
+        }
+        ChatGPTRequest request = new ChatGPTRequest(model, prompt);
+        ChatGPTResponse chatGptResponse = template.postForObject(apiURL, request, ChatGPTResponse.class);
+        String res = chatGptResponse.getChoices().get(0).getMessage().getContent();
+        List<String> recsAsList = Arrays.asList(res.split(","));
+        String[] recsToArray = new String[recsAsList.size()];
+        recsAsList.toArray(recsToArray);
+        System.out.println(Arrays.toString(recsToArray));
+        user.setMediaRecs(recsToArray);
+        userRepository.save(user);
+        return returnListOfMedia(recsAsList);
     }
+
+    public List<MediaEntity> returnListOfMedia(List<String> recsAsList) {
+        List<String> firstFour = recsAsList.subList(0, 3);
+        System.out.println(firstFour);
+        List<String> secondFour = recsAsList.size() >= 6 ? recsAsList.subList(3, 6) : new ArrayList<>();
+        System.out.println(secondFour);
+        List<String> thirdFour = recsAsList.size() >= 9 ? recsAsList.subList(6, 9) : new ArrayList<>();
+        System.out.println(thirdFour);
+        List<String> fourthFour = recsAsList.size() == 12 ? recsAsList.subList(10,12) : new ArrayList<>();
+        System.out.println(fourthFour);
+        List<MediaEntity> mediaListFromRecs = new ArrayList<>();
+
+        for (String s : firstFour){
+            List<MediaEntity> m = mediaRepository.findByMediaTitle(s);
+            System.out.println(m);
+            mediaListFromRecs.add(m.get(0));
+        }
+
+        for (String s : secondFour){
+            List<MediaEntity> m = mediaRepository.findByMediaTitleAndMediaType(s, "Video Game");
+            m = s.contains("Zelda") ? mediaRepository.findByid(1221L) : m;
+            m = s.contains("Red") ? mediaRepository.findByid(1208L) : m;
+            m = s.contains("Witcher") ? mediaRepository.findByid(1174L) : m;
+//            List<MediaEntity> m = mediaRepository.findByMediaTitle(s);
+            System.out.println(m);
+            mediaListFromRecs.add(m.get(0));
+        }
+
+        for (String s : thirdFour){
+//            List<MediaEntity> m = mediaRepository.findByMediaTitleAndMediaType(s, "TV Show");
+            List<MediaEntity> m = mediaRepository.findByMediaTitle(s);
+            System.out.println(m);
+            mediaListFromRecs.add(m.get(0));
+        }
+
+        for (String s : fourthFour){
+            List<MediaEntity> m = mediaRepository.findByMediaTitle(s);
+            mediaListFromRecs.add(m.get(0));
+        }
+        return mediaListFromRecs;
+    }
+
 
     public String returnBookTitles(List<MediaEntity> books) {
         if (books.isEmpty()) {
             return "";
         }
-        StringBuilder prompt = new StringBuilder("Given I like the following books, give me 3 more book recommendations. Give your response as a java array.");
+        StringBuilder prompt = new StringBuilder("Given I like the following books, give me 3 more book recommendations" +
+                ", 3 video game recommendations, 3 TV show recommendations, and 3 movie recommendations. Give your response as a comma separated list with only the titles." +
+                " Don't include the works \"book recommendations\", TV show recommendations. I just want a plain, one line list of 12 titles, 3 of each category.");
         for (int i = 0; i < books.size(); i++) {
             prompt.append(books.get(i).getMediaTitle());
             prompt.append(",");
@@ -339,7 +399,7 @@ public class UserService {
         if (shows.isEmpty()) {
             return "";
         }
-        StringBuilder prompt = new StringBuilder("Given I like the following TV shows, give me 3 more tv show recommendations. Give your response as a java array.");
+        StringBuilder prompt = new StringBuilder("Given I like the following TV shows, give me 3 more tv show recommendations. Give your response as a comma separated list");
         for (int i = 0; i < shows.size(); i++) {
             prompt.append(shows.get(i).getMediaTitle());
             prompt.append(",");
@@ -351,7 +411,7 @@ public class UserService {
         if (games.isEmpty()) {
             return "";
         }
-        StringBuilder prompt = new StringBuilder("Given I like the following video games, give me 3 more video game recommendations. Give your response as a java array.");
+        StringBuilder prompt = new StringBuilder("Given I like the following video games, give me 3 more video game recommendations. Give your response as a comma separated list");
         for (int i = 0; i < games.size(); i++) {
             prompt.append(games.get(i).getMediaTitle());
             prompt.append(",");
@@ -363,7 +423,7 @@ public class UserService {
         if (movies.isEmpty()) {
             return "";
         }
-        StringBuilder prompt = new StringBuilder("Given I like the following movies, give me 3 more movie recommendations. Give your response as a java array.");
+        StringBuilder prompt = new StringBuilder("Given I like the following movies, give me 3 more movie recommendations. Give your response as a comma separated list");
         for (int i = 0; i < movies.size(); i++) {
             prompt.append(movies.get(i).getMediaTitle());
             prompt.append(",");

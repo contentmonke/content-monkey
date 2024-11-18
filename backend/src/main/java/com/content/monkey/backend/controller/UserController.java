@@ -2,6 +2,7 @@ package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
+import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.ReviewEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.UserRepository;
@@ -197,7 +198,7 @@ public class UserController {
 
 
     @GetMapping("/chat/{id}")
-    public String chat(@PathVariable Long id){
+    public List<MediaEntity> chat(@PathVariable Long id){
         return userService.chatResponse(id);
     }
 }
