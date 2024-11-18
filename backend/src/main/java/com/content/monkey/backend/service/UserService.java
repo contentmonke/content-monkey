@@ -12,6 +12,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -440,5 +441,18 @@ public class UserService {
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    public List<MediaEntity> getHighestRatedMedia() {
+        List<MediaEntity> highestRatedBooks = mediaRepository.findHighestRated("Book");
+        List<MediaEntity> highestRatedMovies = mediaRepository.findHighestRated("Movie");
+        List<MediaEntity> highestRatedTVShow = mediaRepository.findHighestRated("TV Show");
+        List<MediaEntity> highestRatedVideoGame = mediaRepository.findHighestRated("Video Game");
+        List<MediaEntity> allHighest = new ArrayList<>(highestRatedBooks);
+        allHighest.addAll(highestRatedMovies);
+        allHighest.addAll(highestRatedTVShow);
+        allHighest.addAll(highestRatedVideoGame);
+
+        return allHighest;
     }
 }

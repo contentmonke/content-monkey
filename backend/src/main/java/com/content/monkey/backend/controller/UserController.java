@@ -201,4 +201,9 @@ public class UserController {
     public List<MediaEntity> chat(@PathVariable Long id){
         return userService.chatResponse(id);
     }
+
+    @GetMapping("/highest-rated/")
+    public List<MediaEntity> highestRated() {
+        return userService.getHighestRatedMedia();
+    }
 }
