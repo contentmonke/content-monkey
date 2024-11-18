@@ -24,6 +24,12 @@ export const mediaImage = {
   minWidth: 100
 }
 
+export const streamingLogo = {
+  width: '40%',
+  height: 'auto',
+  minWidth: 100
+}
+
 export const buttonGroup: SxProps<Theme> = {
   flexGrow: 1,
   width: '90%',
