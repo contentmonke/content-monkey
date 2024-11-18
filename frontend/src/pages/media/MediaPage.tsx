@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchMedia } from "./media-utils";
+import { fetchMedia, fetchStreamingServices } from "./media-utils";
 import { Media, MediaLabel } from "../../models/Models";
 import { SmallLoading } from "../../components/Loading";
 import { Container, Divider, Rating, Typography } from "@mui/material";
-import { leftColumn, mediaDetails, mediaImage, mediaPageContainer, mediaRatings, mediaReviews, rateField, rightColumn } from "../../style/media-page";
+import { leftColumn, mediaDetails, mediaImage, mediaPageContainer, mediaRatings, mediaReviews, rateField, rightColumn, streamingLogo } from "../../style/media-page";
 import StatusDropdown from "./StatusDropdown";
 import ActionDropdown from "./ActionDropdown";
 import RatingStars from "../../components/RatingStars";
@@ -17,8 +17,12 @@ import Button from "../../components/button/Button";
 import IconButton from '@mui/material/IconButton';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import primeVideoLogo from '/primeVideoLogo.png';
+import disneyPlusLogo from '/disneyPlusLogo.png';
+import netflixLogo from '/netflixLogo.png'
+import googlePlayLogo from '/googlePlayLogo.png'
+import CountryDropdown from "./countryListComponent";
 
 
 function MediaPage() {
@@ -34,11 +38,14 @@ function MediaPage() {
   const location = useLocation(); // Accessing the state passed from the navbar
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [favorited, setFavorited] = useState(false);
+  const [streamingService, setStreamingService] = useState("");
+  const [selectedCountryCode, setSelectedCountryCode] = useState("us");
 
   useEffect(() => {
+    console.log( "location: ", location );
     if (location && location.state && location.state.result && needsUpdate) {
       setNeedsUpdate(false);
-      fetchMedia(location.state.result, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
+      fetchMedia(location.state.result, setMedia, setStreamingService, setLabels, setIsLoading, setIsError, setDoneSearching);
       // fetchMedia(null, setMedia, setLabels, setIsLoading, setIsError, setDoneSearching);
     }
     const fetchFavorites = async () => {
@@ -57,6 +64,9 @@ function MediaPage() {
     fetchFavorites();
   }, [needsUpdate, media, user]);
 
+  useEffect(() => {
+    fetchStreamingServices(media, selectedCountryCode, setStreamingService, setIsLoading, setIsError);
+  }, [selectedCountryCode]);
 
   const handleStatusClick = (value: any) => {
   }
@@ -151,6 +161,35 @@ function MediaPage() {
                   }}>
                   {favorited ? <StarIcon /> : <StarBorderIcon />}
                 </IconButton> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
+                {(media?.mediaType === "TV Show" || media?.mediaType === "Movie") && (
+                <div>
+                  <h6 style={{ ...rateField }}>Streaming Services</h6>
+
+                  {streamingService.includes("Disney+") && (
+                    <img src={disneyPlusLogo} style={{ ...streamingLogo }} />
+                  )}
+
+                  {streamingService.includes("Netflix") && (
+                    <img src={netflixLogo} style={{ ...streamingLogo }} />
+                  )}
+                  {streamingService.includes("Amazon Prime Video") && (
+                    <img src={primeVideoLogo} style={{ ...streamingLogo }} />
+                  )}
+                  {streamingService.includes("Google Play") && (
+                    <img src={googlePlayLogo} style={{ ...streamingLogo }} />
+                  )}
+
+                  {["Disney+", "Netflix", "Amazon Prime Video", "Google Play"].every(
+                      (service) => !streamingService.includes(service)
+                    ) && <p>Not available for streaming</p>}
+
+                </div>
+
+                )}
+
+              <div style={{ display: media.mediaType === "Movie" || media.mediaType === "TV Show" ? 'block' : 'none' }}>
+                <CountryDropdown setSelectedCountryCode={setSelectedCountryCode} />
+              </div>
 
               </Container>
               <Divider orientation="vertical" sx={{ height: 'auto' }} />

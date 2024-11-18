@@ -4,13 +4,14 @@ import { Media, MediaLabel, MediaType } from "../../models/Models";
 import { fieldContent, fieldLabel, resultImage, resultImageContainer } from "../../style/review-page";
 import { DateTime } from 'luxon';
 
-export async function fetchMedia(media: any, setMedia: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
+export async function fetchMedia(media: any, setMedia: any, setStreamingService: any, setLabels: any, setIsLoading: any, setIsError: any, setDoneSearching: any) {
   setIsLoading(true);
   // let mediaId = parseInt(idString);
   api.media.fetchMedia(media)
     .then((response) => {
       console.log(response.data);
       setMedia(response.data);
+      setStreamingService(response.data.streamingService)
       setLabels(getLabels(response.data.mediaType));
       setIsError(false);
     })
@@ -22,6 +23,24 @@ export async function fetchMedia(media: any, setMedia: any, setLabels: any, setI
     .finally(() => {
       setIsLoading(false)
       setDoneSearching(true)
+    });
+}
+
+export async function fetchStreamingServices(media:any, countryCode: any, setStreamingService: any, setIsLoading: any, setIsError: any) {
+  setIsLoading(true);
+  api.media.fetchStreamingServices(media, countryCode)
+    .then((response) => {
+      console.log(response.data);
+      setStreamingService(response.data)
+      setIsError(false);
+    })
+    .catch((error) => {
+      setStreamingService("");
+      console.log(error)
+      setIsError(true);
+    })
+    .finally(() => {
+      setIsLoading(false)
     });
 }
 
