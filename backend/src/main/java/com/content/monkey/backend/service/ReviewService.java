@@ -23,12 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Comparator;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -396,5 +393,60 @@ public class ReviewService {
                         Comparator.reverseOrder()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, Map<String, Integer>> getActivitySummary(Long userId, int year) {
+        Map<String, Map<String, Integer>> activitySummary = new LinkedHashMap<>();  // LinkedHashMap to preserve month order
+
+        // Month abbreviations to use as keys
+        String[] monthAbbreviations = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+        // Initialize the map with each month abbreviation and media types with default counts of 0
+        for (String month : monthAbbreviations) {
+            Map<String, Integer> monthlyData = new HashMap<>();
+            monthlyData.put("Book", 0);
+            monthlyData.put("Movie", 0);
+            monthlyData.put("TV Show", 0);
+            monthlyData.put("Video Game", 0);
+            activitySummary.put(month, monthlyData);
+        }
+
+        // Fetch all reviews for the user and year
+        List<ReviewEntity> reviews = reviewRepository.findByUserIdAndYear(userId, year);
+
+        // Process each review
+        for (ReviewEntity review : reviews) {
+            // Determine the date and month index
+            LocalDate activityDate = (review.getEndDate() != null) ? review.getEndDate().toLocalDate() : review.getDateCreated().toLocalDate();
+            int monthIndex = activityDate.getMonthValue() - 1;  // monthValue is 1-based, so subtract 1 for array index
+
+            // Fetch media type (Book, Movie, etc.)
+            String mediaType = fetchMediaType(review.getMediaId());
+
+            if (mediaType == null) {
+                System.err.println("Warning: Media type is null for mediaId " + review.getMediaId());
+                continue; // Skip if media type is null
+            }
+
+            // Get the month abbreviation and increment count in the relevant media type
+            String month = monthAbbreviations[monthIndex];
+            Map<String, Integer> monthlyData = activitySummary.get(month);
+            if (monthlyData != null) {
+                monthlyData.put(mediaType, monthlyData.getOrDefault(mediaType, 0) + 1);
+            }
+        }
+
+        return activitySummary;
+    }
+
+    private String fetchMediaType(Long mediaId) {
+        return mediaRepository.findById(mediaId)
+                .map(MediaEntity::getMediaType)
+                .orElse(null);
+    }
+
+    public int getOldestReviewYear(Long userId) {
+        LocalDate oldestDate = reviewRepository.findOldestReviewDate(userId);
+        return (oldestDate != null) ? oldestDate.getYear() : Year.now().getValue();
     }
 }
