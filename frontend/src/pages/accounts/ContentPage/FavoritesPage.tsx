@@ -11,6 +11,8 @@ import ConfirmButton from './../../../components/ConfirmButton.tsx';
 const SortableItem: React.FC<{ favId: string; favorite: string; onDelete: (favId: string) => void }> = ({ favId, favorite, onDelete }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id:favId });
 
+
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -25,12 +27,18 @@ const SortableItem: React.FC<{ favId: string; favorite: string; onDelete: (favId
         <p className="content-page-review-title" style={{ margin: 0 }}>
           {favorite}
         </p>
-        <IconButton onClick={() => onDelete(favId)} aria-label="delete" style={{ padding: 0 }}>
-          <DeleteIcon />
-        </IconButton>
+
       </div>
       <Container disableGutters className="review-vote-container">
       </Container>
+      <IconButton onClick={(e) => {
+                if (!isDragging) { // Only call onDelete if not dragging
+                  e.stopPropagation(); // Prevent drag event from firing
+                  onDelete(favId);
+                }
+              }} aria-label="delete" style={{ padding: 0 }}>
+                <DeleteIcon />
+              </IconButton>
     </li>
   );
 };
@@ -38,12 +46,13 @@ const SortableItem: React.FC<{ favId: string; favorite: string; onDelete: (favId
 const FavoritesPage: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const { id } = useParams();
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
         const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=${id}`);
-        setFavorites(favoritesResponse.data || []); // Fallback to an empty array if no data
+        setFavorites(favoritesResponse.data || []);
       } catch (error) {
         console.error('Error fetching favorites:', error);
       }
@@ -52,8 +61,16 @@ const FavoritesPage: React.FC = () => {
     fetchFavorites();
   }, [id]);
 
+  const handleDragStart = () => {
+    setIsDragging(true);
+
+  };
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
+
+    setIsDragging(false);
+
     if (active.id !== over?.id) {
       setFavorites((items) => {
         const oldIndex = items.indexOf(active.id);
@@ -78,6 +95,7 @@ const FavoritesPage: React.FC = () => {
   };
 
   const deleteFavorite = async (favId: string) => {
+      console.log("delete pressed");
     try {
       const updatedFavorites = favorites.filter((favorite) => favorite !== favId);
       console.log(updatedFavorites);
@@ -96,7 +114,7 @@ const FavoritesPage: React.FC = () => {
   };
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext collisionDetection={closestCenter} onDragStart={handleDragStart}  onDragEnd={handleDragEnd}>
       <SortableContext items={favorites} strategy={verticalListSortingStrategy}>
         <ul className="content-page-reviews-list">
           {favorites.length > 0 ? (

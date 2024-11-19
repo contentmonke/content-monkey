@@ -102,6 +102,18 @@ public class UserController {
         return users;
     }
 
+    @GetMapping("/name/{name}")
+    public List<UserEntity> getUserLikeName(@PathVariable String name) {
+        List<UserEntity> users = userRepository.getUserLikeName(name);
+        return users;
+    }
+
+    @GetMapping("/emaillike/{email}")
+    public List<UserEntity> getUserLikeEmail(@PathVariable String email) {
+        List<UserEntity> users = userRepository.getUserLikeEmail(email);
+        return users;
+    }
+
     @GetMapping("/email")
     public UserEntity getUserById(@RequestParam("email") String email) {
         return userService.getUserByEmail(email);
