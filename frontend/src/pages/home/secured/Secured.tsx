@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import RecsFormat from '../../../components/RecsFormat';
 // Comment the above and uncomment the following to import the WebGL BG lazily for faster loading times
 // const Bananas = lazy(() => import('./Bananas'))
 
@@ -14,6 +15,7 @@ function Secured() {
   const [speed] = useState(1);
   const {user} = useAuth0();
   const [recsList, setRecsList] = useState([]);
+  const [highestRatedMedia, setHighestRatedMedia] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,10 +35,11 @@ function Secured() {
       try {
         const currUserResponse = await axios.post("http://localhost:8080/api/user/", user);
         const recs = await axios.get(`http://localhost:8080/api/user/chat/${currUserResponse.data[0].id}`);
-        console.log(recs.data);
+        const highestRated = await axios.get("http://localhost:8080/api/user/highest-rated/");
+        setHighestRatedMedia(highestRated.data);
         setRecsList(recs.data);
       } catch (err) {
-        console.log("error getting user");
+        console.log("error getting user data");
       }
     }
     console.log(location)
@@ -54,6 +57,10 @@ function Secured() {
   return (
     isAuthenticated && (
       <div className="the-secured-page">
+        <RecsFormat recsList={highestRatedMedia} mediaType={"Book"} />
+        <RecsFormat recsList={highestRatedMedia} mediaType={"TV Show"} />
+        <RecsFormat recsList={highestRatedMedia} mediaType={"Movie"} />
+        <RecsFormat recsList={highestRatedMedia} mediaType={"Video Game"} />
         <Box sx={{ flexGrow: 1 }}>
         <p className="fave-titles">Movies For You</p>
         <hr className="main-divider" />

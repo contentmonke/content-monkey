@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -342,13 +343,13 @@ public class UserService {
 
     public List<MediaEntity> returnListOfMedia(List<String> recsAsList) {
         List<String> firstFour = recsAsList.subList(0, 3);
-        System.out.println(firstFour);
+//        System.out.println(firstFour);
         List<String> secondFour = recsAsList.size() >= 6 ? recsAsList.subList(3, 6) : new ArrayList<>();
-        System.out.println(secondFour);
+//        System.out.println(secondFour);
         List<String> thirdFour = recsAsList.size() >= 9 ? recsAsList.subList(6, 9) : new ArrayList<>();
-        System.out.println(thirdFour);
+//        System.out.println(thirdFour);
         List<String> fourthFour = recsAsList.size() == 12 ? recsAsList.subList(10,12) : new ArrayList<>();
-        System.out.println(fourthFour);
+//        System.out.println(fourthFour);
         List<MediaEntity> mediaListFromRecs = new ArrayList<>();
 
         for (String s : firstFour){
@@ -452,7 +453,14 @@ public class UserService {
         allHighest.addAll(highestRatedMovies);
         allHighest.addAll(highestRatedTVShow);
         allHighest.addAll(highestRatedVideoGame);
+        System.out.println(allHighest);
+        Set<String> seenTitles = new HashSet<>();
+        List<MediaEntity> uniqueMediaList = allHighest.stream()
+                .filter(media -> seenTitles.add(media.getMediaTitle()))
+                .toList();
 
-        return allHighest;
+        // Print the unique media list
+//        uniqueMediaList.forEach(System.out::println);
+        return uniqueMediaList;
     }
 }
