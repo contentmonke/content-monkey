@@ -67,6 +67,9 @@ public class UserEntity {
     @Column(name = "favorite_media")
     private List<Long> favorite_media;
 
+//    @Column(name="media_recs")
+    private String[] mediaRecs;
+
     public List<Long> getFavoriteMedia() {
         return favorite_media;
     }

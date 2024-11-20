@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.core.env.Environment;
 
@@ -18,6 +19,7 @@ public class BackendApplication {
 	}
 
 	@Bean
+	@Primary
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.additionalInterceptors((request, body, execution) -> {
 			request.getHeaders().add("User-Agent", "Sui"); // Customize your user-agent here
