@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RecsFormat from '../../../components/RecsFormat';
+import "./Secured.css"
 // Comment the above and uncomment the following to import the WebGL BG lazily for faster loading times
 // const Bananas = lazy(() => import('./Bananas'))
 
@@ -57,10 +58,10 @@ function Secured() {
   return (
     isAuthenticated && (
       <div className="the-secured-page">
-        <RecsFormat recsList={highestRatedMedia} mediaType={"Book"} />
-        <RecsFormat recsList={highestRatedMedia} mediaType={"TV Show"} />
-        <RecsFormat recsList={highestRatedMedia} mediaType={"Movie"} />
-        <RecsFormat recsList={highestRatedMedia} mediaType={"Video Game"} />
+        <RecsFormat onClick={handleClick} recsList={highestRatedMedia} mediaType={"Book"} />
+        <RecsFormat onClick={handleClick} recsList={highestRatedMedia} mediaType={"TV Show"} />
+        <RecsFormat onClick={handleClick} recsList={highestRatedMedia} mediaType={"Movie"} />
+        <RecsFormat onClick={handleClick} recsList={highestRatedMedia} mediaType={"Video Game"} />
         <Box sx={{ flexGrow: 1 }}>
         <p className="fave-titles">Movies For You</p>
         <hr className="main-divider" />
@@ -69,9 +70,9 @@ function Secured() {
               return rec.mediaType === "Movie" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
                     <div>
-                    <img className='content-item .img-size' src={rec?.thumbnail} />
+                    <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
-                    <p>{rec.mediaTitle}</p>
+                    <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
                     </div>
                   </Grid>
             )
@@ -87,9 +88,9 @@ function Secured() {
               return rec.mediaType === "Video Game" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
                     <div>
-                    <img className='content-item .img-size' src={rec?.thumbnail} />
+                    <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
-                    <p>{rec.mediaTitle}</p>
+                    <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
                     </div>
                   </Grid>
             )
@@ -106,9 +107,9 @@ function Secured() {
               return rec.mediaType === "TV Show" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
                     <div>
-                    <img className='content-item .img-size' src={rec?.thumbnail} />
+                    <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
-                    <p>{rec.mediaTitle}</p>
+                    <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
                     </div>
                   </Grid>
             )
@@ -124,9 +125,9 @@ function Secured() {
               return rec.mediaType === "Book" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
                     <div>
-                    <img className='content-item .img-size' src={rec?.thumbnail} />
+                    <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
-                    <p>{rec.mediaTitle}</p>
+                    <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
                     </div>
                   </Grid>
             )

@@ -1,7 +1,7 @@
 import { Box, Grid2 as Grid } from '@mui/material'
 import React from 'react'
 
-const RecsFormat = ({recsList, mediaType}) => {
+const RecsFormat = ({onClick, recsList, mediaType}) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
     <p className="fave-titles">Community Favorites {mediaType}s</p>
@@ -11,9 +11,8 @@ const RecsFormat = ({recsList, mediaType}) => {
           return rec.mediaType === mediaType && (
               <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
                 <div>
-                <img className='content-item .img-size' src={rec?.thumbnail} />
-                {/* <br /> */}
-                <p>{rec.mediaTitle}</p>
+                <img onClick={() => onClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
+                <p onClick={() => onClick(rec)}>{rec.mediaTitle}</p>
                 </div>
               </Grid>
         )
