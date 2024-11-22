@@ -1,7 +1,10 @@
 package com.content.monkey.backend.controller;
 
 import com.content.monkey.backend.model.ListEntity;
+import com.content.monkey.backend.model.UserEntity;
+import com.content.monkey.backend.service.UserService;
 import com.content.monkey.backend.service.ListService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +15,9 @@ import java.util.List;
 public class ListController {
 
     private final ListService listService;
+
+    @Autowired
+    private UserService userService;
 
     public ListController(ListService listService) {
         this.listService = listService;
@@ -28,9 +34,10 @@ public class ListController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ListEntity> createList(@RequestParam String name, @RequestParam Long userId) {
+    public ResponseEntity<UserEntity> createList(@RequestParam String name, @RequestParam Long userId) {
         ListEntity createdList = listService.createList(name, userId);
-        return ResponseEntity.ok(createdList);
+        UserEntity updatedUser = userService.addListToUser(userId, createdList.getId());
+        return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("/{id}")

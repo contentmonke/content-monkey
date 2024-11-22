@@ -1,0 +1,30 @@
+.list-details-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.list-details {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.list-details img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.list-details ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-details ul li {
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #e0f7fa;
+  border-radius: 4px;
+}
