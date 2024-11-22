@@ -73,6 +73,9 @@ public class UserEntity {
     @Column(name = "list_id")
     private List<Long> listIds = new ArrayList<>();
 
+//    @Column(name="media_recs")
+    private String[] mediaRecs;
+
     public List<Long> getFavoriteMedia() {
         return favorite_media;
     }

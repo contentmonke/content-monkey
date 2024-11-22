@@ -55,6 +55,7 @@ export type Media = {
   thumbnail: string;
   reviews: ReviewDTO[];
   numTotalReviews: number
+  streamingService: string
 }
 
 export type UploadResult = {
