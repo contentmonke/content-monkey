@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.apache.catalina.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -128,11 +129,12 @@ public class UserEntity {
     }
 
     public List<Long> getBlockedUsers() {
-        return blocked_users;
+        if (this.blocked_users == null) {
+            return new ArrayList<>();
+        }
+        return this.blocked_users;
     }
 
-
-    //TODO - Add fields
     public UserEntity() {
     }
 
