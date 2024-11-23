@@ -100,7 +100,7 @@ export const api = {
   media: {
     async fetchMedia(media: any) {
       const mediaEntity = {
-        mediaTitle: media.title,
+        mediaTitle: media.title ? media.title : media.mediaTitle,
         mediaDuration: media.pageCount,
         author: media.authors ? media.authors[0] : "",
         description: media.description,
@@ -111,6 +111,13 @@ export const api = {
         await axios.post(`${URL}/media/`, mediaEntity)
 
       );
+    },
+
+    async fetchStreamingServices(media:any, country: string) {
+      let mediaTitle = media.title ? media.title : media.mediaTitle
+      return (
+        await axios.get(`${URL}/media/streamingServices/${mediaTitle}/${country}`)
+      )
     },
 
     async fetchMediaList(mediaIds: any) {

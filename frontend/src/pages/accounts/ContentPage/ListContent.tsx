@@ -23,9 +23,10 @@ interface ReviewEntity {
 interface ListContentProps {
   reviews: ReviewEntity[];
   type?: string;
+  handleClick: any,
 }
 
-const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
+const ListContent: React.FC<ListContentProps> = ({ reviews, type, handleClick }) => {
   const [expandedReviewIds, setExpandedReviewIds] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(1); // State to track the current page
 
@@ -59,7 +60,7 @@ const ListContent: React.FC<ListContentProps> = ({ reviews, type }) => {
     <div>
       <ul className="content-page-reviews-list">
         {reviewsToDisplay.map((review) => (
-          <li key={review.id} className="content-page-review-item">
+          <li key={review.id} className="content-page-review-item" onClick={() => handleClick(review)}>
             <div className="content-page-review-thumbnail">
               <img src={review.mediaThumbnail} alt="Thumbnail" />
             </div>

@@ -3,7 +3,10 @@ package com.content.monkey.backend.controller;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.service.MediaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +34,7 @@ public class MediaController {
     @PostMapping("/")
     public MediaEntityDTO getMediaByTitle(@RequestBody MediaEntity mediaEntity,
                                           @RequestParam(defaultValue = "0") int pageNumber,
-                                          @RequestParam(defaultValue = "10") int pageSize) {
+                                          @RequestParam(defaultValue = "10") int pageSize) throws JsonProcessingException {
         MediaEntityDTO result = mediaService.getMediaByTitleAndType(mediaEntity.getMediaTitle(), mediaEntity.getMediaType(), pageNumber, pageSize);
         if (result == null) {
             mediaEntity.setTotalRatings(0);
@@ -39,6 +42,14 @@ public class MediaController {
             result = mediaService.createMediaEntity(mediaEntity);
         }
         return result;
+    }
+
+    @GetMapping("/streamingServices/{mediaTitle}/{countryCode}")
+    public String getStreamingServices(
+            @PathVariable("mediaTitle") String mediaTitle,
+            @PathVariable("countryCode") String countryCode
+    ) throws JsonProcessingException {
+        return mediaService.getStreamingServiceByTitle(mediaTitle, countryCode);
     }
 
     @GetMapping("/{mediaTitle}/author/{author}")

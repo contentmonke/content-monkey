@@ -42,6 +42,16 @@ public class MediaEntity {
     @Column(name = "media_type")
     private String mediaType;
 
+    @Column(name = "streaming_service")
+    private String streamingService;
+
+    public String getStreamingService() {
+        return streamingService;
+    }
+
+    public void setStreamingService(String streamingService) {
+        this.streamingService = streamingService;
+    }
 
     public String getMediaTitle() {
         return mediaTitle;

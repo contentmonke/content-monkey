@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams, useLocation, Link, Routes, Route } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Link, Routes, Route } from 'react-router-dom';
 import UserNavBar from '../UserNavbar';
 import ListContent from './ListContent';
 import FavoritesPage from './FavoritesPage';
@@ -15,10 +15,22 @@ interface ReviewEntity {
   downVotes: number;
 }
 
+
+
 const ContentPage: React.FC = () => {
   const { id } = useParams(); // Get the user ID from the URL
   const [allContent, setAllContent] = useState([]);
   const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const handleClick = (result: any) => {
+    navigate(`/media/${result.mediaTitle}/${result.mediaType}`, {
+      state: {
+        result: result
+      }
+    });
+  };
 
   async function fetchData() {
     try {
@@ -82,13 +94,13 @@ const ContentPage: React.FC = () => {
           <Routes>
             <Route
               path="/"
-              element={<ListContent reviews={allContent} />}
+              element={<ListContent reviews={allContent} handleClick={handleClick} />}
             />
             <Route path="tvshows"
-              element={<ListContent reviews={allContent} type="TV Show" />}
+              element={<ListContent reviews={allContent} type="TV Show" handleClick={handleClick} />}
             />
             <Route path="movies"
-              element={<ListContent reviews={allContent} type="Movie" />}
+              element={<ListContent reviews={allContent} type="Movie" handleClick={handleClick} />}
             />
             <Route
               path="favorites"
@@ -97,10 +109,10 @@ const ContentPage: React.FC = () => {
               }
             />
             <Route path="videogames"
-              element={<ListContent reviews={allContent} type="Video Game" />}
+              element={<ListContent reviews={allContent} type="Video Game" handleClick={handleClick} />}
             />
             <Route path="books"
-              element={<ListContent reviews={allContent} type="Book" />}
+              element={<ListContent reviews={allContent} type="Book" handleClick={handleClick} />}
             />
           </Routes>
         </div>

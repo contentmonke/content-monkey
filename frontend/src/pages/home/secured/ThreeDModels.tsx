@@ -74,7 +74,7 @@ export default function Models({ speed = 1, count = 100, depth = 80, easing = (x
         top: "-105px",
         left: 0,
         width: '100%',
-        height: '100vh',
+        height: '145vh',
         clipPath: 'inset(0 0% 0 0%)'  // Adjust to control visible area
       }}
       dpr={[1, 1.5]}

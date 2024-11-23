@@ -32,6 +32,7 @@ public class MediaEntityDTO {
     private String mediaType;
     private List<ReviewEntityDTO> reviews;
     private int numTotalReviews;
+    private String streamingService;
 
     public static MediaEntityDTO convertMediaEntityToDTO(MediaEntity mediaEntity,
                                                          List<ReviewEntityDTO> reviewEntities,
@@ -51,7 +52,8 @@ public class MediaEntityDTO {
                 mediaEntity.getThumbnail(),
                 mediaEntity.getMediaType(),
                 reviewEntities,
-                numTotalReviews
+                numTotalReviews,
+                mediaEntity.getStreamingService()
         );
     }
 
