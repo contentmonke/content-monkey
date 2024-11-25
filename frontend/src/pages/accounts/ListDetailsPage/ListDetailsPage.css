@@ -28,3 +28,35 @@
   background-color: #e0f7fa;
   border-radius: 4px;
 }
+
+.vote-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.upvote-button,
+.downvote-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.upvote-button {
+  background-color: #4caf50;
+}
+
+.upvote-button:hover {
+  background-color: #388e3c;
+}
+
+.downvote-button {
+  background-color: #f44336;
+}
+
+.downvote-button:hover {
+  background-color: #d32f2f;
+}

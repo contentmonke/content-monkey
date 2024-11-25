@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
@@ -38,7 +38,7 @@ function Secured() {
         const recs = await axios.get(`http://localhost:8080/api/user/chat/${currUserResponse.data[0].id}`);
         const highestRated = await axios.get("http://localhost:8080/api/user/highest-rated/");
         setHighestRatedMedia(highestRated.data);
-        setRecsList(recs.data);
+        setRecsList(recs.data ? recs.data : []);
       } catch (err) {
         console.log("error getting user data");
       }
@@ -69,7 +69,7 @@ function Secured() {
             {recsList.map((rec: any, i: number) => {
               return rec.mediaType === "Movie" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
-                    <div>
+                    <div className="media-home-page">
                     <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
                     <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
@@ -87,7 +87,7 @@ function Secured() {
             {recsList.map((rec: any, i: number) => {
               return rec.mediaType === "Video Game" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
-                    <div>
+                    <div className="media-home-page">
                     <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
                     <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
@@ -106,7 +106,7 @@ function Secured() {
             {recsList.map((rec: any, i: number) => {
               return rec.mediaType === "TV Show" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
-                    <div>
+                    <div className="media-home-page">
                     <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
                     <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>
@@ -124,7 +124,7 @@ function Secured() {
             {recsList.map((rec: any, i: number) => {
               return rec.mediaType === "Book" && (
                   <Grid display="flex" justifyContent="center" alignItems="center" size="grow">
-                    <div>
+                    <div className="media-home-page">
                     <img onClick={() => handleClick(rec)} className='content-item img-size' src={rec?.thumbnail} />
                     {/* <br /> */}
                     <p onClick={() => handleClick(rec)}>{rec.mediaTitle}</p>

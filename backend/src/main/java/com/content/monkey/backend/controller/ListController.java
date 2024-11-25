@@ -16,6 +16,7 @@ public class ListController {
 
     private final ListService listService;
 
+
     @Autowired
     private UserService userService;
 
@@ -49,5 +50,17 @@ public class ListController {
     public ResponseEntity<Void> deleteList(@PathVariable Long id) {
         listService.deleteList(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{listId}/upvote")
+    public ResponseEntity<Void> upvoteList(@PathVariable Long listId, @RequestParam Long userId) {
+        listService.upvoteList(listId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{listId}/downvote")
+    public ResponseEntity<Void> downvoteList(@PathVariable Long listId, @RequestParam Long userId) {
+        listService.downvoteList(listId, userId);
+        return ResponseEntity.ok().build();
     }
 }
