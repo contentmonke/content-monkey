@@ -15,6 +15,7 @@ import UploadPage from './pages/upload/UploadPage';
 import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
 import ContentPage from './pages/accounts/ContentPage/ContentPage';
 import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
+import DiscussionPage from './pages/groups/DiscussionPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -42,6 +43,7 @@ function App() {
             </Route>
             <Route path="/media/:title/:type" element={<MediaPage />} />
             <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />
+            <Route path="/discussion" element={<DiscussionPage/>} />
           </Routes>
         </Container>
       </div>
