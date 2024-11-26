@@ -83,3 +83,16 @@ export enum MediaType {
   VIDEO_GAME = "Video Game",
   UNSELECTED = "---"
 }
+
+export type Group = {
+  id: number,
+  groupName: string,
+  description: string,
+  owner: number,
+  picture: string | null,
+  isPublic: boolean,
+  members: number[],
+  joinRequests: number[],
+  discussionBoards: number[],
+  dateCreated: Date
+}

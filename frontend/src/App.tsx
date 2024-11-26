@@ -15,7 +15,12 @@ import UploadPage from './pages/upload/UploadPage';
 import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
 import ContentPage from './pages/accounts/ContentPage/ContentPage';
 import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
-import DiscussionPage from './pages/groups/DiscussionPage';
+import CommunityPage from './pages/community/CommunityPage';
+import MyGroupsPage from './pages/community/my-groups/MyGroupsPage';
+import PopularGroupsPage from './pages/community/popular-groups/PopularGroupsPage';
+import GroupPage from './pages/community/group/GroupPage';
+import DiscussionPage from './pages/community/discussions/DiscussionPage';
+import CreateGroupPage from './pages/community/create-group/CreateGroupPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -31,6 +36,13 @@ function App() {
             <Route path="/u/:id/friends" element={<FriendsPage />} />
             <Route path="/u/:id/content/*" element={<ContentPage />} />
             <Route path="/u/:id/activity/*" element={<ActivityPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community/create-group" element={<CreateGroupPage />} />
+            <Route path="/community/explore" element={<CommunityPage />} />
+            <Route path="/community/my-groups" element={<MyGroupsPage />} />
+            <Route path="/community/popular" element={<PopularGroupsPage />} />
+            <Route path="/community/group/:id" element={<GroupPage />} />
+            <Route path="/community/group/:id/discussion/:id" element={<DiscussionPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">

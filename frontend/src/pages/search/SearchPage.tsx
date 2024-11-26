@@ -65,7 +65,7 @@ function SearchPage() {
     <>
       <Container
         disableGutters
-        maxWidth={true}
+        // maxWidth={true}
         sx={{ ...newFullpageContainer }}
       >
         {media !== null &&

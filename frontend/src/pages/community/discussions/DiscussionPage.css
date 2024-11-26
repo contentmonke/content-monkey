@@ -1,0 +1,30 @@
+.discussion-page {
+  display: flex;
+  width: '100%';
+}
+
+.discussion-page-title {
+  display: flex;
+  width: '100%';
+  /* background-color: red; */
+}
+
+.discussion-content {
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  min-width: 400px;
+  max-width: 850px;
+  width: '100%';
+  /* background-color: yellow; */
+}
+
+.loading-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  margin-top: 100px;
+}

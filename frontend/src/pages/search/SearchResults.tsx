@@ -34,7 +34,8 @@ function SearchResults({ results, page, mediaType, handleClick, handlePageChange
             scrollRef={scrollRef}
             items={results}
             page={page}
-            handlePageChange={handlePageChange} />
+            handlePageChange={handlePageChange}
+          />
         </>
       }
     </List>
