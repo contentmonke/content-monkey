@@ -6,6 +6,7 @@ import lombok.*;
 import org.apache.catalina.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,7 @@ public class UserEntity {
     private List<Long> groupList;
 
     @Column(name = "group_invites")
-    private List<String> groupInvites;
+    private List<Long> groupInvites;
 
     public List<String> getFriendList() {
         return friend_list;
@@ -136,6 +137,15 @@ public class UserEntity {
             return new ArrayList<>();
         }
         return this.blocked_users;
+    }
+
+    public List<Long> getGroupList() {
+        if (this.groupList == null) {
+            this.groupList = new ArrayList<>();
+            // return new ArrayList<>();
+        }
+        this.groupList.removeAll(Collections.singletonList(null));
+        return this.groupList;
     }
 
     public UserEntity() {

@@ -17,10 +17,10 @@ const arrowSx: SxProps<Theme> = {
   top: 80
 }
 
-function MyGroups() {
+function MyGroups({ myGroups }: any) {
   const groupsContentRef = useRef(null);
   const navigate = useNavigate();
-  const [myGroups, setMyGroups] = useState(longMockGroups);
+  // const [myGroups, setMyGroups] = useState(longMockGroups);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
@@ -61,74 +61,82 @@ function MyGroups() {
   }, [])
 
   return (
-    <div className={myGroups.length > 0 ? "my-groups" : "my-groups-empty"}>
-      <div className="my-groups-header">
-        <h5 className="my-groups-title">My Groups</h5>
-        {myGroups.length > 0 && <button
-          className="browse-all-button"
-          onClick={handleBrowseAllClick}
-        >
-          Browse All
-        </button>
-        }
-      </div>
-      <Divider />
-      {myGroups.length === 0 ?
-        <div className="my-groups-empty-message">
-          <div className="">No groups joined yet</div>
+    <>
+      {myGroups !== undefined ?
+        <div className={myGroups.length > 0 ? "my-groups" : "my-groups-empty"}>
+          <div className="my-groups-header">
+            <h5 className="my-groups-title">My Groups</h5>
+            {myGroups.length > 0 && <button
+              className="browse-all-button"
+              onClick={handleBrowseAllClick}
+            >
+              Browse All
+            </button>
+            }
+          </div>
+          <Divider />
+          {myGroups.length === 0 ?
+            <div className="my-groups-empty-message">
+              <div className="">No groups joined yet</div>
+            </div>
+            :
+            <div className="my-groups-content">
+              {showLeftArrow &&
+                <Fab
+                  variant="extended"
+                  sx={{ ...arrowSx, left: 0, }}
+                  onClick={handleLeftArrowClick}
+                >
+                  <ArrowBackIosIcon fontSize="medium" />
+                </Fab>
+              }
+              <div
+                className="my-groups-list"
+                ref={groupsContentRef}
+                onScroll={checkCards}
+              >
+                {myGroups.slice(0, 10).map((group, index) => (
+                  <Card className="group-card" key={index}
+                    variant={'outlined'}
+                    sx={{
+                      m: 1,
+                      background: 'none',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                      }
+                    }}
+                    onClick={() => handleCardClick(group)}
+                  >
+                    <CardContent>
+                      <div className="group-card-content" key={group.id}>
+                        <div className="group-card-picture-container">
+                          <img className="group-card-picture" src={group.picture ? group.picture : 'https://via.placeholder.com/150'} />
+                        </div>
+                        <div className="group-card-name">{group.groupName}</div>
+                        <div className="group-card-members">
+                          {group.members.length} members
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {showRightArrow &&
+                <Fab
+                  variant="extended"
+                  sx={{ ...arrowSx, right: 0 }}
+                  onClick={handleRightArrowClick}
+                >
+                  <ArrowForwardIosIcon fontSize="medium" />
+                </Fab>
+              }
+            </div>
+          }
         </div>
         :
-        <div className="my-groups-content">
-          {showLeftArrow &&
-            <Fab
-              variant="extended"
-              sx={{ ...arrowSx, left: 0, }}
-              onClick={handleLeftArrowClick}
-            >
-              <ArrowBackIosIcon fontSize="medium" />
-            </Fab>
-          }
-          <div
-            className="my-groups-list"
-            ref={groupsContentRef}
-            onScroll={checkCards}
-          >
-            {myGroups.slice(0, 10).map((group, index) => (
-              <Card className="group-card" key={index}
-                variant={'outlined'}
-                sx={{
-                  m: 1,
-                  background: 'none',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                  }
-                }}
-                onClick={() => handleCardClick(group)}
-              >
-                <CardContent>
-                  <div className="group-card-content" key={group.id}>
-                    <img className="group-card-picture" src={group.picture ? group.picture : cmLogo} />
-                    <div className="group-card-name">{group.groupName}</div>
-                    <div className="group-card-members">
-                      {group.members.length} members
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          {showRightArrow &&
-            <Fab
-              variant="extended"
-              sx={{ ...arrowSx, right: 0 }}
-              onClick={handleRightArrowClick}
-            >
-              <ArrowForwardIosIcon fontSize="medium" />
-            </Fab>
-          }
-        </div>
+        <></>
       }
-    </div>
+    </>
   );
 }
 

@@ -1,18 +1,21 @@
 package com.content.monkey.backend.service;
 
+import com.content.monkey.backend.model.CommentEntity;
 import com.content.monkey.backend.model.GroupEntity;
+import com.content.monkey.backend.model.GroupInviteEntity;
 import com.content.monkey.backend.model.UserEntity;
-import com.content.monkey.backend.model.dto.groups.GroupInvite;
+import com.content.monkey.backend.model.dto.groups.GroupInviteDTO;
 import com.content.monkey.backend.model.dto.groups.GroupJoinRequest;
+import com.content.monkey.backend.repository.GroupInviteRepository;
 import com.content.monkey.backend.repository.GroupRepository;
 import com.content.monkey.backend.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static com.content.monkey.backend.model.dto.groups.GroupInvite.*;
 
 @Service
 public class GroupService {
@@ -22,18 +25,21 @@ public class GroupService {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private GroupInviteRepository groupInviteRepository;
 
     // HELPERS
     public void addGroupToUser(Long userId, Long groupId) {
         try {
             UserEntity user = userService.getUser(userId);
-            if (user.getGroupList() == null) {
+            if (user.getGroupList() == null || user.getGroupList().isEmpty()) {
                 user.setGroupList(new ArrayList<>());
             }
             if (user.getGroupList().contains(groupId)) {
                 return;
             }
             user.getGroupList().add(groupId);
+            System.out.println(user);
             userRepository.save(user);
         } catch (Exception e) {
             System.out.println("Error adding groupId to the user entity");
@@ -64,6 +70,7 @@ public class GroupService {
         }
         groupEntity.setDiscussionBoards(new ArrayList<>());
         groupEntity.setJoinRequests(new ArrayList<>());
+        System.out.println(groupEntity);
 
         // Save group
         GroupEntity savedEntity = groupRepository.save(groupEntity);
@@ -141,7 +148,7 @@ public class GroupService {
         return groupRepository.findByGroupNameContainingIgnoreCase(searchTerm);
     }
 
-    public UserEntity invite(GroupInvite groupInvite) {
+    public UserEntity invite(GroupInviteEntity groupInvite) {
         UserEntity user = userService.getUser(groupInvite.getInviteeId());
         if (user.getGroupInvites() == null) {
             user.setGroupInvites(new ArrayList<>());
@@ -157,44 +164,95 @@ public class GroupService {
             System.out.println("Invited user is already a member of this group");
             return null;
         }
-        // Already has an invitation pending
-        List<Map<String, Long>> mappedInvites = jsonToInvitesList(user.getGroupInvites());
-        for (Map<String, Long> map : mappedInvites) {
-            if (map.containsKey("inviteeId") && map.get("inviteeId").equals(groupInvite.getInviteeId())) {
-                System.out.println("User already has an invitation for this group pending");
+        // Already has an invitation pending from this inviter
+        List<GroupInviteEntity> groupInviteEntities  = groupInviteRepository.findAllById(user.getGroupInvites());
+        for (GroupInviteEntity groupInviteEntity : groupInviteEntities) {
+            if (Objects.equals(groupInviteEntity.getGroupId(), groupInvite.getGroupId()) &&
+                    Objects.equals(groupInviteEntity.getInviterId(), groupInvite.getInviterId())) {
+                System.out.println("User already has an invitation from this inviter");
                 return null;
             }
         }
 
-        String inviteJSON = inviteToJSON(groupInvite);
-        if (inviteJSON.isEmpty()) {
-            return null;
-        }
-        user.getGroupInvites().add(inviteJSON);
+        GroupInviteEntity inviteEntity = groupInviteRepository.save(groupInvite);
+        user.getGroupInvites().add(inviteEntity.getId());
         return userRepository.save(user);
     }
 
-    public UserEntity handleInvite(GroupInvite groupInvite, Boolean isAccepted) {
-        UserEntity user = userService.getUser(groupInvite.getInviteeId());
+    public UserEntity handleInvite(Long userId, Long groupId, Boolean isAccepted) {
+        UserEntity user = userService.getUser(userId);
         if (user.getGroupInvites() == null) {
             user.setGroupInvites(new ArrayList<>());
         }
-        List<Map<String, Long>> invites = jsonToInvitesList(user.getGroupInvites());
-        invites.removeIf(invite -> invite.containsValue(groupInvite.getGroupId()));
-        List<String> jsonInvites = new ArrayList<>();
-        for (Map<String, Long> map: invites){
-            jsonInvites.add(inviteMapToJSON(map));
+
+        // No pending invites for this group
+        if (groupInviteRepository.findByInviteeIdAndGroupId(userId, groupId).size() == 0) {
+            System.out.println("Not a valid pending invite");
+            return null;
         }
 
-        user.setGroupInvites(jsonInvites);
+        List<GroupInviteEntity> inviteEntities  = groupInviteRepository.findAllById(user.getGroupInvites());
+
+        // Remove the pending invites for this group
+        List<Long> toRemove = new ArrayList<>();
+        for (GroupInviteEntity invite: inviteEntities) {
+            if (Objects.equals(invite.getGroupId(), groupId)) {
+                toRemove.add(invite.getId());
+            }
+        }
 
         if (isAccepted) {
-            GroupEntity groupEntity = getGroup(groupInvite.getGroupId());
-            groupEntity.getMembers().add(groupInvite.getInviteeId());
+            // Already a member of the group
+            if (user.getGroupList().contains(groupId)) {
+                return null;
+            }
+            GroupEntity groupEntity = getGroup(groupId);
+            groupEntity.getMembers().add(userId);
             groupRepository.save(groupEntity);
-            user.getGroupList().add(groupInvite.getGroupId());
+            user.getGroupList().add(groupId);
         }
+
+        System.out.println("Deleting Invites " + toRemove);
+        groupInviteRepository.deleteAllByIdInBatch(toRemove);
+        user.getGroupInvites().removeAll(toRemove);
         return userRepository.save(user);
+    }
+
+    public List<GroupInviteDTO> getInvites(Long userId) {
+        UserEntity user = userService.getUser(userId);
+        List<GroupInviteEntity> invites = groupInviteRepository.findAllById(user.getGroupInvites());
+        List<GroupInviteDTO> inviteDTOs = new ArrayList<>();
+
+        // Convert invite to DTO
+        for (GroupInviteEntity invite: invites) {
+
+            UserEntity inviter = userService.getUser(invite.getInviterId());
+            GroupEntity group = getGroup(invite.getGroupId());
+            inviteDTOs.add(
+                    GroupInviteDTO.builder()
+                            .groupId(group.getId())
+                            .groupName(group.getGroupName())
+                            .inviteeId(userId)
+                            .inviterId(inviter.getId())
+                            .inviterName(inviter.getName())
+                            .dateSent(invite.getDateSent())
+                            .build()
+            );
+        }
+
+        System.out.println(inviteDTOs);
+        return inviteDTOs;
+    }
+
+    public List<GroupEntity> getMyGroups(Long userId) {
+        UserEntity user = userService.getUser(userId);
+        return groupRepository.findAllById(user.getGroupList());
+    }
+
+    public List<GroupEntity> getPopularGroups() {
+        Pageable page = PageRequest.of(0, 30);
+        Page<GroupEntity> pageResult = groupRepository.findPopularGroups(page);
+        return pageResult.getContent();
     }
 
 

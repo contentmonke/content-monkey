@@ -1,0 +1,99 @@
+.group-invitations-page {
+  display: flex;
+  width: '100%';
+}
+
+.group-invitations-page-title {
+  display: flex;
+  width: '100%';
+  margin-bottom: 20px;
+}
+
+.group-invitations-content {
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  min-width: 400px;
+  max-width: 850px;
+  width: '100%';
+}
+
+.invite-search {
+  display: flex;
+  width: '100%';
+  flex-wrap: nowrap;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  /* background-color: red; */
+}
+
+.invite-search-bar {
+  padding-top: 2px;
+  /* flex: 1; */
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.invite-search-button {
+  margin-left: 10px;
+}
+
+.invite-page-contentlist {
+  padding: 10px 0;
+}
+
+.invite-item {
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.invite-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.invite-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.invite-item-perp,
+.invite-item-vict {
+  font-weight: bold;
+}
+
+.invite-item-vict {
+  font-style: italic;
+  cursor: pointer;
+  color: #31628F;
+}
+
+.invite-item-dates {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.85em;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.request-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.loading-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  margin-top: 100px;
+}

@@ -119,3 +119,13 @@ export type DiscussionComment = {
   downVotes: number,
   picture: string
 }
+
+export type GroupInvite = {
+  id: number,
+  groupId: number,
+  groupName: string,
+  inviteeId: number,
+  inviterId: number,
+  inviterName: string,
+  dateSent: Date
+}

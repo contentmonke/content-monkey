@@ -7,6 +7,35 @@
   display: flex;
   width: '100%';
   margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.title-path {
+  display: flex;
+  flex-grow: 1;
+}
+
+.owner-controls-container {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 30px;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.owner-button {
+  /* background-color: blue; */
+  background: none;
+  color: black;
+
+}
+
+.owner-button.hover {
+  background-color: #d1d1d1ef;
+  color: black;
+  transition: .2s ease-in-out;
 }
 
 .group-content {
@@ -24,7 +53,6 @@
   display: flex;
   gap: 20px;
   height: auto;
-  /* background-color: red; */
 }
 
 .group-button-column {
@@ -35,7 +63,6 @@
   flex-shrink: 0;
   gap: 5px;
   align-items: center;
-  /* background-color: red; */
 }
 
 .group-img-container {
@@ -49,13 +76,17 @@
 }
 
 .group-img {
-  width: auto;
-  height: 80%;
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .group-img-locked {
-  width: auto;
-  height: 80%;
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  object-fit: cover;
   opacity: 0.6;
 }
 

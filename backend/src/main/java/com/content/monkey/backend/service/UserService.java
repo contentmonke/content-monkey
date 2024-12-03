@@ -289,7 +289,7 @@ public class UserService {
             List<String> mediaAsArrList = new ArrayList<>(Arrays.asList(media_recs));
             return returnListOfMedia(mediaAsArrList);
         }
-        List<Long> favMedia = user.getFavoriteMedia();
+        List<Long> favMedia = (user.getFavoriteMedia() == null) ? new ArrayList<>() : user.getFavoriteMedia();
         List<MediaEntity> books = new ArrayList<>();
         List<MediaEntity> tvShows = new ArrayList<>();
         List<MediaEntity> movies = new ArrayList<>();
@@ -462,5 +462,9 @@ public class UserService {
         // Print the unique media list
 //        uniqueMediaList.forEach(System.out::println);
         return uniqueMediaList;
+    }
+
+    public List<UserEntity> getListOfUsers(List<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 }

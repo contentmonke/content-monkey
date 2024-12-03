@@ -1,11 +1,9 @@
 import { Divider } from "@mui/material";
-
-import "./PopularGroups.css"
-import { longMockGroups, shortMockGroups } from "../my-groups/mock-groups";
 import GroupResults from "../group-results/GroupResults";
 import { useNavigate } from "react-router-dom";
+import "./PopularGroups.css"
 
-function PopularGroups({ userId }: any) {
+function PopularGroups({ popularGroups, userId }: any) {
   const navigate = useNavigate();
 
   const handleBrowseAllClick = () => {
@@ -27,7 +25,7 @@ function PopularGroups({ userId }: any) {
       <Divider />
       <div className="popular-groups-content">
         <GroupResults
-          groups={longMockGroups}
+          groups={popularGroups}
           userId={userId}
         />
       </div>

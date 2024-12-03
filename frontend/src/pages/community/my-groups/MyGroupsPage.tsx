@@ -12,23 +12,31 @@ import { longMockGroups } from "./mock-groups";
 import "../CommunityPage.css"
 import CustomPagination from "../../../components/CustomPagination";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { fetchMyGroups } from "../community-utils";
 
 function MyGroupsPage() {
   const [groupSearch, setGroupSearch] = useState("");
   const { user } = useAuth0();
   const [userData, setUserData] = useState<any | undefined>(undefined);
-  const [groups, setGroups] = useState<Group[] | undefined>(undefined);
+  const [myGroups, setMyGroups] = useState<Group[] | undefined>(undefined);
   const [page, setPage] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Fetch user info
   useEffect(() => {
     if (user?.name === undefined) {
       return;
     }
     loadUser(user.name, setUserData);
-    // fetchMyGroups();
-    setGroups(longMockGroups);
   }, [user?.name]);
+
+  // Fetch groups
+  useEffect(() => {
+    if (userData?.id === undefined) {
+      return;
+    }
+    fetchMyGroups(userData.id, setMyGroups);
+  }, [userData?.id]);
 
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,51 +61,62 @@ function MyGroupsPage() {
     <>
       <div className="community-page">
         <CommunitySideBar />
-        {userData !== undefined && groups !== undefined ?
-          <div className="community-content">
-            <div className="community-page-title">
-              <h3
-              >Communities</h3>
-              <KeyboardArrowRightIcon
-                sx={{ fontSize: '30px', marginTop: '1px' }}
+        <div className="community-content">
+          <div className="community-page-title">
+            <h3
+            >Communities</h3>
+            <KeyboardArrowRightIcon
+              sx={{ fontSize: '30px', marginTop: '1px' }}
+            />
+            <h3>My Groups</h3>
+          </div>
+          <div className="community-search">
+            <div className="community-search-bar">
+              <SearchBox
+                searchQuery={groupSearch}
+                onSearchInputChange={handleInputChange}
+                onSearchSubmit={handleSearchSubmit}
+                onSearchSubmitOnEnter={handleSearchEnter}
+                placeholder="Search my groups"
               />
-              <h3>My Groups</h3>
             </div>
-            <div className="community-search">
-              <div className="community-search-bar">
-                <SearchBox
-                  searchQuery={groupSearch}
-                  onSearchInputChange={handleInputChange}
-                  onSearchSubmit={handleSearchSubmit}
-                  onSearchSubmitOnEnter={handleSearchEnter}
-                  placeholder="Search my groups"
-                />
-              </div>
-              <div className="community-search-button">
-                <Button
-                  onClick={handleSearchSubmit}
-                  label={"Search"}
-                  width={'120px'}
-                />
-              </div>
+            <div className="community-search-button">
+              <Button
+                onClick={handleSearchSubmit}
+                label={"Search"}
+                width={'120px'}
+              />
             </div>
-            <br />
-            <GroupResults
-              groups={groups}
-              userId={userData.id}
-            />
-            <CustomPagination
-              scrollRef={scrollRef}
-              items={groups}
-              page={page}
-              handlePageChange={handlePageChange}
-            />
           </div>
-          :
-          <div className="loading-container">
-            <SmallLoading />
-          </div>
-        }
+          <br />
+
+          {userData !== undefined && myGroups !== undefined ?
+            <>
+              {myGroups.length === 0 ?
+                <div className="my-groups-empty-message">
+                  <div className="">No groups joined yet</div>
+                </div>
+                :
+                <>
+                  <GroupResults
+                    groups={myGroups}
+                    userId={userData.id}
+                  />
+                  <CustomPagination
+                    scrollRef={scrollRef}
+                    items={myGroups}
+                    page={page}
+                    handlePageChange={handlePageChange}
+                  />
+                </>
+              }
+            </>
+            :
+            <div className="loading-container">
+              <SmallLoading />
+            </div>
+          }
+        </div>
       </div>
     </>
   );

@@ -4,6 +4,7 @@
   display: flex;
   margin-top: 10px;
   margin-bottom: 10px;
+  /* background-color: blue; */
 }
 
 .group-result-img-container {
@@ -13,19 +14,26 @@
   height: 150px;
   align-items: center;
   justify-content: center;
-  /* background-color: red; */
   flex-shrink: 0;
 }
 
 .group-result-img-public {
-  width: auto;
-  height: 80%;
+  /* width: auto;
+  height: 80%; */
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .group-result-img-private {
-  width: auto;
-  height: 80%;
+  /* width: auto;
+  height: 80%; */
+  width: 90%;
+  height: 90%;
   opacity: 0.6;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .group-result-content {
