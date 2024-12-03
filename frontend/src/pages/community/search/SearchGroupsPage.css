@@ -1,16 +1,16 @@
-.community-page {
+.group-search-page {
   display: flex;
   width: '100%';
 }
 
-.community-page-title {
+.group-search-page-title {
   display: flex;
   width: '100%';
   margin-bottom: 20px;
   /* background-color: red; */
 }
 
-.community-content {
+.group-search-content {
   flex-grow: 1;
   flex-shrink: 1;
   margin-left: 20px;
@@ -23,26 +23,27 @@
   /* background-color: yellow; */
 }
 
-.community-search {
+.group-search-search {
   display: flex;
   width: '100%';
   flex-wrap: nowrap;
   margin-left: 20px;
   margin-right: 20px;
+  /* background-color: red; */
 }
 
-.community-search-bar {
+.group-search-search-bar {
   padding-top: 2px;
   /* flex: 1; */
   flex-grow: 1;
   flex-shrink: 1;
 }
 
-.community-search-button {
+.group-search-search-button {
   margin-left: 10px;
 }
 
-.loading-container {
+.group-search-container {
   display: flex;
   width: 100%;
   height: 100%;

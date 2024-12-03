@@ -113,7 +113,7 @@ export const api = {
       );
     },
 
-    async fetchStreamingServices(media:any, country: string) {
+    async fetchStreamingServices(media: any, country: string) {
       let mediaTitle = media.title ? media.title : media.mediaTitle
       return (
         await axios.get(`${URL}/media/streamingServices/${mediaTitle}/${country}`)
@@ -130,11 +130,25 @@ export const api = {
   // User API Routes
   user: {
     async fetchUser(username: any) {
-      return (await axios.post(`${URL}/user/`,
-        {
-          name: username
-        }));
-    }
+      return (
+        await axios.post(`${URL}/user/`,
+          {
+            name: username
+          })
+      );
+    },
+    async searchUsersByUsername(username: string) {
+      return (
+        await axios.get(`${URL}/user/username-search`, {
+          params: {
+            username: username,
+          }
+        })
+      );
+    },
+    async getListOfUsers(userIds: any) {
+      return await axios.post(`${URL}/user/list`, userIds);
+    },
   },
 
   // Commment API Routes
@@ -157,5 +171,67 @@ export const api = {
           })
       );
     }
+  },
+
+  // Group API Routes
+  groups: {
+    async searchGroup(searchTerm: string) {
+      return (
+        await axios.get(`${URL}/groups/search/${searchTerm}`)
+      );
+    },
+    async fetchGroup(groupId: number) {
+      console.log(groupId);
+      return (
+        await axios.get(`${URL}/groups/${groupId}`)
+      );
+    },
+    async fetchMyGroups(userId: number) {
+      return (
+        await axios.get(`${URL}/groups/${userId}/myGroups`)
+      );
+    },
+    async fetchPopularGroups() {
+      return (
+        await axios.get(`${URL}/groups/popularGroups`)
+      );
+    },
+    async createGroup(group: any) {
+      return (
+        await axios.post(`${URL}/groups`, group)
+      );
+    },
+    async joinGroup(groupId: number, userId: number) {
+      return (
+        await axios.post(`${URL}/groups/join/${groupId}/${userId}`)
+      );
+    },
+    async leaveGroup(groupId: number, userId: number) {
+      return (
+        await axios.post(`${URL}/groups/leave/${groupId}/${userId}`)
+      );
+    },
+    async handleRequest(joinRequest: any) {
+      return (
+        await axios.post(`${URL}/groups/request`, joinRequest)
+      );
+    },
+    async inviteToGroup(invite: any) {
+      return (
+        await axios.post(`${URL}/groups/invite`, invite)
+      );
+    },
+    async handleInvite(userId: number, groupId: number, isAccepted: boolean) {
+      return (
+        await axios.post(`${URL}/groups/invite/${userId}/${groupId}/${isAccepted}`)
+      );
+    },
+    async fetchInvites(userId: number) {
+      return (
+        await axios.get(`${URL}/groups/invite/${userId}`)
+      );
+    },
+
   }
+
 }

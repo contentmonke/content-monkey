@@ -96,3 +96,13 @@ export type Group = {
   discussionBoards: number[],
   dateCreated: Date
 }
+
+export type GroupInvite = {
+  id: number,
+  groupId: number,
+  groupName: string,
+  inviteeId: number,
+  inviterId: number,
+  inviterName: string,
+  dateSent: Date
+}

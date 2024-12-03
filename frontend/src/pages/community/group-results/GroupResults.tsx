@@ -14,7 +14,7 @@ function GroupResults({ groups, userId }: params) {
   const navigate = useNavigate();
   return (
     <>
-      {groups.length > 0 ?
+      {groups?.length > 0 ?
         <div className="group-results">
           {groups.map((group) => (
             <div className="group-result-item" key={group.id}>
@@ -24,7 +24,7 @@ function GroupResults({ groups, userId }: params) {
                     "group-result-img-public" :
                     "group-result-img-private"
                   }
-                  src={group.picture || cmLogo}
+                  src={group.picture || 'https://via.placeholder.com/150'}
                 />
                 <div className="group-result-lock">
                   {!group.isPublic && group.members.includes(userId) &&

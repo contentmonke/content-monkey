@@ -19,6 +19,7 @@
 .activity-item {
   padding: 15px 0; /* Remove side padding if you need a flush edge */
   border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
 }
 
 .activity-page-tabs-container {

@@ -56,11 +56,28 @@
   justify-items: center;
 }
 
+.group-card-picture-container {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
+  flex-shrink: 0;
+  margin-bottom: 5px;
+}
+
 .group-card-picture {
-  height: 50%;
-  width: auto;
-  max-width: 130px;
-  margin-bottom: 15px;
+  /* height: 50%;
+  width: auto; */
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  /* max-width: 130px; */
+  object-fit: cover;
+  /* margin-bottom: 15px; */
+  /* background-color: red; */
 }
 
 .group-card-name {

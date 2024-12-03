@@ -4,13 +4,15 @@ import CommunitySideBar from "../sidebar/CommunitySideBar";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { useEffect, useState } from "react";
 import { loadUser } from "../../reviews/review-utils";
-import "./CreateGroupPage.css"
+import "./ManageGroupsPage.css"
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
 import ProfilePicture from "../../settings/profile/ProfilePicture";
 import Button from "../../../components/button/Button";
-import dayjs from "dayjs";
-import { createGroup } from "../community-utils";
 import SuccessAlert from "../../../components/SuccessAlert";
+import { useParams } from "react-router-dom";
+import { fetchGroup, getListOfUsers } from "../community-utils";
+import { Group } from "../../../models/Models";
+import JoinRequests from "./JoinRequests";
 
 const textfieldSx = {
   width: '100%',
@@ -27,21 +29,37 @@ const textfieldSx = {
   },
 }
 
-function CreateGroupPage() {
+function ManageGroupsPage() {
   const { user } = useAuth0();
+  const { groupId } = useParams();
   const [userData, setUserData] = useState<any | undefined>(undefined);
+  const [group, setGroup] = useState<Group | undefined>(undefined);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [success, setSuccess] = useState(false);
   const [groupPicture, setGroupPicture] = useState<string | null>(null);
+  const [joinRequests, setJoinRequests] = useState(undefined);
+  const [needsUpdate, setNeedsUpdate] = useState(false);
 
   useEffect(() => {
     if (user?.name === undefined) {
       return;
     }
+    setNeedsUpdate(false);
     loadUser(user.name, setUserData);
-  }, [user?.name]);
+    fetchGroup(parseInt(groupId!, 10), setGroup);
+  }, [user?.name, needsUpdate]);
+
+  useEffect(() => {
+    if (group !== undefined) {
+      setName(group.groupName);
+      setDescription(group.description);
+      setGroupPicture(group.picture);
+      setIsPrivate(!group.isPublic);
+      getListOfUsers(group.joinRequests, setJoinRequests)
+    }
+  }, [group]);
 
   const clearFields = () => {
     setName("");
@@ -50,39 +68,39 @@ function CreateGroupPage() {
     setIsPrivate(false);
   }
 
-  const handleCreateClick = () => {
-    const newGroup = {
-      groupName: name,
-      description: description,
-      owner: userData.id,
-      picture: groupPicture,
-      isPublic: !isPrivate,
-      members: [userData.id],
-      joinRequests: [],
-      discussionBoards: [],
-      dateCreated: dayjs()
-    }
-    createGroup(newGroup, setSuccess);
-    clearFields();
-  }
+  // const handleCreateClick = () => {
+  //   const newGroup = {
+  //     groupName: name,
+  //     description: description,
+  //     owner: userData.id,
+  //     picture: groupPicture,
+  //     isPublic: !isPrivate,
+  //     members: [userData.id],
+  //     joinRequests: [],
+  //     discussionBoards: [],
+  //     dateCreated: dayjs()
+  //   }
+  //   createGroup(newGroup, setSuccess);
+  //   clearFields();
+  // }
 
   return (
     <>
-      <div className="create-group-page">
+      <div className="manage-group-page">
         <CommunitySideBar />
-        <div className="create-group-content">
-          <div className="create-group-page-title">
+        <div className="manage-group-content">
+          <div className="manage-group-page-title">
             <h3
             >Communities</h3>
             <KeyboardArrowRightIcon
               sx={{ fontSize: '30px', marginTop: '1px' }}
             />
-            <h3>Create A Group</h3>
+            <h3>Manage Group</h3>
           </div>
-          {userData !== undefined ?
+          {userData !== undefined && group !== undefined && userData.id === group.owner ?
             <>
-              <div className="create-group-img-header">
-                <div className="create-group-img-container">
+              <div className="manage-group-img-header">
+                <div className="manage-group-img-container">
                   <ProfilePicture
                     profilePicture={groupPicture}
                     setProfilePicture={setGroupPicture}
@@ -118,22 +136,30 @@ function CreateGroupPage() {
                   />
                 }
               />
-              <div className="create-group-button">
+              <JoinRequests
+                groupId={group.id}
+                userId={userData.id}
+                joinRequests={joinRequests}
+                setNeedsUpdate={setNeedsUpdate}
+              />
+              <div className="manage-group-button">
                 <Button
-                  label={"Create Group"}
-                  onClick={handleCreateClick}
+                  label={"Modify Group"}
+                  onClick={() => { }}
                   width={'180px'}
                   disabled={name === "" || description === ""}
                 />
               </div>
               <SuccessAlert
-                message={"Group successfully created"}
+                message={"Group successfully modified"}
                 showAlert={success}
                 setShowAlert={setSuccess}
               />
             </>
             :
             <div className="loading-container">
+              {userData.id}
+              {group.owner}
               <SmallLoading />
             </div>
           }
@@ -143,4 +169,4 @@ function CreateGroupPage() {
   );
 }
 
-export default CreateGroupPage;
+export default ManageGroupsPage;
