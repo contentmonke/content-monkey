@@ -1,6 +1,7 @@
 package com.content.monkey.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class DiscussionBoardEntity {
     @Column(name = "title")
     private String title;
 
-    @Transient
+    @NotNull
     @Column(name = "posts")
-    private List<Integer> post_ids;
+    private List<Long> post_ids;
 
     public long getId() {
         return id;
@@ -37,11 +38,11 @@ public class DiscussionBoardEntity {
         this.title = title;
     }
 
-    public List<Integer> getPost_ids() {
+    public List<Long> getPost_ids() {
         return post_ids;
     }
 
-    public void setPost_ids(List<Integer> post_ids) {
+    public void setPost_ids(List<Long> post_ids) {
         this.post_ids = post_ids;
     }
 }

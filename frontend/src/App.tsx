@@ -42,7 +42,7 @@ function App() {
             <Route path="/community/my-groups" element={<MyGroupsPage />} />
             <Route path="/community/popular" element={<PopularGroupsPage />} />
             <Route path="/community/group/:id" element={<GroupPage />} />
-            <Route path="/community/group/:id/discussion/:id" element={<DiscussionPage />} />
+            <Route path="/community/group/:id/discussion/:discussionId" element={<DiscussionPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">

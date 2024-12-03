@@ -157,5 +157,60 @@ export const api = {
           })
       );
     }
+  },
+  discussions: {
+    async getDiscussionBoard(discussionId: any) {
+      return (
+        await axios.get(`${URL}/discussionBoard/get/${discussionId}`)
+      )
+    },
+    async fetchDiscussionPosts(discussionId: any) {
+      return (
+        await axios.get(`${URL}/discussionBoard/getDiscussionPosts/${discussionId}`)
+      )
+    },
+    async createDiscussionPost(discussionId: any, postBody: any, username: any) {
+      console.log(`${URL}/discussionBoard/createPost/${discussionId}/${postBody}/${username}`)
+
+      return (
+        await axios.post(`${URL}/discussionBoard/createPost/${discussionId}/${postBody}/${username}`)
+      )
+    },
+    async updateUpVotes(userId: any, reviewId: number, addedVote: boolean) {
+      console.log(reviewId);
+      return (
+        await axios.get(`${URL}/reviews/upVotes/${userId}`, {
+          params: {
+            reviewId: reviewId,
+            addedVote: addedVote
+          }
+        })
+      );
+    },
+
+    async updateDownVotes(userId: any, reviewId: number, addedVote: boolean) {
+      console.log(reviewId);
+      return (
+        await axios.get(`${URL}/reviews/downVotes/${userId}`, {
+          params: {
+            reviewId: reviewId,
+            addedVote: addedVote
+          }
+        })
+      );
+    }
+  },
+  discussionComments: {
+    async createDiscussionComment(userId: any, body: any, postId: any) {
+      return (
+        await axios.post(`${URL}/discussionPostComments/${userId}/${body}/${postId}`)
+      );
+    },
+
+    async getDiscussionComments(commentIds: any) {
+      return (
+        await axios.post(`${URL}/discussionPostComments/getComments`, commentIds)
+      );
+    }
   }
 }

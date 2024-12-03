@@ -96,3 +96,26 @@ export type Group = {
   discussionBoards: number[],
   dateCreated: Date
 }
+
+export type Post = {
+  id: number,
+  username: string,
+  commentIds: number[],
+  postBody: string,
+  postDate: Date,
+  upVotes: number,
+  downVotes: number,
+  picture: string
+}
+
+export type DiscussionComment = {
+  id: number,
+  userId: number,
+  username: string,
+  postId: number,
+  body: string,
+  dateCreated: Date,
+  upVotes: number,
+  downVotes: number,
+  picture: string
+}

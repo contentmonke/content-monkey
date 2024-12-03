@@ -113,6 +113,7 @@ function GroupPage() {
             <br />
             <div>Discussion Boards</div>
             <Divider />
+            
             {/* TODO */}
           </div>
           :
