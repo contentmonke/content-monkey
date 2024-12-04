@@ -1,0 +1,11 @@
+.popular-groups {
+  margin-top: 50px;
+  height: 250px;
+  width: 850px;
+  max-width: 100%;
+}
+
+.popular-groups-header {
+  display: flex;
+  justify-content: space-between;
+}

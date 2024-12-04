@@ -16,7 +16,6 @@ import MediaSearchBar from "../reviews/MediaSearchBar";
 
 function SearchPage() {
   const location = useLocation(); // Accessing the state passed from the navbar
-
   const [title, setTitle] = useState((location && location.state) ? location.state.searchQuery : "");
   const [results, setResults] = useState<VolumeInfo[]>([]);
   const [isLoading, setIsLoading] = useState("");
@@ -65,7 +64,7 @@ function SearchPage() {
     <>
       <Container
         disableGutters
-        maxWidth={true}
+        // maxWidth={true}
         sx={{ ...newFullpageContainer }}
       >
         {media !== null &&

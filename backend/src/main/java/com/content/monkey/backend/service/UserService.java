@@ -46,7 +46,7 @@ public class UserService {
         System.out.println(user);
         System.out.println(created.getName());
         if (!user.isEmpty()) {
-            return user.getFirst();
+            return user.get(0);
         } else {
             created.setUsername(generateUniqueUsername(created.getName()));
             return userRepository.save(created);
@@ -55,13 +55,13 @@ public class UserService {
 
     public List<UserEntity> getSingleUser(String name) {
         List<UserEntity> users = userRepository.findByName(name);
-        if (!users.isEmpty() && (users.getFirst().getFriend_list() == null ||
-                users.getFirst().getFriend_requests() == null)) {
-            users.getFirst().setFriend_list(new ArrayList<>());
-            users.getFirst().setFriend_requests(new ArrayList<>());
+        if (!users.isEmpty() && (users.get(0).getFriend_list() == null ||
+                users.get(0).getFriend_requests() == null)) {
+            users.get(0).setFriend_list(new ArrayList<>());
+            users.get(0).setFriend_requests(new ArrayList<>());
         }
         if (!users.isEmpty()) {
-            userRepository.save(users.getFirst());
+            userRepository.save(users.get(0));
         }
         return users;
     }
@@ -221,7 +221,7 @@ public class UserService {
         List<Long> favorite_media = user.getFavoriteMedia();
         List<String> favorite_titles = new ArrayList<>();
         for(int i = 0; i < favorite_media.size(); i++) {
-            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).getFirst().getMediaTitle());
+            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).get(0).getMediaTitle());
         }
         return favorite_titles;
     }
@@ -231,7 +231,7 @@ public class UserService {
         List<Long> favorite_media = new ArrayList<>();
 
         for(int i = 0; i < favorites.size(); i++) {
-            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).getFirst().getId());
+            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).get(0).getId());
         }
         user.setFavoriteMedia(favorite_media);
         userRepository.save(user);
@@ -245,12 +245,12 @@ public class UserService {
 
     public UserEntity getUserByEmail(String email) {
         List<UserEntity> user = userRepository.findByEmail(email);
-        return user.getFirst();
+        return user.get(0);
     }
 
     public void unblockUser(String blockedUser, Long userId) {
         UserEntity user = getUser(userId);
-        UserEntity blockedUserE = getSingleUser(blockedUser).getFirst();
+        UserEntity blockedUserE = getSingleUser(blockedUser).get(0);
         List<Long> newBlockedUsers = user.getBlockedUsers();
         newBlockedUsers.remove(blockedUserE.getId());
         user.updateBlockedUsers(newBlockedUsers);
@@ -308,7 +308,7 @@ public class UserService {
             List<String> mediaAsArrList = new ArrayList<>(Arrays.asList(media_recs));
             return returnListOfMedia(mediaAsArrList);
         }
-        List<Long> favMedia = user.getFavoriteMedia();
+        List<Long> favMedia = (user.getFavoriteMedia() == null) ? new ArrayList<>() : user.getFavoriteMedia();
         List<MediaEntity> books = new ArrayList<>();
         List<MediaEntity> tvShows = new ArrayList<>();
         List<MediaEntity> movies = new ArrayList<>();
@@ -506,5 +506,9 @@ public class UserService {
         // Print the unique media list
 //        uniqueMediaList.forEach(System.out::println);
         return uniqueMediaList;
+    }
+
+    public List<UserEntity> getListOfUsers(List<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 }

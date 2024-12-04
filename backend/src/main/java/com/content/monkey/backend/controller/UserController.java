@@ -218,4 +218,9 @@ public class UserController {
     public List<MediaEntity> highestRated() {
         return userService.getHighestRatedMedia();
     }
+
+    @PostMapping("/list")
+    public List<UserEntity> getListOfUsers(@RequestBody List<Long> userIds) {
+        return userService.getListOfUsers(userIds);
+    }
 }

@@ -17,6 +17,15 @@ import ContentPage from './pages/accounts/ContentPage/ContentPage';
 import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
 import ListPage from './pages/accounts/ListPage/ListPage';
 import ListDetailsPage from './pages/accounts/ListDetailsPage/ListDetailsPage';
+import CommunityPage from './pages/community/CommunityPage';
+import MyGroupsPage from './pages/community/my-groups/MyGroupsPage';
+import PopularGroupsPage from './pages/community/popular-groups/PopularGroupsPage';
+import GroupPage from './pages/community/group/GroupPage';
+import DiscussionPage from './pages/community/discussions/DiscussionPage';
+import CreateGroupPage from './pages/community/create-group/CreateGroupPage';
+import GroupInvitationsPage from './pages/community/invitations/GroupInvitationsPage';
+import SearchGroupsPage from './pages/community/search/SearchGroupsPage';
+import ManageGroupsPage from './pages/community/manage-groups/ManageGroupsPage';
 
 function App() {
   // const { isLoading, error } = useAuth0();
@@ -34,6 +43,16 @@ function App() {
             <Route path="/u/:id/activity/*" element={<ActivityPage />} />
             <Route path="/u/:id/lists" element={<ListPage />} />
             <Route path="/u/:id/li/:listid" element={<ListDetailsPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community/create-group" element={<CreateGroupPage />} />
+            <Route path="/community/explore" element={<CommunityPage />} />
+            <Route path="/community/invitations" element={<GroupInvitationsPage />} />
+            <Route path="/community/my-groups" element={<MyGroupsPage />} />
+            <Route path="/community/manage-group/:groupId" element={<ManageGroupsPage />} />
+            <Route path="/community/popular" element={<PopularGroupsPage />} />
+            <Route path="/community/search" element={<SearchGroupsPage />} />
+            <Route path="/community/group/:groupId" element={<GroupPage />} />
+            <Route path="/community/group/:id/discussion/:discussionId" element={<DiscussionPage />} />
             <Route path="/examples" element={<ExampleList />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings">
@@ -46,6 +65,7 @@ function App() {
             </Route>
             <Route path="/media/:title/:type" element={<MediaPage />} />
             <Route path="/upload" element={<ProtectedRoute component={UploadPage} />} />
+            <Route path="/discussion" element={<DiscussionPage/>} />
           </Routes>
         </Container>
       </div>

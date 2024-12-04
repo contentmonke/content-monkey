@@ -3,7 +3,8 @@
   font-size: 18px;
   font-weight: 600;
   background-color: var(--button-color, #31628F);
-  width: var(--button-width, 200px); /* Default to 200px if not set */
+  width: var(--button-width, 200px);
+  /* Default to 200px if not set */
   height: 45px;
   border: 1px solid #D1D1D1;
   border-radius: 3px;
@@ -16,4 +17,11 @@
 .button:hover {
   background-color: var(--button-hovercolor, #295680);
   transition: .2s ease-in-out;
+}
+
+.button:disabled {
+  cursor: default;
+  background-color: #d3d3d3;
+  border-color: #a1a1a1;
+  color: #7a7a7a;
 }

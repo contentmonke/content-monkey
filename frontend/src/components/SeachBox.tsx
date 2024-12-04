@@ -13,9 +13,9 @@ const Search = styled('div')(({ theme }) => ({
   },
   marginLeft: 0,
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    width: 'auto',
-  }
+  // [theme.breakpoints.up('sm')]: {
+  //   width: 'auto',
+  // }
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -59,14 +59,15 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         onKeyDown={onSearchSubmitOnEnter}
         sx={{
           color: 'inherit',
+          width: '100%',
           '& .MuiInputBase-input': (theme: Theme) => ({
             padding: theme.spacing(1, 1, 1, 0),
             paddingLeft: `calc(1em + ${theme.spacing(4)})`,
             transition: theme.transitions.create('width'),
             width: '100%',
-            [theme.breakpoints.up('md')]: {
-              width: inputWidth, // Dynamic width via prop
-            }
+            // [theme.breakpoints.up('md')]: {
+            //   width: inputWidth, // Dynamic width via prop
+            // }
           }),
         }}
       />

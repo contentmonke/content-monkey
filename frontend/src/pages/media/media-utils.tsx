@@ -26,7 +26,7 @@ export async function fetchMedia(media: any, setMedia: any, setStreamingService:
     });
 }
 
-export async function fetchStreamingServices(media:any, countryCode: any, setStreamingService: any, setIsLoading: any, setIsError: any) {
+export async function fetchStreamingServices(media: any, countryCode: any, setStreamingService: any, setIsLoading: any, setIsError: any) {
   setIsLoading(true);
   api.media.fetchStreamingServices(media, countryCode)
     .then((response) => {
@@ -191,4 +191,21 @@ export function getRelativeDateString(date: Date) {
   // convert UTC to LocalTime
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   return DateTime.fromJSDate(localDate).toRelative()
+}
+
+export function getDateString(date: Date) {
+  // convert UTC to LocalTime
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return (
+    localDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    }) + " " +
+    localDate.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+  );
 }

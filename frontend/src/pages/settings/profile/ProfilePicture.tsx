@@ -32,10 +32,12 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({ profilePicture, setProf
       };
       reader.readAsDataURL(event.target.files[0]);
     }
+    setIsMenuVisible(false);
   };
 
   const handleRemovePhoto = () => {
     setProfilePicture(null);
+    setIsMenuVisible(false);
   };
 
   const toggleMenu = () => {

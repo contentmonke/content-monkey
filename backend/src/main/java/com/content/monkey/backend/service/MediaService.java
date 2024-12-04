@@ -1,10 +1,7 @@
 package com.content.monkey.backend.service;
 
+import com.content.monkey.backend.model.*;
 import com.content.monkey.backend.model.BooksApiModels.GoogleBooksResponse;
-import com.content.monkey.backend.model.MediaEntity;
-import com.content.monkey.backend.model.ReviewEntity;
-import com.content.monkey.backend.model.SearchEntity;
-import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.model.dto.ReviewEntityDTO;
 import com.content.monkey.backend.repository.MediaRepository;
@@ -51,6 +48,7 @@ public class MediaService {
     private Environment environment;
     @Autowired
     private RestTemplate template = new RestTemplate();
+
 
     public MediaEntityDTO getMediaByTitle(String title, int pageNumber, int pageSize) {
         List<MediaEntity> mediaEntity = mediaRepository.findByMediaTitle(title);

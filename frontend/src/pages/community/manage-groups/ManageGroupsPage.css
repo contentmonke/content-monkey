@@ -1,0 +1,85 @@
+.manage-group-page {
+  display: flex;
+  width: '100%';
+}
+
+.manage-group-page-title {
+  display: flex;
+  width: '100%';
+  margin-bottom: 20px;
+}
+
+.manage-group-content {
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  min-width: 400px;
+  max-width: 850px;
+  width: '100%';
+}
+
+.manage-group-prompts {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.manage-group-img-header {
+  display: flex;
+  justify-content: right;
+}
+
+.manage-group-img-container {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  margin-right: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.manage-group-button {
+  display: flex;
+  justify-content: right;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.join-request-header {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.no-requests {
+  color: gray;
+  margin-top: 20px;
+  border-bottom: none;
+}
+
+.request-list {
+  /* background-color: red; */
+  margin-top: 10px;
+}
+
+.request-title {
+  color: #31628F;
+  cursor: pointer;
+}
+
+.request-icons {
+  display: flex;
+  gap: 10px;
+}
+
+
+.loading-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  margin-top: 100px;
+}

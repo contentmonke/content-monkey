@@ -43,7 +43,6 @@ function MediaPage() {
   const [userId, setUserId] = useState();
 
   useEffect(() => {
-    console.log( "location: ", location );
     if (location && location.state && location.state.result && needsUpdate) {
       setNeedsUpdate(false);
       fetchMedia(location.state.result, setMedia, setStreamingService, setLabels, setIsLoading, setIsError, setDoneSearching);

@@ -6,7 +6,9 @@ import lombok.*;
 import org.apache.catalina.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -60,6 +62,12 @@ public class UserEntity {
 
     @Column(name = "blocked_users")
     private List<Long> blocked_users;
+
+    @Column(name = "group_list")
+    private List<Long> groupList;
+
+    @Column(name = "group_invites")
+    private List<Long> groupInvites;
 
     public List<String> getFriendList() {
         return friend_list;
@@ -140,11 +148,21 @@ public class UserEntity {
     }
 
     public List<Long> getBlockedUsers() {
-        return blocked_users;
+        if (this.blocked_users == null) {
+            return new ArrayList<>();
+        }
+        return this.blocked_users;
     }
 
+    public List<Long> getGroupList() {
+        if (this.groupList == null) {
+            this.groupList = new ArrayList<>();
+            // return new ArrayList<>();
+        }
+        this.groupList.removeAll(Collections.singletonList(null));
+        return this.groupList;
+    }
 
-    //TODO - Add fields
     public UserEntity() {
     }
 
@@ -153,14 +171,24 @@ public class UserEntity {
         this.reviewIds = reviewIds;
     }
 
-
-
     @Override
     public String toString() {
         return "UserEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", reviewIds=" + reviewIds +
+                ", bio='" + bio + '\'' +
+                ", genres='" + genres + '\'' +
+                ", email='" + email + '\'' +
+                ", picture='" + picture + '\'' +
+                ", posts_liked=" + posts_liked +
+                ", posts_disliked=" + posts_disliked +
+                ", friend_requests=" + friend_requests +
+                ", friend_list=" + friend_list +
+                ", comments_liked=" + comments_liked +
+                ", blocked_users=" + blocked_users +
+                ", group_list=" + groupList +
+                ", favorite_media=" + favorite_media +
                 '}';
     }
 }
