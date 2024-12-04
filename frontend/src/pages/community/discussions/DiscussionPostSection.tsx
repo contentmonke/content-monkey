@@ -42,26 +42,7 @@ function DiscussionPostSubsection({ posts, setNeedsUpdate, setPosts }: params) {
   }, [comments])
 
   const handleCommentClick = (reviewIndex) => {
-    // setOpenComments(indices => [...indices, reviewIndex]);
     setOpenComments(reviewIndex)
-  }
-
-  const handleUpVote = (post: Post, addedVote: boolean) => {
-    if (userData?.posts_disliked.includes(post.id)) {
-      return;
-    }
-    console.log("Upvote");
-    console.log("addedVote = " + addedVote);
-    updateUpVotes(userData, post.id, addedVote, setUserData, setNeedsUpdate);
-  }
-
-  const handleDownVote = (post: Post, addedVote: boolean) => {
-    if (userData?.posts_liked.includes(post.id)) {
-      return;
-    }
-    console.log("Downvote");
-    console.log("addedVote = " + addedVote);
-    updateDownVotes(userData, post.id, addedVote, setUserData, setNeedsUpdate);
   }
 
   return (
@@ -71,48 +52,16 @@ function DiscussionPostSubsection({ posts, setNeedsUpdate, setPosts }: params) {
           <Divider />
           <Container disableGutters sx={{ display: 'flex', my: 1 }}>
             <div className="user-info">
-              <Avatar src={post.picture ? post.picture : 'https://via.placeholder.com/150'} alt={post.username} style={{ marginBottom: '5px', width: '35px', height: '35px' }}/>
+              <Avatar src={post.picture ? post.picture : 'https://via.placeholder.com/150'} alt={post.username} style={{ marginBottom: '5px', width: '35px', height: '35px', marginRight: '10px' }}/>
               <Typography variant="caption">{post.username}</Typography>
             </div> 
             <Container disableGutters sx={{ ...reviewDetail }}>
               <div className="rating-date">
-                {/* <Rating
-                  size={'small'}
-                  sx={{ my: 0, mr: 1, mb: 0.5 }}
-                  value={review.rating}
-                  precision={0.5}
-                  readOnly
-                /> */}
-                {/* <div className="text">{DateTime.fromJSDate(new Date(review.dateCreated).getHours() - 4).toRelative(}</div> */}
-                <div className="text">{formatDate(post.postDate)}</div>
+                <div className="text">{DateTime.fromJSDate(new Date(post.postDate)).toRelative()}</div>
               </div>
               <div className="text">{post.postBody}</div>
               <div className="interactive-container">
-                {/* <IconButton
-                  size={'small'}
-                  // disabled={!userData?.posts_liked.includes(review.id)}
-                  onClick={() => handleUpVote(post, !userData?.posts_liked.includes(post.id))}
-                >
-                  <ThumbUp
-                    sx={{
-                      width: 15,
-                      color: (userData?.posts_liked.includes(post.id) ? '#31628F' : 'grey')
-                    }}
-                  />
-                </IconButton>
-                <div className="text">{post.upVotes}</div>
-                <IconButton
-                  disabled={!userData}
-                  onClick={() => handleDownVote(post, !userData?.posts_disliked.includes(post.id))}
-                >
-                  <ThumbDown
-                    sx={{
-                      width: 15,
-                      color: (userData?.posts_disliked.includes(post.id) ? '#31628F' : 'grey')
-                    }}
-                  />
-                </IconButton>
-                <div className="text">{post.downVotes}</div> */}
+                
 
                 <Button
                   variant="text"
