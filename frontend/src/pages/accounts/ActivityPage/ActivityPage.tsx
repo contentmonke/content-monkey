@@ -86,8 +86,8 @@ const ActivityPage: React.FC = () => {
                     {userActivities.map((activity: any, index: number) => (
                       <li key={index} className="activity-item">
                         <div className="activity-item-header">
-                          <span className="activity-item-perp">{username}</span> {activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
-                          {activity.rating && (
+                          <span className="activity-item-perp">{username}</span> {(activity.rating != null) ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
+                          {(activity.rating != null) && (
                             <Rating
                               size="small"
                               value={activity.rating}
@@ -130,8 +130,8 @@ const ActivityPage: React.FC = () => {
                     {friendsActivities.map((activityWithUser: any, index: number) => (
                       <li key={index} className="activity-item">
                         <div className="activity-item-header">
-                          <span className="activity-item-perp">{activityWithUser.userName}</span> {activityWithUser.activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
-                          {activityWithUser.activity.rating && (
+                          <span className="activity-item-perp">{activityWithUser.userName}</span> {(activityWithUser.activity.rating != null) ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
+                          {(activityWithUser.activity.rating != null) && (
                             <Rating
                               size="small"
                               value={activityWithUser.activity.rating}

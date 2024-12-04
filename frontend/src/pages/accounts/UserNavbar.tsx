@@ -76,6 +76,14 @@ const UserNavBar: React.FC = () => {
               Content
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to={`/u/${userId}/lists`} // Navigate to /u/{id}/content
+              className={({ isActive }) => (isActive ? 'user-navbar-active' : '')}
+            >
+              Lists
+            </NavLink>
+          </li>
         </ul>
       </div>
     </div>

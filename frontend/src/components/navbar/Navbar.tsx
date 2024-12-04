@@ -92,6 +92,9 @@ const Navbar = () => {
             <li onClick={() => navigate(`/u/${loggedInUserId}/friends`)} className="nav-item-li nav-click">
               Friends
             </li>
+            <li onClick={() => navigate(`/u/${loggedInUserId}/lists`)} className="nav-item-li nav-click">
+              Lists
+            </li>
             <li className="nav-avatar-li">
               {user ? (<>
                 <Avatar src={profilePicture} alt={user.name} style={{ cursor: 'pointer', width: '35px', height: '35px' }} onClick={() => toggleAvatarDropdown()} />
