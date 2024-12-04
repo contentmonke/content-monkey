@@ -90,7 +90,7 @@ function PopularGroupsPage() {
                 :
                 <>
                   <GroupResults
-                    groups={popularGroups}
+                    groups={popularGroups?.slice((page-1)*10, page*10)}
                     userId={userData.id}
                   />
                   <CustomPagination

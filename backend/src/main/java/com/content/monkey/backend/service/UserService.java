@@ -46,7 +46,7 @@ public class UserService {
         System.out.println(user);
         System.out.println(created.getName());
         if (!user.isEmpty()) {
-            return user.getFirst();
+            return user.get(0);
         } else {
             created.setUsername(generateUniqueUsername(created.getName()));
             return userRepository.save(created);
@@ -55,13 +55,13 @@ public class UserService {
 
     public List<UserEntity> getSingleUser(String name) {
         List<UserEntity> users = userRepository.findByName(name);
-        if (!users.isEmpty() && (users.getFirst().getFriend_list() == null ||
-                users.getFirst().getFriend_requests() == null)) {
-            users.getFirst().setFriend_list(new ArrayList<>());
-            users.getFirst().setFriend_requests(new ArrayList<>());
+        if (!users.isEmpty() && (users.get(0).getFriend_list() == null ||
+                users.get(0).getFriend_requests() == null)) {
+            users.get(0).setFriend_list(new ArrayList<>());
+            users.get(0).setFriend_requests(new ArrayList<>());
         }
         if (!users.isEmpty()) {
-            userRepository.save(users.getFirst());
+            userRepository.save(users.get(0));
         }
         return users;
     }
