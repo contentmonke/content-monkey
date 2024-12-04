@@ -91,6 +91,7 @@ function CreateDiscussionPopup({ open, setModalOpen, discussionBoardId, setNeeds
     // const mediaId = media.id;
     // const userId = userData.id;
     console.log(userData)
+    setBody("");
     createDiscussionPost(discussionBoardId, body, userData.username, setPosts, setModalOpen)
 
     // createReview({ body, mediaType, mediaId, userId, rating, startDate, endDate })
@@ -128,78 +129,16 @@ function CreateDiscussionPopup({ open, setModalOpen, discussionBoardId, setNeeds
           <DialogTitle mb={1}>Create A New Post</DialogTitle>
           <Container disableGutters sx={{ ...createReviewContainer }}>
             <Container disableGutters sx={{ ...createReviewInfo }}>
-              <Container disableGutters sx={{ ...createReviewImageContainer }}>
-                {/* < img
-                  src={media.thumbnail}
-                  style={{ ...createReviewImage }}>
-                </img> */}
-              </Container >
+
               <Container disableGutters sx={{ ...createReviewPrompts }}>
-                {/* <Stack
-                  direction={'row'}
-                  justifyContent={'start'}
-                  spacing={2}
-                  mt={0}
-                >
-                  <Typography sx={{ pt: 0.5 }}>Rating: </Typography>
-                  <RatingStars
-                    value={rating}
-                    setValue={(event: any) => handleRatingChange(event.target.value)} />
-                </Stack> */}
-                <Stack >
+
                   <TextField
                     label={"What are your thoughts?"}
                     multiline
-                    rows={1}
-                    sx={{
-                      mb: 1,
-                      "& .MuiOutlinedInput-root": {
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#31628F",
-                        },
-                      },
-                      "& .MuiInputLabel-root": {
-                        "&.Mui-focused": {
-                          color: "#31628F", // Change label color on focus
-                        },
-                      },
-                    }}
+                    rows={15}
+                    fullWidth
                     value={body}
                     onChange={(event) => setBody(event.target.value)} />
-                  {isInvalidArgs &&
-                    <Typography color="error">Please enter a valid rating and description</Typography>
-                  }
-                  {/* <FormControlLabel
-                    label={`I have started this ${media.mediaType?.toLowerCase()}`}
-                    control={
-                      <Checkbox
-                        checked={startedMedia}
-                        onChange={handleCheckClick}
-                        sx={{
-                          color: "#31628F", // Default color
-                          "&.Mui-checked": {
-                            color: "#31628F", // Color when checked
-                          },
-                        }}
-                      />
-                    }
-                  /> */}
-                  {startedMedia ?
-                    <Stack
-                      direction={'row'}
-                      alignContent={'center'}
-                      spacing={2}
-                      sx={{
-                        mt: 2
-                      }}
-                    >
-                      <DatePickerField label={"Start Date"} value={startDate} setValue={setStartDate} />
-                      <DatePickerField label={"End Date"} value={endDate} setValue={setEndDate} />
-                    </Stack>
-                    :
-                    <></>
-                  }
-                </Stack>
               </Container>
             </Container>
             <Stack
@@ -227,7 +166,7 @@ function CreateDiscussionPopup({ open, setModalOpen, discussionBoardId, setNeeds
         <></>
       }
       <SuccessAlert
-        message={"Review successfully created"}
+        message={"Post successfully created"}
         showAlert={isSuccess}
         setShowAlert={setIsSuccess}
       />

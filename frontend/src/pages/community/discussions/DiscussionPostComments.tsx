@@ -12,6 +12,7 @@ import { loadUser } from "../../reviews/review-utils";
 import { useAuth0 } from "@auth0/auth0-react";
 import CreateDiscussionComment from "./CreateDiscussionComment";
 import { fetchDiscussionComments } from "./discussion-utils";
+import { DateTime } from 'luxon';
 
 function DiscussionPostComments({ commentIds, open, postId, setNeedsUpdate, setComments, comments, setPosts }: any) {
 
@@ -61,10 +62,10 @@ function DiscussionPostComments({ commentIds, open, postId, setNeedsUpdate, setC
                   <div className="rating-date">
                     <div className="text">{comment.username}</div>
                     <div className="text">
-                      {getRelativeDateString(new Date(comment.dateCreated))}</div>
+                      {DateTime.fromJSDate(new Date(comment.dateCreated)).toRelative()}</div>
                   </div>
                   <div className="text">{comment.body}</div>
-                  <div className="interactive-container">
+                  {/* <div className="interactive-container">
                     <IconButton size={'small'}>
                       <ThumbUp sx={{ width: 15 }} />
                     </IconButton>
@@ -73,13 +74,7 @@ function DiscussionPostComments({ commentIds, open, postId, setNeedsUpdate, setC
                       <ThumbDown sx={{ width: 15 }} />
                     </IconButton>
                     <div className="text">{comment.downVotes}</div>
-                    {/* <Button
-                      variant="text"
-                      onClick={() => { }}>
-                      <ModeCommentRoundedIcon sx={{ width: 15, color: 'grey', marginRight: '5px' }} />
-                      <div className="text">{comment.replyIds.length} replies</div>
-                    </Button> */}
-                  </div>
+                  </div> */}
                 </Container>
               </Container>
               <Divider />

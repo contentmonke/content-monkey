@@ -116,3 +116,20 @@
   justify-content: center;
   margin-top: 100px;
 }
+
+.discussion-title {
+  color: #31628F;
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.discussion-list-item {
+  list-style-type: none;
+  margin-bottom: 10px;
+}
+
+.discussion-item-title {
+  cursor: pointer;
+  color: #31628F;
+  padding-left: 10px;  
+}
