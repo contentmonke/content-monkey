@@ -6,6 +6,7 @@ import EditableListDetails from "./EditableListDetails";
 import "./ListDetailsPage.css";
 import Button from '../../../components/button/Button';
 import { Media } from "../../../models/Models";
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 import AddContentModal from "./AddContentModal";
 
@@ -127,6 +128,29 @@ const ListDetailsPage: React.FC = () => {
     }
   };
 
+  const handleDragEnd = async (result: DropResult) => {
+    // If dropped outside the list or no destination
+    if (!result.destination) return;
+
+    // Create a new list with the reordered items
+    const reorderedMedia = Array.from(listMedia);
+    const [reorderedItem] = reorderedMedia.splice(result.source.index, 1);
+    reorderedMedia.splice(result.destination.index, 0, reorderedItem);
+
+    // Update local state immediately for responsiveness
+    setListMedia(reorderedMedia);
+
+    try {
+      // Send media IDs in new order to backend
+      const mediaIds = reorderedMedia.map(media => media.id);
+      await axios.put(`http://localhost:8080/api/lists/${listid}/update-order`, mediaIds);
+    } catch (error) {
+      console.error("Error updating media order:", error);
+      // Optionally, revert local state if backend update fails
+      fetchListDetails();
+    }
+  };
+
   return (
     <div className="list-details-page">
       {listDetails ? (
@@ -154,7 +178,7 @@ const ListDetailsPage: React.FC = () => {
               </button>
             </div>
           )}
-          
+
           <Button
             label="Add Content"
             onClick={handleEditClick}
@@ -164,26 +188,53 @@ const ListDetailsPage: React.FC = () => {
             width="100%"
           />
 
-          <ul className="media-list">
-            {listMedia?.map((mediaItem: Media, index) => (
-              <li key={index} className="media-item">
-                <img src={mediaItem.thumbnail} alt={mediaItem.mediaTitle} className="media-poster" />
-                <div className="media-info">
-                  <h4>{mediaItem.mediaTitle}</h4>
-                  <p>{mediaItem.author || ""}</p>
-                </div>
-                {isOwner ? (
-                  <button
-                    className="delete-button"
-                    onClick={() => handleRemoveMedia(mediaItem.id)} // Pass media ID to handler
-                  >
-                    🗑️
-                  </button>
-                ) : (<></>)
-                }
-              </li>
-            ))}
-          </ul>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="media-list">
+              {(provided) => (
+                <ul
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="media-list"
+                >
+                  {listMedia?.map((mediaItem: Media, index) => (
+                    <Draggable
+                      key={mediaItem.id}
+                      draggableId={`media-${mediaItem.id}`}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="media-item"
+                        >
+                          <img
+                            src={mediaItem.thumbnail}
+                            alt={mediaItem.mediaTitle}
+                            className="media-poster"
+                          />
+                          <div className="media-info">
+                            <h4>{mediaItem.mediaTitle}</h4>
+                            <p>{mediaItem.author || ""}</p>
+                          </div>
+                          {isOwner && (
+                            <button
+                              className="delete-button"
+                              onClick={() => handleRemoveMedia(mediaItem.id)}
+                            >
+                              🗑️
+                            </button>
+                          )}
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
 
           {isEditing &&
             <AddContentModal

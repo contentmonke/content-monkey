@@ -136,4 +136,12 @@ public class ListService {
             throw new IllegalArgumentException("Media not found in the list");
         }
     }
+
+    public ListEntity updateMediaOrder(Long listId, List<Long> mediaIds) {
+        ListEntity list = listRepository.findById(listId)
+                .orElseThrow(() -> new EntityNotFoundException("List not found with id: " + listId));
+
+        list.setMediaIds(mediaIds); // Replace existing order
+        return listRepository.save(list);
+    }
 }

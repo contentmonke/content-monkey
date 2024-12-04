@@ -99,4 +99,12 @@ public class ListController {
         ListEntity updatedList = listService.removeMediaFromList(listId, mediaId);
         return ResponseEntity.ok(updatedList);
     }
+
+    @PutMapping("/{listId}/update-order")
+    public ResponseEntity<ListEntity> updateMediaOrder(
+            @PathVariable Long listId,
+            @RequestBody List<Long> mediaIds) {
+        ListEntity updatedList = listService.updateMediaOrder(listId, mediaIds);
+        return ResponseEntity.ok(updatedList);
+    }
 }
