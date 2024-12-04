@@ -166,6 +166,8 @@ public class ReviewService {
             reviewEntity.setRating(newReviewEntity.getRating());
             reviewEntity.setUpVotes(newReviewEntity.getUpVotes());
             reviewEntity.setDownVotes(newReviewEntity.getDownVotes());
+            reviewEntity.setStartDate(newReviewEntity.getStartDate());
+            reviewEntity.setEndDate(newReviewEntity.getEndDate());
             reviewRepository.save(reviewEntity);
             return null;
         }

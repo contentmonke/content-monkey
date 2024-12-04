@@ -3,6 +3,7 @@ package com.content.monkey.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;

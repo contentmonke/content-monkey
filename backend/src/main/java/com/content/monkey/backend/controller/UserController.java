@@ -204,7 +204,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/private")
-    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam Long priv) {
+    public ResponseEntity<?> updatePrivate(@PathVariable Long userId, @RequestParam Long priv) {
 
         UserEntity updatedUser = userService.updatePrivate(userId, priv);
         return ResponseEntity.ok(updatedUser);
