@@ -40,6 +40,7 @@ function MediaPage() {
   const [favorited, setFavorited] = useState(false);
   const [streamingService, setStreamingService] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("us");
+  const [userId, setUserId] = useState();
 
   useEffect(() => {
     console.log( "location: ", location );
@@ -52,6 +53,7 @@ function MediaPage() {
       try {
         if (!isLoading && user?.name && media) {
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+          setUserId(idResponse.data[0].id);
           const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + idResponse.data[0].id);
           if (favoritesResponse.data.includes(media.mediaTitle)) {
             setFavorited(true);
@@ -82,6 +84,7 @@ function MediaPage() {
     try {
       const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
       const userId = idResponse.data[0].id;
+      setUserId(idResponse.data[0].id);
       const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + userId);
 
 
@@ -143,7 +146,10 @@ function MediaPage() {
                     } else {
                       loginWithRedirect();
                     }
-                  }} />
+                  }} 
+                  mediaId={media.id}
+                  userId={userId}
+                />
                 <h6 style={{ ...rateField }}>Rate</h6>
                 {isAuthenticated ? <RatingStars
                   value={rating}

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./EditableListDetails.css";
+import Button from "../../../components/button/Button";
+import ListPicture from "./ListPicture";
 
 interface EditableListDetailsProps {
   listDetails: {
@@ -32,29 +34,53 @@ const EditableListDetails: React.FC<EditableListDetailsProps> = ({ listDetails, 
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="List Name"
+            className="input-field"
           />
-          <input
-            type="text"
-            value={picture}
-            onChange={(e) => setPicture(e.target.value)}
-            placeholder="Picture URL"
+
+          <ListPicture 
+            picture={picture} 
+            setPicture={setPicture}
           />
+  
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
+            className="textarea-field"
           />
           <div className="edit-actions">
-            <button onClick={handleSave}>Save</button>
-            <button onClick={() => setIsEditing(false)}>Cancel</button>
+            <Button
+              onClick={handleSave}
+              label="Save"
+              color="#4caf50"
+              hovercolor="#388e3c"
+              textcolor="white"
+            />
+            <Button
+              onClick={() => setIsEditing(false)}
+              label="Cancel"
+              color="#f44336"
+              hovercolor="#d32f2f"
+              textcolor="white"
+            />
           </div>
         </div>
       ) : (
         <div className="view-mode">
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={onDelete} className="delete-button">
-            Delete
-          </button>
+          <Button
+            onClick={() => setIsEditing(true)}
+            label="Edit"
+            color="#31628F"
+            hovercolor="#25496A"
+            textcolor="white"
+          />
+          <Button
+            onClick={onDelete}
+            label="Delete"
+            color="#f44336"
+            hovercolor="#d32f2f"
+            textcolor="white"
+          />
         </div>
       )}
     </div>

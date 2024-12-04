@@ -7,6 +7,8 @@ import "./ListDetailsPage.css";
 import Button from '../../../components/button/Button';
 import { Media } from "../../../models/Models";
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { IconButton, Typography, Container } from '@mui/material';
+import { ThumbUp, ThumbDown } from '@mui/icons-material';
 
 import AddContentModal from "./AddContentModal";
 
@@ -155,11 +157,19 @@ const ListDetailsPage: React.FC = () => {
     <div className="list-details-page">
       {listDetails ? (
         <div className="list-details">
+          {listDetails.picture && <img src={listDetails.picture} alt={listDetails.name} className="list-details-picture" />}
           <h2>{listDetails.name}</h2>
-          {listDetails.picture && <img src={listDetails.picture} alt={listDetails.name} />}
           <p>{listDetails.description}</p>
-          <p>Upvotes: {listDetails.upVotes}</p>
-          <p>Downvotes: {listDetails.downVotes}</p>
+          <Container disableGutters className="review-vote-container">
+            <IconButton size="small" onClick={() => handleVote("upvote")} >
+              <ThumbUp sx={{ width: 21 }} />
+            </IconButton>
+            <Typography variant="caption">{listDetails.upVotes}</Typography>
+            <IconButton size="small" onClick={() => handleVote("downvote")}>
+              <ThumbDown sx={{ width: 21 }} />
+            </IconButton>
+            <Typography variant="caption">{listDetails.downVotes}</Typography>
+          </Container>
 
           {isOwner ? (<>
             <EditableListDetails
@@ -167,26 +177,19 @@ const ListDetailsPage: React.FC = () => {
               onUpdate={handleUpdate}
               onDelete={handleDelete}
             />
-          </>
-          ) : (
-            <div className="vote-buttons">
-              <button onClick={() => handleVote("upvote")} className="upvote-button">
-                Upvote
-              </button>
-              <button onClick={() => handleVote("downvote")} className="downvote-button">
-                Downvote
-              </button>
-            </div>
-          )}
 
-          <Button
-            label="Add Content"
-            onClick={handleEditClick}
-            color="#31628F"
-            hovercolor="#25496A"
-            textcolor="white"
-            width="100%"
-          />
+            <div className="add-content-list-button">
+              <Button
+                label="Add Content"
+                onClick={handleEditClick}
+                color="#31628F"
+                hovercolor="#25496A"
+                textcolor="white"
+                width="100%"
+              />
+            </div>
+          </>
+          ) : (<></>)}
 
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="media-list">

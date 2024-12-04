@@ -81,12 +81,12 @@
 }
 
 .media-info h4 {
+  width: 650px;
   font-size: 18px;
   font-weight: bold;
   margin: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-wrap: wrap;
   /* Truncate long titles */
 }
 
@@ -102,9 +102,9 @@
 }
 
 .delete-button {
-  background: none;
   border: none;
-  color: #f44336;
+  border-radius: 16px;
+  background-color: #eb6359;
   /* Red color for delete */
   font-size: 18px;
   cursor: pointer;
@@ -112,6 +112,14 @@
 }
 
 .delete-button:hover {
-  color: #d32f2f;
+  background-color: #ea4439;
   /* Darker red on hover */
+}
+
+.add-content-list-button {
+  margin-top: 15px;
+}
+
+.list-details-picture {
+  width: 300px;
 }

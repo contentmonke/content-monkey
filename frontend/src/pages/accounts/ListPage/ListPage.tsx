@@ -5,6 +5,8 @@ import UserNavBar from '../UserNavbar';
 import { Modal, TextField, Box } from '@mui/material';
 import Button from '../../../components/button/Button';
 import './ListPage.css';
+import { IconButton, Typography, Container } from '@mui/material';
+import { ThumbUp, ThumbDown } from '@mui/icons-material';
 
 const ListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -78,8 +80,16 @@ const ListPage: React.FC = () => {
                   {list.description || 'No description available.'}
                 </div>
                 <div className="list-votes">
-                  <span className="upvotes">Upvotes: {list.upVotes || 0}</span>
-                  <span className="downvotes">Downvotes: {list.downVotes || 0}</span>
+                  <Container disableGutters className="review-vote-container">
+                    <IconButton size="small">
+                      <ThumbUp sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{list.upVotes || 0}</Typography>
+                    <IconButton size="small">
+                      <ThumbDown sx={{ width: 15 }} />
+                    </IconButton>
+                    <Typography variant="caption">{list.downVotes || 0}</Typography>
+                  </Container>
                 </div>
               </div>
             </div>
