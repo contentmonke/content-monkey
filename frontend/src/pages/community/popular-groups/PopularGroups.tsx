@@ -25,7 +25,7 @@ function PopularGroups({ popularGroups, userId }: any) {
       <Divider />
       <div className="popular-groups-content">
         <GroupResults
-          groups={popularGroups.slice(0, 10)}
+          groups={popularGroups?.slice(0, 10)}
           userId={userId}
         />
       </div>
