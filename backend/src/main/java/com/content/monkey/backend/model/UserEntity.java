@@ -76,6 +76,21 @@ public class UserEntity {
     @Column(name = "favorite_media")
     private List<Long> favorite_media;
 
+    @ElementCollection
+    @CollectionTable(name = "user_list_ids", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "list_id")
+    private List<Long> listIds = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "user_liked_lists", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "list_id")
+    private List<Long> listsLikedByUser = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "user_disliked_lists", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "list_id")
+    private List<Long> listsDislikedByUser = new ArrayList<>();
+
 //    @Column(name="media_recs")
     private String[] mediaRecs;
 

@@ -3,11 +3,14 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.ListEntity;
+import com.content.monkey.backend.repository.ListRepository;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
+import org.apache.catalina.User;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +28,8 @@ public class UserService {
     private MediaRepository mediaRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ListRepository listRepository;
 
     public UserEntity getUser(Long id) {
         UserEntity user = userRepository.findById(id)
@@ -37,18 +42,26 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
-        created.setUsername(generateUniqueUsername(created.getName()));
-        return userRepository.save(created);
+        List<UserEntity> user = userRepository.findByName(created.getName());
+        System.out.println(user);
+        System.out.println(created.getName());
+        if (!user.isEmpty()) {
+            return user.getFirst();
+        } else {
+            created.setUsername(generateUniqueUsername(created.getName()));
+            return userRepository.save(created);
+        }
     }
 
-    public List<UserEntity> getSingleUser(String username) {
-        List<UserEntity> users = userRepository.findByName(username);
-        if (!users.isEmpty() && (users.get(0).getFriend_list() == null || users.get(0).getFriend_requests() == null)) {
-            users.get(0).setFriend_list(new ArrayList<>());
-            users.get(0).setFriend_requests(new ArrayList<>());
+    public List<UserEntity> getSingleUser(String name) {
+        List<UserEntity> users = userRepository.findByName(name);
+        if (!users.isEmpty() && (users.getFirst().getFriend_list() == null ||
+                users.getFirst().getFriend_requests() == null)) {
+            users.getFirst().setFriend_list(new ArrayList<>());
+            users.getFirst().setFriend_requests(new ArrayList<>());
         }
         if (!users.isEmpty()) {
-            userRepository.save(users.get(0));
+            userRepository.save(users.getFirst());
         }
         return users;
     }
@@ -255,7 +268,13 @@ public class UserService {
     }
 
     public String generateUniqueUsername(String name) {
-        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String baseUsername;
+        if (name.indexOf('@') > 1) {
+            baseUsername = name.substring(0, name.indexOf('@'));
+        } else {
+            baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        }
+
         baseUsername = baseUsername.substring(0, Math.min(baseUsername.length(), 32));
         String username = baseUsername;
         int suffix = 1;
@@ -442,6 +461,31 @@ public class UserService {
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    public UserEntity addListToUser(Long userId, Long listId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        List<Long> listIds = user.getListIds();
+        if (listIds == null) {
+            listIds = new ArrayList<>();
+            user.setListIds(listIds);
+        }
+
+        if (!listIds.contains(listId)) {
+            listIds.add(listId);
+            user.setListIds(listIds);
+        }
+
+        return userRepository.save(user);
+    }
+
+    public List<ListEntity> getUserLists(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return listRepository.findAllById(user.getListIds());
     }
 
     public List<MediaEntity> getHighestRatedMedia() {

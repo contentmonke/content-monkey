@@ -1,0 +1,68 @@
+.list-page-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-list-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.create-list-caption {
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.list-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 45px;
+}
+
+.list-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 270px;
+  transition: box-shadow 0.3s ease;
+}
+
+.list-thumbnail {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.list-content {
+  padding: 10px;
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #31628f;
+  margin-bottom: 10px;
+}
+
+.list-description {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.list-votes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.list-votes .upvotes {
+  color: #4caf50;
+}
+
+.list-votes .downvotes {
+  color: #f44336;
+}

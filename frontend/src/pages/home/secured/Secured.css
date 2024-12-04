@@ -1,5 +1,7 @@
 .the-secured-page {
   min-height: 1000px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .img-size { 
@@ -17,7 +19,7 @@
   padding: 10px;
 }
 
-p {
+.media-home-page {
   cursor: pointer;
 }
 
@@ -32,16 +34,7 @@ p {
   margin-top: 10px;
 }
 
-button {
-  padding: 10px 15px;
-  margin: 15px 0;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-hr {
+.main-content hr {
   margin: 20px 0;
 }
 
@@ -58,7 +51,6 @@ hr {
   display: flex;
   gap: 10px;
 }
-
 
 .content-item {
   width: 150px;

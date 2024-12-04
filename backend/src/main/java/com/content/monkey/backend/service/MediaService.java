@@ -10,6 +10,7 @@ import com.content.monkey.backend.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.HttpHeaders;
@@ -249,6 +251,11 @@ public class MediaService {
             System.out.println("Created " + mediaEntity);
         }
         return mediaEntity;
+    }
+
+    public MediaEntity getMediaDetailsById(Long mediaId) {
+        return mediaRepository.findById(mediaId)
+                .orElseThrow(() -> new EntityNotFoundException("Media not found with ID: " + mediaId));
     }
 
     public List<MediaEntity> getMediaList(List<Long> mediaIds) {

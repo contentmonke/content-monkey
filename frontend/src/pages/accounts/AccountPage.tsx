@@ -194,6 +194,7 @@ const AccountPage: React.FC = () => {
           <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
           <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
           <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
+          <li onClick={() => navigate(`/u/${id}/lists`)}>Lists</li>
           {(isAuthenticated && user && user.email == email) ?
             <li onClick={() => navigate('/upload')}>Upload Goodreads Data</li> : (<></>)
           }

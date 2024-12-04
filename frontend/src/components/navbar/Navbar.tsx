@@ -92,6 +92,9 @@ const Navbar = () => {
             <li onClick={() => navigate(`/u/${loggedInUserId}/friends`)} className="nav-item-li nav-click">
               Friends
             </li>
+            <li onClick={() => navigate(`/u/${loggedInUserId}/lists`)} className="nav-item-li nav-click">
+              Lists
+            </li>
             <li onClick={() => navigate(`/community`)} className="nav-item-li nav-click">
               Community
             </li>

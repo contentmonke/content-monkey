@@ -15,6 +15,8 @@ import UploadPage from './pages/upload/UploadPage';
 import FriendsPage from './pages/accounts/FriendsPage/FriendsPage';
 import ContentPage from './pages/accounts/ContentPage/ContentPage';
 import ActivityPage from './pages/accounts/ActivityPage/ActivityPage';
+import ListPage from './pages/accounts/ListPage/ListPage';
+import ListDetailsPage from './pages/accounts/ListDetailsPage/ListDetailsPage';
 import CommunityPage from './pages/community/CommunityPage';
 import MyGroupsPage from './pages/community/my-groups/MyGroupsPage';
 import PopularGroupsPage from './pages/community/popular-groups/PopularGroupsPage';
@@ -39,6 +41,8 @@ function App() {
             <Route path="/u/:id/friends" element={<FriendsPage />} />
             <Route path="/u/:id/content/*" element={<ContentPage />} />
             <Route path="/u/:id/activity/*" element={<ActivityPage />} />
+            <Route path="/u/:id/lists" element={<ListPage />} />
+            <Route path="/u/:id/li/:listid" element={<ListDetailsPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/community/create-group" element={<CreateGroupPage />} />
             <Route path="/community/explore" element={<CommunityPage />} />
