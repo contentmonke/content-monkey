@@ -231,7 +231,7 @@ public class GroupService {
                             .groupName(group.getGroupName())
                             .inviteeId(userId)
                             .inviterId(inviter.getId())
-                            .inviterName(inviter.getName())
+                            .inviterName(inviter.getUsername())
                             .dateSent(invite.getDateSent())
                             .build()
             );

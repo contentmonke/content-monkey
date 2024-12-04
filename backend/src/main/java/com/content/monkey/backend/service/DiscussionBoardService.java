@@ -38,7 +38,7 @@ public class DiscussionBoardService {
         if (discussionBoardEntities == null || discussionBoardEntities.isEmpty()) {
             return null;
         }
-        return discussionBoardEntities.getFirst();
+        return discussionBoardEntities.get(0);
     }
 
     public GroupEntity createDiscussionBoard(String title, Long groupId) {
@@ -81,7 +81,7 @@ public class DiscussionBoardService {
         List<PostEntity> discussionPosts = new ArrayList<>();
         List<Long> postIds = board.getPost_ids();
         for(long post: postIds) {
-            discussionPosts.add(postRepository.findByid(post).getFirst());
+            discussionPosts.add(postRepository.findByid(post).get(0));
         }
         return discussionPosts;
 

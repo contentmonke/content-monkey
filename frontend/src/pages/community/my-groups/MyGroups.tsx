@@ -57,8 +57,20 @@ function MyGroups({ myGroups }: any) {
   }
 
   useEffect(() => {
-    checkCards();
-  }, [])
+    const handleResize = () => {
+      checkCards();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   checkCards();
+  // }, [])
 
   return (
     <>

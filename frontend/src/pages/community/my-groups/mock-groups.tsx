@@ -217,42 +217,52 @@ export const shortMockGroups = [
 
 export const invitations: GroupInvite[] = [
   {
-      id: 0,
-      groupId: 1259,
-      groupName: "Third Group",
-      inviteeId: 916,
-      inviterId: 838,
-      inviterName: "fakeemail@gmail.com",
-      dateSent: new Date("2024-11-27T11:56:00")
+    id: 0,
+    groupId: 1259,
+    groupName: "Third Group",
+    inviteeId: 916,
+    inviterId: 838,
+    inviterName: "fakeemail@gmail.com",
+    dateSent: new Date("2024-11-27T11:56:00")
   },
   {
-      id: 1,
-      groupId: 1259,
-      groupName: "Third Group",
-      inviteeId: 916,
-      inviterId: 844,
-      inviterName: "fakeemail@gmail.com",
-      dateSent: new Date("2024-11-27T11:56:00")
+    id: 1,
+    groupId: 1259,
+    groupName: "Third Group",
+    inviteeId: 916,
+    inviterId: 844,
+    inviterName: "fakeemail@gmail.com",
+    dateSent: new Date("2024-11-27T11:56:00")
 
   },
   {
-      id: 2,
-      groupId: 1259,
-      groupName: "Third Group",
-      inviteeId: 916,
-      inviterId: 855,
-      inviterName: "fakeemail@gmail.com",
-      dateSent: new Date("2024-11-27T11:56:00")
+    id: 2,
+    groupId: 1259,
+    groupName: "Third Group",
+    inviteeId: 916,
+    inviterId: 855,
+    inviterName: "fakeemail@gmail.com",
+    dateSent: new Date("2024-11-27T11:56:00")
 
   },
   {
-      id: 3,
-      groupId: 1260,
-      groupName: "Third Group",
-      inviteeId: 916,
-      inviterId: 838,
-      inviterName: "fakeemail@gmail.com",
-      dateSent: new Date("2024-11-27T11:56:00")
+    id: 3,
+    groupId: 1260,
+    groupName: "Third Group",
+    inviteeId: 916,
+    inviterId: 838,
+    inviterName: "fakeemail@gmail.com",
+    dateSent: new Date("2024-11-27T11:56:00")
 
   },
 ]
+
+export const mockInvite: GroupInvite[] = [{
+  id: 1,
+  groupId: 1338,
+  groupName: "Fortnite gamers",
+  inviteeId: 1246,
+  inviterId: 1274,
+  inviterName: "drew@fluffy.com",
+  dateSent: new Date("2024-12-04T20:15:12.231")
+}]

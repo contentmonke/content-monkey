@@ -48,7 +48,7 @@ function JoinRequests({ groupId, userId, joinRequests, setNeedsUpdate }: any) {
                 >
                   <div className="request-title"
                     onClick={() => handleClickUser(user.id)}
-                  >{user.name}
+                  >{user.username}
                   </div>
                   <div className="request-icons">
                     <CheckCircle

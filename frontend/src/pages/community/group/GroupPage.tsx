@@ -7,7 +7,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "../../reviews/review-utils";
 import "./GroupPage.css";
 import { getRelativeDateString } from "../../media/media-utils";
-import cmLogo from '../../../assets/monkey.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { Divider } from "@mui/material";
 import { DiscussionButton, InviteButton, JoinButton, LeaveButton, RequestButton } from "../action-buttons/GroupButtons";
@@ -16,7 +15,6 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { fetchGroup, fetchGroupDiscussionBoards, joinGroup, leaveGroup } from "../community-utils";
 import InviteModal from "../invitations/InviteModal";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Button from "@mui/material";
 
 function GroupPage() {
   const { user } = useAuth0();

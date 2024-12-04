@@ -1,25 +1,21 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CommunitySideBar from "../sidebar/CommunitySideBar";
 import { SmallLoading } from "../../../components/Loading";
 import { useEffect, useState } from "react";
-import { Group } from "../../../models/Models";
 import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "../../reviews/review-utils";
-import { invitations, longMockGroups, shortMockGroups } from "../my-groups/mock-groups";
 import "./GroupInvitationsPage.css";
-import cmLogo from '../../../assets/monkey.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import SearchBox from "../../../components/SeachBox";
 import Button from "../../../components/button/Button";
-import { DateTime } from 'luxon';
 import { fetchInvitations, handleInvite } from "../community-utils";
 import { Cancel, CheckCircle } from "@mui/icons-material";
+import { getDateString, getRelativeDateString } from "../../media/media-utils";
 
 
 function GroupInvitations() {
   const { user } = useAuth0();
   const navigate = useNavigate();
-  // const [group, setGroup] = useState<Group | undefined>(undefined);
   const [groupInvites, setGroupInvites] = useState(undefined);
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const [inviteSearch, setInviteSearch] = useState("");
@@ -58,13 +54,11 @@ function GroupInvitations() {
   }
 
   const handleAcceptInvite = (groupInvite) => {
-    handleInvite(userData.id, groupInvite.groupId, true);
-    fetchInvitations(userData.id, setGroupInvites);
+    handleInvite(userData.id, groupInvite.groupId, true, setGroupInvites);
   }
-  
+
   const handleDeclineInvite = (groupInvite) => {
-    handleInvite(userData.id, groupInvite.groupId, false);
-    fetchInvitations(userData.id, setGroupInvites);
+    handleInvite(userData.id, groupInvite.groupId, false, setGroupInvites);
   }
 
   return (
@@ -72,7 +66,7 @@ function GroupInvitations() {
       <div className="group-invitations-page">
         <CommunitySideBar />
         <div className="group-invitations-content">
-          <div className="group-page-title">
+          <div className="group-invitations-page-title">
             <h3>Communities</h3>
             <KeyboardArrowRightIcon
               sx={{ fontSize: '30px', marginTop: '1px' }}
@@ -136,10 +130,10 @@ function GroupInvitations() {
                       </div>
                       <div className="invite-item-dates">
                         <span className="invite-relative-date">
-                          {DateTime.fromJSDate(new Date(invite.dateSent), { zone: 'utc' }).toLocal().minus({ hours: 1 }).toRelative()}
+                          {getRelativeDateString(new Date(invite.dateSent))}
                         </span>
                         <span className="invite-absolute-date">
-                          {DateTime.fromJSDate(new Date(invite.dateSent), { zone: 'utc' }).toLocal().minus({ hours: 1 }).toLocaleString(DateTime.DATETIME_MED)}
+                          {getDateString(new Date(invite.dateSent))}
                         </span>
                       </div>
                     </li>

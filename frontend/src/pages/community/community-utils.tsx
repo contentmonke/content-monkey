@@ -1,9 +1,8 @@
 import { api } from "../../api/requests";
 import { GroupInvite } from "../../models/Models";
-import { invitations } from "./my-groups/mock-groups";
 
 
-function consolidateInvitations(invitations: GroupInvite[]) {
+export function consolidateInvitations(invitations: GroupInvite[]) {
   var formattedInvitations = [];
 
   invitations.forEach((invite) => {
@@ -126,10 +125,14 @@ export function inviteToGroup(invite: any) {
     })
 }
 
-export function handleInvite(userId: number, groupId: number, isAccepted: boolean) {
+export function handleInvite(userId: number, groupId: number, isAccepted: boolean, setGroupInvites: any) {
   api.groups.handleInvite(userId, groupId, isAccepted)
     .then((response) => {
       console.log(response.data);
+      return fetchInvitations(userId, setGroupInvites);
+    })
+    .then((fetchResponse) => {
+      console.log(fetchResponse);
     })
     .catch(() => {
       console.log("error handling invite");

@@ -24,7 +24,7 @@ function SearchedUsers({ users, sendInvite }: any) {
                   src={user.picture || 'https://via.placeholder.com/150'}
                 />
               </div>
-              {user.name}
+              {user.username}
             </div>
             <div className="invite-button">
               <button
