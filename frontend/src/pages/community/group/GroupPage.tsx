@@ -135,27 +135,23 @@ function GroupPage() {
               </div>
             </div>
             <br />
-            <div>Discussion Boards</div> 
-            {discussionBoards !== null && group !== undefined && userData !== undefined &&
+            {discussionBoards !== null && group !== undefined && userData !== undefined && group.members.includes(userData.id) &&
               <div>
-              <ul>
-             
-                {discussionBoards.map((board) => (
-                  <li>
-                  <DiscussionButton
-                    group={group}
-                    userId={userData.id}
-                    handleClick={handleClickDiscussion}
-                    board={board}
-                  />
-                  </li>
-                ))}
-              </ul>
-            </div>
+                <h5 className="discussion-title">Discussion Boards</h5>
+
+
+                  {discussionBoards.map((board) => (
+                    <li className="discussion-list-item" key={board.id} onClick={() => handleClickDiscussion(userData.id, board.id)}>
+                      <div>
+                        <span className="discussion-item-title">{board.title} </span>
+                        <span className="group-members"> &mdash; {board.post_ids.length} {board.post_ids.length === 1 ? "Post" : "Posts"}</span>
+                      </div>
+                      <div></div>
+                    </li>
+                  ))}
+              </div>
             }
             <Divider />
-            
-            {/* TODO */}
           </div>
           :
           <div className="loading-container">

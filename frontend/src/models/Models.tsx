@@ -133,5 +133,6 @@ export type GroupInvite = {
 export type DiscussionBoard = {
   id: number,
   title: string,
-  posts: Post[]
+  posts: Post[],
+  post_ids: number[]
 }
