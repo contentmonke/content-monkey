@@ -11,6 +11,7 @@ import { formatDate } from "../upload/upload-utils";
 import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser, updateDownVotes, updateUpVotes } from "../reviews/review-utils";
 
+
 type params = {
   reviews: ReviewDTO[];
   setNeedsUpdate: any;
@@ -19,7 +20,7 @@ type params = {
 function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
 
   // const [openComments, setOpenComments] = useState([]);
-  const { user } = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const [openComments, setOpenComments] = useState(null);
   const [likedComments, setLikedComments] = useState([]);
@@ -34,10 +35,16 @@ function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
 
   const handleCommentClick = (reviewIndex) => {
     // setOpenComments(indices => [...indices, reviewIndex]);
+    if (!isAuthenticated) {
+            loginWithRedirect();
+    }
     setOpenComments(reviewIndex)
   }
 
   const handleUpVote = (review: ReviewDTO, addedVote: boolean) => {
+      if (!isAuthenticated) {
+          loginWithRedirect();
+      }
     if (userData?.posts_disliked.includes(review.id)) {
       return;
     }
@@ -47,6 +54,9 @@ function ReviewSubsection({ reviews, setNeedsUpdate }: params) {
   }
 
   const handleDownVote = (review: ReviewDTO, addedVote: boolean) => {
+    if (!isAuthenticated) {
+            loginWithRedirect();
+    }
     if (userData?.posts_liked.includes(review.id)) {
       return;
     }

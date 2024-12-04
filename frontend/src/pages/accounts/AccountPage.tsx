@@ -46,7 +46,7 @@ const AccountPage: React.FC = () => {
         const getUser = async () => {
           if (isLoading === false && user !== null) {
             const curr_user = await axios.post("http://localhost:8080/api/user/", user)
-            console.log("Setting logged in user" + curr_user.data[0].id);
+            //console.log("Setting logged in user" + curr_user.data[0].id);
             setLoggedInUserId(curr_user.data[0].id);
             setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
             setLoggedInBlock(curr_user.data[0].blocked_users);
@@ -113,11 +113,11 @@ const AccountPage: React.FC = () => {
           setFavoriteGenres(JSON.parse(userResponse.data.genres).genres)
         }
         setReviews(sortedReviews.slice(0, 3));
-        console.log("Checking privacy status");
-        console.log(userResponse.data.friend_list?.includes(loggedInUserId));
-        console.log(loggedInUserId);
-        console.log(userResponse.data.friend_list);
-        if (userResponse.data.priv === 1 && !userResponse.data.friend_list?.includes(String(loggedInUserId))) {
+        //console.log("Checking privacy status");
+        //console.log(userResponse.data.friend_list?.includes(loggedInUserId));
+        //console.log(loggedInUserId);
+        //console.log(userResponse.data.friend_list);
+        if (userResponse.data.priv === 1 && !userResponse.data.friend_list?.includes(String(loggedInUserId)) && id != loggedInUserId) {
             setIsPrivate(true);
             return;
         }

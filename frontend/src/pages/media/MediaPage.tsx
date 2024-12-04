@@ -75,10 +75,16 @@ function MediaPage() {
   }
 
   const handleRatingChange = (value: any) => {
+      if (!isAuthenticated) {
+        loginWithRedirect();
+      }
     setRating(parseFloat(value));
   }
 
   const handleToggle = async () => {
+      if (!isAuthenticated) {
+              loginWithRedirect();
+      }
     try {
       const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
       const userId = idResponse.data[0].id;
@@ -148,14 +154,14 @@ function MediaPage() {
                     }
                   }} />
                 <h6 style={{ ...rateField }}>Rate</h6>
-                {isAuthenticated ? <RatingStars
+                {<RatingStars
                   value={rating}
                   setValue={(event: any) => handleRatingChange(event.target.value)}
-                /> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
+                />}
 
 
                 <h6 style={{ ...rateField }}>Favorite</h6>
-                {isAuthenticated ? <IconButton onClick={handleToggle} aria-label="toggle favorite"
+                {<IconButton onClick={handleToggle} aria-label="toggle favorite"
                   sx={{
                     color: favorited ? "#31628F" : "rgba(49, 98, 143, 0.5)", // Active/Inactive color
                     "&:hover": {
@@ -163,7 +169,7 @@ function MediaPage() {
                     }
                   }}>
                   {favorited ? <StarIcon /> : <StarBorderIcon />}
-                </IconButton> : <Button label="Sign in" onClick={() => loginWithRedirect()} />}
+                </IconButton>}
                 {(media?.mediaType === "TV Show" || media?.mediaType === "Movie") && (
                 <div>
                   <h6 style={{ ...rateField }}>Streaming Services</h6>

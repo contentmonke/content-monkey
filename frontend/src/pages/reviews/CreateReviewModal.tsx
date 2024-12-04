@@ -36,7 +36,7 @@ function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params
   const [errorMessage, setErrorMessage] = useState("");
   const [isInvalidArgs, setIsInvalidArgs] = useState(false);
   const [userData, setUserData] = useState<any | undefined>(undefined);
-  const { user } = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
   useEffect(() => {
     if (user?.name === undefined) {
@@ -82,6 +82,9 @@ function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params
   const handleCreateReviewClick = async () => {
     if (isInvalidArguments()) {
       return;
+    }
+    if (!isAuthenticated) {
+      loginWithRedirect();
     }
     setIsLoading(true);
     setErrorMessage("Error creating the review");
