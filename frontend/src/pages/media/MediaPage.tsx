@@ -98,6 +98,9 @@ function MediaPage() {
         });
       } else {
         // add to favorites
+        if (!favoritesResponse?.data) {
+            favoritesResponse.data = [];
+        }
         favoritesResponse?.data?.push(media.mediaTitle);
         await axios.post('http://localhost:8080/api/user/setfavoritemedia', {
           id: parseInt(userId),

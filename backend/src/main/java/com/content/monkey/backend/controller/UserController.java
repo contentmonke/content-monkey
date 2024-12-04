@@ -196,6 +196,22 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PutMapping("/{userId}/private")
+    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam Long priv) {
+
+        UserEntity updatedUser = userService.updatePrivate(userId, priv);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/{userId}/private")
+    public ResponseEntity<?> updateUsername(@PathVariable Long userId, @RequestParam Long priv) {
+
+        UserEntity updatedUser = userService.updatePrivate(userId, priv);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+
 
     @GetMapping("/chat/{id}")
     public List<MediaEntity> chat(@PathVariable Long id){

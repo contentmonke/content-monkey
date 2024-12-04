@@ -67,6 +67,9 @@ public class UserEntity {
     @Column(name = "favorite_media")
     private List<Long> favorite_media;
 
+    @Column(name = "private")
+    private long priv;
+
 //    @Column(name="media_recs")
     private String[] mediaRecs;
 
@@ -101,6 +104,8 @@ public class UserEntity {
     public String getName() {
         return this.name;
     }
+
+    public void setPrivate(long priv) { this.priv = priv;}
 
     public Long getId() {
         return this.id;

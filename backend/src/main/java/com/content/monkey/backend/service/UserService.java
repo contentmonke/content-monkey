@@ -224,6 +224,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public UserEntity updatePrivate(Long id, Long priv) {
+        UserEntity user = getUser(id);
+
+        user.setPrivate(priv);
+        userRepository.save(user);
+        return user;
+    }
+
     public void blockUser(Long blockId, Long userId) {
         UserEntity user = getUser(userId);
         user.setBlockedUsers(blockId);

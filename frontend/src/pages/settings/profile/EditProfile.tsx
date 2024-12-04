@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SettingsSidebar from '../sidebar/SettingsSidebar';
 import '../Settings.css';
-import { TextField, FormHelperText } from '@mui/material';
+import { TextField, FormHelperText, FormControlLabel, Switch } from '@mui/material';
 import Button from '../../../components/button/Button';
 import ProfilePicture from './ProfilePicture';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,6 +18,7 @@ const EditProfile: React.FC = () => {
   const [bio, setBio] = useState('No biography available.');
   const [favoriteGenres, setFavoriteGenres] = useState([]);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [isPrivate, setIsPrivate] = useState(false); // State for private profile
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -31,11 +32,12 @@ const EditProfile: React.FC = () => {
 
           const userBio = await axios.post(`http://localhost:8080/api/user/name/${user.name}`);
           const profilePic = await axios.get('http://localhost:8080/api/user/getPicture', { params: { id: userId } });
-
+          console.log(userBio.data[0]);
           setProfilePicture(profilePic.data);
           setBio(JSON.parse(userBio.data[0].bio).biography || 'No biography available.');
           setFavoriteGenres(JSON.parse(userBio.data[0].genres).genres || 'No Genres available.');
           setUsername(userBio.data[0].username);
+          setIsPrivate(userBio.data[0].priv || false);
         }
       } catch (error) {
         console.error('Error fetching data', error);
@@ -52,7 +54,7 @@ const EditProfile: React.FC = () => {
     } else if (value.length > 32) {
       setUsernameError("Username cannot exceed 32 characters.");
     } else {
-      setUsernameError('')
+      setUsernameError('');
     }
   };
 
@@ -87,6 +89,10 @@ const EditProfile: React.FC = () => {
 
       // Update profile picture
       await axios.post('http://localhost:8080/api/user/updatePicture', { id: userId, picture: profilePicture });
+
+      // Update private profile setting
+      const privateStatus = isPrivate ? 1 : 0;
+      await axios.put(`http://localhost:8080/api/user/${userId}/private?priv=${privateStatus}`);
 
       // Update username
       await axios.put(`http://localhost:8080/api/user/${userId}/username?username=${username}`);
@@ -162,6 +168,18 @@ const EditProfile: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="private-profile-field">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isPrivate}
+                onChange={(e) => setIsPrivate(e.target.checked)}
+              />
+            }
+            label="Private Profile"
+          />
         </div>
 
         <div className="save-button">
