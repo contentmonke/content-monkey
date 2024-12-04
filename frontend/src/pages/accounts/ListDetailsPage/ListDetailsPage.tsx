@@ -4,6 +4,10 @@ import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react"; // Assuming you're using Auth0 for authentication
 import EditableListDetails from "./EditableListDetails";
 import "./ListDetailsPage.css";
+import Button from '../../../components/button/Button';
+import { Media } from "../../../models/Models";
+
+import AddContentModal from "./AddContentModal";
 
 interface ListEntity {
   id: number;
@@ -20,8 +24,20 @@ const ListDetailsPage: React.FC = () => {
   const { id: userIdFromUrl, listid } = useParams<{ id: string; listid: string }>();
   const { user, isAuthenticated } = useAuth0();
   const [listDetails, setListDetails] = useState<ListEntity | null>(null);
+  const [listMedia, setListMedia] = useState<Media[] | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  // adding media ㅠㅠ
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  }
+
+  const closeEdit = () => {
+    setIsEditing(false);
+  }
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -52,6 +68,9 @@ const ListDetailsPage: React.FC = () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/lists/${listid}`);
       setListDetails(response.data);
+
+      const response2 = await axios.get(`http://localhost:8080/api/lists/${listid}/details`);
+      setListMedia(response2.data)
     } catch (error) {
       console.error("Error fetching list details:", error);
     }
@@ -61,11 +80,11 @@ const ListDetailsPage: React.FC = () => {
     if (listid) {
       fetchListDetails();
     }
-  }, [listid]);
+  }, [listid, isEditing]);
 
   const handleUpdate = async (updatedList: { name?: string; picture?: string; description?: string }) => {
     try {
-      await axios.post(`http://localhost:8080/api/lists/${listid}`, updatedList);
+      await axios.put(`http://localhost:8080/api/lists/${listid}`, updatedList);
       setListDetails((prevDetails) => (prevDetails ? { ...prevDetails, ...updatedList } : null));
     } catch (error) {
       console.error("Error updating list:", error);
@@ -78,6 +97,19 @@ const ListDetailsPage: React.FC = () => {
       window.location.href = `/u/${userIdFromUrl}/lists`; // Redirect to user's lists page
     } catch (error) {
       console.error("Error deleting list:", error);
+    }
+  };
+
+  const handleRemoveMedia = async (mediaId: number) => {
+    try {
+      // API call to remove the media from the list
+      await axios.delete(`http://localhost:8080/api/lists/${listid}/remove-media`, {
+        params: { mediaId },
+      });
+
+      fetchListDetails();
+    } catch (error) {
+      console.error("Error removing media from the list:", error);
     }
   };
 
@@ -104,19 +136,14 @@ const ListDetailsPage: React.FC = () => {
           <p>{listDetails.description}</p>
           <p>Upvotes: {listDetails.upVotes}</p>
           <p>Downvotes: {listDetails.downVotes}</p>
-          <h3>Media in this List:</h3>
-          <ul>
-            {listDetails.media?.map((mediaItem, index) => (
-              <li key={index}>{mediaItem}</li>
-            ))}
-          </ul>
 
-          {isOwner ? (
+          {isOwner ? (<>
             <EditableListDetails
               listDetails={listDetails}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
             />
+          </>
           ) : (
             <div className="vote-buttons">
               <button onClick={() => handleVote("upvote")} className="upvote-button">
@@ -127,6 +154,46 @@ const ListDetailsPage: React.FC = () => {
               </button>
             </div>
           )}
+          
+          <Button
+            label="Add Content"
+            onClick={handleEditClick}
+            color="#31628F"
+            hovercolor="#25496A"
+            textcolor="white"
+            width="100%"
+          />
+
+          <ul className="media-list">
+            {listMedia?.map((mediaItem: Media, index) => (
+              <li key={index} className="media-item">
+                <img src={mediaItem.thumbnail} alt={mediaItem.mediaTitle} className="media-poster" />
+                <div className="media-info">
+                  <h4>{mediaItem.mediaTitle}</h4>
+                  <p>{mediaItem.author || ""}</p>
+                </div>
+                {isOwner ? (
+                  <button
+                    className="delete-button"
+                    onClick={() => handleRemoveMedia(mediaItem.id)} // Pass media ID to handler
+                  >
+                    🗑️
+                  </button>
+                ) : (<></>)
+                }
+              </li>
+            ))}
+          </ul>
+
+          {isEditing &&
+            <AddContentModal
+              listid={listid}
+              refreshListPage={fetchListDetails}
+              open={isEditing}
+              setOpen={setIsEditing}
+              handleClose={closeEdit}
+            />
+          }
         </div>
       ) : (
         <p>Loading list details...</p>

@@ -10,6 +10,7 @@ import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
+import org.apache.catalina.User;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,12 +42,19 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
-        created.setUsername(generateUniqueUsername(created.getName()));
-        return userRepository.save(created);
+        List<UserEntity> user = userRepository.findByName(created.getName());
+        System.out.println(user);
+        System.out.println(created.getName());
+        if (!user.isEmpty()) {
+            return user.getFirst();
+        } else {
+            created.setUsername(generateUniqueUsername(created.getName()));
+            return userRepository.save(created);
+        }
     }
 
-    public List<UserEntity> getSingleUser(String username) {
-        List<UserEntity> users = userRepository.findByName(username);
+    public List<UserEntity> getSingleUser(String name) {
+        List<UserEntity> users = userRepository.findByName(name);
         if (!users.isEmpty() && (users.getFirst().getFriend_list() == null ||
                 users.getFirst().getFriend_requests() == null)) {
             users.getFirst().setFriend_list(new ArrayList<>());
@@ -260,7 +268,13 @@ public class UserService {
     }
 
     public String generateUniqueUsername(String name) {
-        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String baseUsername;
+        if (name.indexOf('@') > 1) {
+            baseUsername = name.substring(0, name.indexOf('@'));
+        } else {
+            baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        }
+
         baseUsername = baseUsername.substring(0, Math.min(baseUsername.length(), 32));
         String username = baseUsername;
         int suffix = 1;

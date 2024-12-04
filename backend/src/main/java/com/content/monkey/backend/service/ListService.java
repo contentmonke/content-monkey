@@ -39,12 +39,25 @@ public class ListService {
         return listRepository.save(newList);
     }
 
-    public ListEntity updateList(Long id, ListEntity updatedList) {
-        ListEntity existingList = getListById(id);
-        existingList.setName(updatedList.getName());
-        existingList.setDescription(updatedList.getDescription());
-        existingList.setPicture(updatedList.getPicture());
-        existingList.setMediaIds(updatedList.getMediaIds());
+    public ListEntity updateList(Long id, ListEntity newListData) {
+        // Fetch the existing list entity
+        ListEntity existingList = listRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("List not found with id: " + id));
+
+        // Update only the specified fields
+        if (newListData.getName() != null) {
+            existingList.setName(newListData.getName());
+        }
+
+        if (newListData.getDescription() != null) {
+            existingList.setDescription(newListData.getDescription());
+        }
+
+        if (newListData.getPicture() != null) {
+            existingList.setPicture(newListData.getPicture());
+        }
+
+        // Save the updated list entity
         return listRepository.save(existingList);
     }
 
@@ -96,5 +109,31 @@ public class ListService {
 
         userRepository.save(user);
         listRepository.save(list);
+    }
+
+    public ListEntity addMediaToList(Long listId, Long mediaId) {
+        ListEntity list = listRepository.findById(listId)
+                .orElseThrow(() -> new EntityNotFoundException("List not found with id: " + listId));
+
+        // Check if media already exists in the list
+        if (list.getMediaIds().contains(mediaId)) {
+            throw new IllegalArgumentException("Media already exists in the list");
+        }
+
+        list.getMediaIds().add(mediaId); // Add media ID to the list
+        return listRepository.save(list); // Save the updated list
+    }
+
+    public ListEntity removeMediaFromList(Long listId, Long mediaId) {
+        ListEntity list = listRepository.findById(listId)
+                .orElseThrow(() -> new EntityNotFoundException("List not found with id: " + listId));
+
+        // Remove the media ID if it exists
+        if (list.getMediaIds().contains(mediaId)) {
+            list.getMediaIds().remove(mediaId);
+            return listRepository.save(list); // Save the updated list
+        } else {
+            throw new IllegalArgumentException("Media not found in the list");
+        }
     }
 }
