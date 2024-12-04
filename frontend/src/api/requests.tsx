@@ -173,6 +173,11 @@ export const api = {
     }
   },
   discussions: {
+    async createDiscussionBoard(title: any, groupId: any) {
+      return (
+        await axios.post(`${URL}/discussionBoard/create/${title}/${groupId}`)
+      )
+    },
     async getDiscussionBoard(discussionId: any) {
       return (
         await axios.get(`${URL}/discussionBoard/get/${discussionId}`)
@@ -286,6 +291,11 @@ export const api = {
         await axios.get(`${URL}/groups/invite/${userId}`)
       );
     },
+    async getGroupDiscussionBoards(groupId) {
+      return (
+        await axios.get(`${URL}/groups/discussionBoards/${groupId}`)
+      )
+    }
 
   }
 

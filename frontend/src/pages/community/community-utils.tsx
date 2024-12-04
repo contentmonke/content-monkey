@@ -169,3 +169,14 @@ export function handleRequest(joinRequest: any, setNeedsUpdate: any) {
       console.log("error handling join request");
     })
 }
+
+export function fetchGroupDiscussionBoards(groupId: any, setDiscussionBoards) {
+  api.groups.getGroupDiscussionBoards(groupId)
+    .then((response) => {
+      setDiscussionBoards(response.data)
+    })
+    .catch(() => {
+      console.log("error getting discussion boards");
+    })
+
+}

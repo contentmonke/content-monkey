@@ -1,9 +1,6 @@
 package com.content.monkey.backend.service;
 
-import com.content.monkey.backend.model.CommentEntity;
-import com.content.monkey.backend.model.GroupEntity;
-import com.content.monkey.backend.model.GroupInviteEntity;
-import com.content.monkey.backend.model.UserEntity;
+import com.content.monkey.backend.model.*;
 import com.content.monkey.backend.model.dto.groups.GroupInviteDTO;
 import com.content.monkey.backend.model.dto.groups.GroupJoinRequest;
 import com.content.monkey.backend.repository.GroupInviteRepository;

@@ -68,3 +68,18 @@ export function InviteButton({ group, userId, handleClick }: any) {
     </>
   );
 }
+
+export function DiscussionButton({ group, userId, handleClick, board }: any) {
+  console.log( group )
+  return (
+    <>
+      {group?.members.includes(userId) &&
+        <Button
+          label={board.title}
+          onClick={() => handleClick(group.id, board.id)}
+          width={'180px'}
+        />
+      }
+    </>
+  );
+}

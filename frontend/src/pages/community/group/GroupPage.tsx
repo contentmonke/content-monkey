@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import CommunitySideBar from "../sidebar/CommunitySideBar";
 import { SmallLoading } from "../../../components/Loading";
 import { useEffect, useState } from "react";
-import { Group } from "../../../models/Models";
+import { DiscussionBoard, Group } from "../../../models/Models";
 import { useAuth0 } from "@auth0/auth0-react";
 import { loadUser } from "../../reviews/review-utils";
 import "./GroupPage.css";
@@ -10,12 +10,13 @@ import { getRelativeDateString } from "../../media/media-utils";
 import cmLogo from '../../../assets/monkey.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { Divider } from "@mui/material";
-import { InviteButton, JoinButton, LeaveButton, RequestButton } from "../action-buttons/GroupButtons";
+import { DiscussionButton, InviteButton, JoinButton, LeaveButton, RequestButton } from "../action-buttons/GroupButtons";
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { fetchGroup, joinGroup, leaveGroup } from "../community-utils";
+import { fetchGroup, fetchGroupDiscussionBoards, joinGroup, leaveGroup } from "../community-utils";
 import InviteModal from "../invitations/InviteModal";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Button from "@mui/material";
 
 function GroupPage() {
   const { user } = useAuth0();
@@ -24,6 +25,7 @@ function GroupPage() {
   const [group, setGroup] = useState<Group | undefined>(undefined);
   const [userData, setUserData] = useState<any | undefined>(undefined);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [discussionBoards, setDiscussionBoards] = useState<DiscussionBoard[] | null>(null);
 
   useEffect(() => {
     if (user?.name === undefined) {
@@ -31,6 +33,7 @@ function GroupPage() {
     }
     loadUser(user.name, setUserData);
     fetchGroup(parseInt(groupId!, 10), setGroup);
+    fetchGroupDiscussionBoards(groupId, setDiscussionBoards);
   }, [user?.name]);
 
   const handleJoinClick = () => {
@@ -56,6 +59,10 @@ function GroupPage() {
   const handleManageGroup = () => {
     navigate(`/community/manage-group/${groupId}`);
   }
+
+  const handleClickDiscussion = (groupId, discussionId) => {
+    navigate(`/community/group/${groupId}/discussion/${discussionId}`);
+  };
 
   return (
     <>
@@ -128,7 +135,24 @@ function GroupPage() {
               </div>
             </div>
             <br />
-            <div>Discussion Boards</div>
+            <div>Discussion Boards</div> 
+            {discussionBoards !== null && group !== undefined && userData !== undefined &&
+              <div>
+              <ul>
+             
+                {discussionBoards.map((board) => (
+                  <li>
+                  <DiscussionButton
+                    group={group}
+                    userId={userData.id}
+                    handleClick={handleClickDiscussion}
+                    board={board}
+                  />
+                  </li>
+                ))}
+              </ul>
+            </div>
+            }
             <Divider />
             
             {/* TODO */}

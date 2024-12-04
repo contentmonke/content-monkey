@@ -1,9 +1,11 @@
 package com.content.monkey.backend.service;
 
 import com.content.monkey.backend.model.DiscussionBoardEntity;
+import com.content.monkey.backend.model.GroupEntity;
 import com.content.monkey.backend.model.PostEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.repository.DiscussionBoardRepository;
+import com.content.monkey.backend.repository.GroupRepository;
 import com.content.monkey.backend.repository.PostRepository;
 import com.google.api.client.util.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,13 @@ public class DiscussionBoardService {
     @Autowired
     private UserService userService;
 
-    public DiscussionBoardEntity getDiscussionBoardById(int id) {
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private GroupRepository groupRepository;
+
+    public DiscussionBoardEntity getDiscussionBoardById(Long id) {
         List<DiscussionBoardEntity> discussionBoardEntities = discussionBoardRepository.findDiscussionBoardById(id);
         if (discussionBoardEntities == null || discussionBoardEntities.isEmpty()) {
             return null;
@@ -33,15 +41,19 @@ public class DiscussionBoardService {
         return discussionBoardEntities.getFirst();
     }
 
-    public DiscussionBoardEntity createDiscussionBoard(String title) {
+    public GroupEntity createDiscussionBoard(String title, Long groupId) {
         DiscussionBoardEntity newBoard = new DiscussionBoardEntity();
         newBoard.setTitle(title);
         newBoard.setPost_ids(new ArrayList<Long>());
         newBoard = discussionBoardRepository.save(newBoard);
-        return discussionBoardRepository.save(newBoard);
+        GroupEntity group = groupService.getGroup(groupId);
+        group.getDiscussionBoards().add(newBoard.getId());
+        discussionBoardRepository.save(newBoard);
+        return groupRepository.save(group);
+
     }
 
-    public DiscussionBoardEntity addPostToDiscussionBoard(int boardId, String postBody, String username) {
+    public DiscussionBoardEntity addPostToDiscussionBoard(Long boardId, String postBody, String username) {
         DiscussionBoardEntity board = getDiscussionBoardById(boardId);
         if (board.getPost_ids() == null) {
             board.setPost_ids(new ArrayList<>());
@@ -64,7 +76,7 @@ public class DiscussionBoardService {
         return null;
     }
 
-    public List<PostEntity> getDiscussionPosts(int boardId) {
+    public List<PostEntity> getDiscussionPosts(Long boardId) {
         DiscussionBoardEntity board = getDiscussionBoardById(boardId);
         List<PostEntity> discussionPosts = new ArrayList<>();
         List<Long> postIds = board.getPost_ids();
@@ -73,5 +85,15 @@ public class DiscussionBoardService {
         }
         return discussionPosts;
 
+    }
+
+    public List<DiscussionBoardEntity> getGroupDiscussionBoards(Long groupId) {
+        GroupEntity group = groupRepository.findByid(groupId).get(0);
+        List<DiscussionBoardEntity> discussionBoards = new ArrayList<>();
+        List<Long> boardIds = group.getDiscussionBoards();
+        for(long board: boardIds) {
+            discussionBoards.add(getDiscussionBoardById(board));
+        }
+        return discussionBoards;
     }
 }

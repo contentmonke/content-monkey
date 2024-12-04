@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DiscussionBoardRepository extends JpaRepository<DiscussionBoardEntity, Long> {
-    List<DiscussionBoardEntity> findDiscussionBoardById(int id);
+    List<DiscussionBoardEntity> findDiscussionBoardById(Long id);
 
 
 }

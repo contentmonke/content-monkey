@@ -13,6 +13,8 @@ import { useParams } from "react-router-dom";
 import { fetchGroup, getListOfUsers } from "../community-utils";
 import { Group } from "../../../models/Models";
 import JoinRequests from "./JoinRequests";
+import CreateDiscussionBoardPopup from "../discussions/CreateDiscussionBoardPopup";
+import { createDiscussionBoard } from "../discussions/discussion-utils";
 
 const textfieldSx = {
   width: '100%',
@@ -41,6 +43,7 @@ function ManageGroupsPage() {
   const [groupPicture, setGroupPicture] = useState<string | null>(null);
   const [joinRequests, setJoinRequests] = useState(undefined);
   const [needsUpdate, setNeedsUpdate] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     if (user?.name === undefined) {
@@ -68,6 +71,8 @@ function ManageGroupsPage() {
     setIsPrivate(false);
   }
 
+  // const 
+
   // const handleCreateClick = () => {
   //   const newGroup = {
   //     groupName: name,
@@ -83,6 +88,12 @@ function ManageGroupsPage() {
   //   createGroup(newGroup, setSuccess);
   //   clearFields();
   // }
+
+  const handleCreateBoard = (title) => {
+    console.log('New Discussion Board Title:', title);
+    createDiscussionBoard(title, groupId);
+    // Add your logic to create a discussion board here
+  };
 
   return (
     <>
@@ -121,6 +132,11 @@ function ManageGroupsPage() {
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
               />
+                             <CreateDiscussionBoardPopup
+                  isOpen={isPopupOpen}
+                  onClose={() => setIsPopupOpen(false)}
+                  onSubmit={handleCreateBoard}
+                />
               <FormControlLabel
                 label={"Private"}
                 control={
@@ -143,12 +159,18 @@ function ManageGroupsPage() {
                 setNeedsUpdate={setNeedsUpdate}
               />
               <div className="manage-group-button">
+                <Button 
+                  label={"Create Discussion Board"}
+                  onClick={() => setIsPopupOpen(true)}
+                  width={'240px'}
+                />
                 <Button
                   label={"Modify Group"}
                   onClick={() => { }}
                   width={'180px'}
                   disabled={name === "" || description === ""}
                 />
+ 
               </div>
               <SuccessAlert
                 message={"Group successfully modified"}
@@ -158,8 +180,8 @@ function ManageGroupsPage() {
             </>
             :
             <div className="loading-container">
-              {userData.id}
-              {group.owner}
+              {userData?.id}
+              {group?.owner}
               <SmallLoading />
             </div>
           }

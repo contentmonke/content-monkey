@@ -1,10 +1,12 @@
 package com.content.monkey.backend.controller;
 
+import com.content.monkey.backend.model.DiscussionBoardEntity;
 import com.content.monkey.backend.model.GroupEntity;
 import com.content.monkey.backend.model.GroupInviteEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.groups.GroupInviteDTO;
 import com.content.monkey.backend.model.dto.groups.GroupJoinRequest;
+import com.content.monkey.backend.service.DiscussionBoardService;
 import com.content.monkey.backend.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private DiscussionBoardService discussionBoardService;
 
     @PostMapping()
     public ResponseEntity<GroupEntity> createGroup(@RequestBody GroupEntity groupEntity) {
@@ -108,6 +112,12 @@ public class GroupController {
         List<GroupInviteDTO> invites = groupService.getInvites(userId);
         return ResponseEntity.ok().body(invites);
     }
+
+    @GetMapping("/discussionBoards/{groupId}")
+    public List<DiscussionBoardEntity> getDiscussionBoards(@PathVariable Long groupId) {
+        return discussionBoardService.getGroupDiscussionBoards(groupId);
+    }
+
 
 
 }

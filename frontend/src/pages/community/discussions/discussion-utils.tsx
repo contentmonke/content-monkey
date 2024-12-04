@@ -118,3 +118,7 @@ export async function updateDownVotes(user: any, reviewId: any, addedVote: any, 
       setNeedsUpdate(true)
     })
 }
+
+export async function createDiscussionBoard(title: any, groupId: any) {
+  api.discussions.createDiscussionBoard(title, groupId)
+}

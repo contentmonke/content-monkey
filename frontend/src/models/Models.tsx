@@ -129,3 +129,9 @@ export type GroupInvite = {
   inviterName: string,
   dateSent: Date
 }
+
+export type DiscussionBoard = {
+  id: number,
+  title: string,
+  posts: Post[]
+}
