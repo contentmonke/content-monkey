@@ -7,6 +7,7 @@ import Button from '../../../components/button/Button';
 import './ListPage.css';
 import { IconButton, Typography, Container } from '@mui/material';
 import { ThumbUp, ThumbDown } from '@mui/icons-material';
+import { useAuth0 } from "@auth0/auth0-react"; // Assuming you're using Auth0 for authentication
 
 const ListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,34 @@ const ListPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [error, setError] = useState('');
+
+  const [isOwner, setIsOwner] = useState(false);
+  const { user, isAuthenticated } = useAuth0();
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        if (isAuthenticated && user?.name) {
+          const response = await axios.post("http://localhost:8080/api/user/", { name: user.name });
+          if (response.data.length > 0) {
+            const currentUser = response.data[0];
+            setCurrentUserId(currentUser.id);
+            // Compare the current user's ID with the list owner's ID
+            if (id && response.data[0].id == id) {
+              setIsOwner(true);
+            } else {
+              setIsOwner(false);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, [user]);
 
   const fetchLists = async () => {
     try {
@@ -56,15 +85,18 @@ const ListPage: React.FC = () => {
 
       <div className="list-page-container">
         {/* Create New List Section */}
-        <div className="create-list-container">
-          <Button
-            label="Create New List"
-            onClick={() => setModalOpen(true)}
-            width="215px"
-          />
-        </div>
 
-        <hr />
+        {isOwner ? (<>
+          <div className="create-list-container">
+            <Button
+              label="Create New List"
+              onClick={() => setModalOpen(true)}
+              width="215px"
+            />
+          </div>
+
+          <hr />
+        </>) : (<></>)}
 
         <div className="list-container">
           {lists.map((list: any) => (
