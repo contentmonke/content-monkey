@@ -7,7 +7,7 @@ import { api } from "./requests";
 
 export async function createReview(params: any): Promise<any> {
   // Validate params
-  if (params.body === "" || params.body === null || params.rating < 0 || params.rating > 5 || params.userId === undefined || params.mediaId === undefined) {
+  if (params.rating > 5 || params.userId === undefined || params.mediaId === undefined) {
     throw new Error("Invalid review parameters");
   }
 
@@ -15,7 +15,8 @@ export async function createReview(params: any): Promise<any> {
   let dateCreated = dayjs();
   let upVotes = 0;
   let downVotes = 0;
+  let progress = "Finished";
 
-  return api.reviews.createReview({ ...params, commentIds, dateCreated, upVotes, downVotes });
+  return api.reviews.createReview({ ...params, commentIds, dateCreated, upVotes, downVotes, progress });
 
 }

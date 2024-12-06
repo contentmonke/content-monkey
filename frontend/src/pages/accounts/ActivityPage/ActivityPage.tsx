@@ -32,17 +32,37 @@ const ActivityPage: React.FC = () => {
   const fetchUserActivities = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/reviews/userId/${id}/activity`);
-      setUserActivities(response.data);
+      let data = response.data;
+      const filteredData = data
+        .filter(item => item.progress === "In Progress" || item.progress === "Finished")
+        .map(item => ({ ...item, progress: "Not Started" }));
+
+      const combinedData = [...data, ...filteredData];
+
+      combinedData.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+
+      setUserActivities(combinedData);
+      console.log(combinedData);
     } catch (error) {
       console.error("Error fetching user activities", error);
     }
   };
 
+
   const fetchFriendsActivities = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/reviews/userId/${id}/friends/activity`);
-      console.log(response.data);
-      setFriendsActivities(response.data);
+      let data = response.data;
+            const filteredData = data
+              .filter(item => item.activity && (item.activity.progress === "In Progress" || item.activity.progress === "Finished"))
+              .map(item => ({ ...item, activity: { ...item.activity, progress: "Not Started" } }));
+
+
+            const combinedData = [...data, ...filteredData];
+
+            combinedData.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+      console.log(combinedData);
+      setFriendsActivities(combinedData);
     } catch (error) {
       console.error("Error fetching friends' activities", error);
     }
@@ -86,26 +106,49 @@ const ActivityPage: React.FC = () => {
                     {userActivities.map((activity: any, index: number) => (
                       <li key={index} className="activity-item">
                         <div className="activity-item-header">
-                          <span className="activity-item-perp">{username}</span> {activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
-                          {activity.rating && (
-                            <Rating
-                              size="small"
-                              value={activity.rating}
-                              precision={0.5}
-                              readOnly
-                              sx={{ ml: 1 }}
-                            />
+                          {activity.progress == 'In Progress' ? (
+                            <>
+                              <span className="activity-item-perp">{username}</span> started <span className="activity-item-vict">{activity.mediaTitle}</span>
+                            </>
+                          ) : activity.progress == 'Finished' ? (
+                            <>
+                              <span className="activity-item-perp">{username}</span> finished <span className="activity-item-vict">{activity.mediaTitle}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="activity-item-perp">{username}</span> {activity.rating ? 'reviewed' : 'commented on'}{' '}
+                              <span className="activity-item-vict">{activity.mediaTitle}</span>
+                              {activity.rating && (
+                                <Rating
+                                  size="small"
+                                  value={activity.rating}
+                                  precision={0.5}
+                                  readOnly
+                                  sx={{ ml: 1 }}
+                                />
+                              )}
+                            </>
                           )}
                         </div>
                         <div className="activity-item-dates">
                           <span className="activity-relative-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toRelative()}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' })
+                              .toLocal()
+                              .minus({ hours: 1 })
+                              .toRelative()}
                           </span>
                           <span className="activity-absolute-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toLocaleString(DateTime.DATETIME_MED)}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' })
+                              .toLocal()
+                              .minus({ hours: 1 })
+                              .toLocaleString(DateTime.DATETIME_MED)}
                           </span>
                         </div>
-                        <div className={`activity-item-body ${expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'}`}>
+                        <div
+                          className={`activity-item-body ${
+                            expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'
+                          }`}
+                        >
                           {activity.body}
                         </div>
                         {((activity.body.split('\n').length > 1) || (activity.body.length > 120)) && (
@@ -128,19 +171,31 @@ const ActivityPage: React.FC = () => {
                 <div className="activity-page-contentlist">
                   <ul className="activity-page-ul">
                     {friendsActivities.map((activityWithUser: any, index: number) => (
-                      <li key={index} className="activity-item">
-                        <div className="activity-item-header">
-                          <span className="activity-item-perp">{activityWithUser.userName}</span> {activityWithUser.activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
-                          {activityWithUser.activity.rating && (
-                            <Rating
-                              size="small"
-                              value={activityWithUser.activity.rating}
-                              precision={0.5}
-                              readOnly
-                              sx={{ ml: 1 }}
-                            />
-                          )}
-                        </div>
+          <li key={index} className="activity-item">
+            <div className="activity-item-header">
+              {activityWithUser.activity.progress === 'In Progress' ? (
+                <>
+                  <span className="activity-item-perp">{activityWithUser.userName}</span> started <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
+                </>
+              ) : activityWithUser.activity.progress === 'Finished' ? (
+                <>
+                  <span className="activity-item-perp">{activityWithUser.userName}</span> finished <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
+                </>
+              ) : (
+                <>
+                  <span className="activity-item-perp">{activityWithUser.userName}</span> {activityWithUser.activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
+                  {activityWithUser.activity.rating && (
+                    <Rating
+                      size="small"
+                      value={activityWithUser.activity.rating}
+                      precision={0.5}
+                      readOnly
+                      sx={{ ml: 1 }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
                         <div className="activity-item-dates">
                           <span className="activity-relative-date">
                             {DateTime.fromJSDate(new Date(activityWithUser.activity.dateCreated)).minus({hours: 1}).toRelative()}

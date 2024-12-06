@@ -23,6 +23,10 @@ import disneyPlusLogo from '/disneyPlusLogo.png';
 import netflixLogo from '/netflixLogo.png'
 import googlePlayLogo from '/googlePlayLogo.png'
 import CountryDropdown from "./countryListComponent";
+import { createReview } from "../../api/objects";
+import ConfirmCancelModal from "./ConfirmCancelModal";
+import CloseIcon from "@mui/icons-material/Close";
+import SuccessAlert from '../../components/SuccessAlert';
 
 
 function MediaPage() {
@@ -30,6 +34,7 @@ function MediaPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [doneSearching, setDoneSearching] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [rating, setRating] = useState(0);
   const [labels, setLabels] = useState<MediaLabel | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
@@ -40,6 +45,9 @@ function MediaPage() {
   const [favorited, setFavorited] = useState(false);
   const [streamingService, setStreamingService] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("us");
+  const [currentStatus, setCurrentStatus] = useState<string | null>(null);
+  const [userRating, setUserRating] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log( "location: ", location );
@@ -65,14 +73,122 @@ function MediaPage() {
   }, [needsUpdate, media, user]);
 
   useEffect(() => {
+    const fetchStatus = async () => {
+      if (user?.name && media) {
+        try {
+          const idResponse = await axios.post(`http://localhost:8080/api/user/name/${user?.name}`);
+          const userId = idResponse.data[0].id;
+          const reviews = await axios.get(`http://localhost:8080/api/reviews/userId/${userId}`);
+          const review = reviews.data.find((review: any) => review.mediaId === media.id);
+
+          if (review) {
+            setCurrentStatus(review.progress || "Not Started"); // Default to "Not Started" if no progress
+            setUserRating(review.rating);
+          } else {
+            setCurrentStatus("Not Started");
+            setUserRating(0);
+          }
+        } catch (error) {
+          console.error('Error fetching status:', error);
+        }
+      }
+    };
+
+    fetchStatus();
+  }, [user, media]);
+
+  useEffect(() => {
     fetchStreamingServices(media, selectedCountryCode, setStreamingService, setIsLoading, setIsError);
   }, [selectedCountryCode]);
 
-  const handleStatusClick = (value: any) => {
+const handleQuickRate = async (value: number) => {
+  if (!isAuthenticated) {
+    loginWithRedirect();
+    return;
   }
+
+  setUserRating(value);
+
+  try {
+    const idResponse = await axios.post(`http://localhost:8080/api/user/name/${user?.name}`);
+    const userId = idResponse.data[0].id;
+    const reviews = await axios.get(`http://localhost:8080/api/reviews/userId/${userId}`);
+    const matchingReview = reviews.data.find((review: any) => review.mediaId === media.id);
+    const currentBody = matchingReview ? matchingReview.body : "";
+    createReview({ mediaType: media.mediaType,
+       mediaId: media.id,
+       userId: userId,
+       progress: status,
+       rating: value,
+       body: currentBody, })
+       .then((response) => {
+       })
+       .catch((error) => {
+          console.error(error);
+          setIsError(true);
+       });
+       setIsSuccess(true);
+  } catch (error) {
+    console.error('Error handling rating change:', error);
+    setIsError(true);
+  }
+};
+
+
+const handleStatusClick = async (status: string) => {
+  try {
+    const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+    const userId = idResponse.data[0].id;
+    const reviews = await axios.get(`http://localhost:8080/api/reviews/userId/${userId}`);
+    let found = false;
+    // Check if review exists and update status
+    for (let i = 0; i < reviews.data.length; i++) {
+      if (reviews.data[i].mediaId === media.id) {
+        reviews.data[i].progress = status;
+        console.log('Updated progress:', reviews.data[i].progress);
+        const response = await axios.put(`http://localhost:8080/api/reviews/${reviews.data[i].id}`, reviews.data[i]);
+        found = true;
+      }
+    }
+    if(!found) {
+        createReview({ mediaType: media.mediaType,
+                             mediaId: media.id,
+                             userId: userId,
+                             progress: status,
+                             rating: 0,
+                             body: '', })
+                  .then((response) => {
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    setIsError(true);
+                  });
+              }
+
+  } catch (error) {
+    console.error('Error Updating Status', error);
+  }
+}
+
 
   const handleActionClick = (value: any) => {
   }
+
+  const handleRatingReset = async () => {
+      setUserRating(0);
+      try {
+          const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+          const userId = idResponse.data[0].id;
+          const reviews = await axios.get(`http://localhost:8080/api/reviews/userId/${userId}`);
+          const matchingReview = reviews.data.find((review: any) => review.mediaId === media.id);
+          const reviewId = matchingReview.id;
+          const response = await axios.delete(`http://localhost:8080/api/reviews/${reviewId}`);
+      } catch (error) {
+            console.error('Error deleting the review:', error);
+      }
+
+      setIsModalOpen(false);
+  };
 
   const handleRatingChange = (value: any) => {
       if (!isAuthenticated) {
@@ -135,13 +251,14 @@ function MediaPage() {
                 <StatusDropdown
                   isOpen={statusDropdownOpen}
                   setOpen={setStatusDropdownOpen}
-                  handleClick={() => {
+                  handleClick={(status: string) => {
                     if (isAuthenticated) {
-                      handleStatusClick(null);
+                      handleStatusClick(status);
                     } else {
                       loginWithRedirect();
                     }
                   }}
+                  defaultStatus={currentStatus}
                 />
                 <ActionDropdown
                   isOpen={actionDropdownOpen}
@@ -154,10 +271,32 @@ function MediaPage() {
                     }
                   }} />
                 <h6 style={{ ...rateField }}>Rate</h6>
-                {<RatingStars
-                  value={rating}
-                  setValue={(event: any) => handleRatingChange(event.target.value)}
-                />}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                        <RatingStars
+                          value={userRating}
+                          setValue={(event, newValue) => {
+                            if (newValue !== null) {
+                              handleQuickRate(newValue);
+                            }
+                          }}
+                        />
+                        {userRating > 0 && ( // Conditionally render the "X" button
+                                  <IconButton onClick={() => setIsModalOpen(true)} aria-label="reset rating">
+                                    <CloseIcon />
+                                  </IconButton>
+                        )}
+                      </div>
+                      <ConfirmCancelModal
+                        open={isModalOpen}
+                        onClose={() => setIsModalOpen(false)}
+                        onConfirm={handleRatingReset}
+                        message="Are you sure you want to reset your rating?"
+                      />
+                      <SuccessAlert
+                            message={"Quick Rating Updated Successfully."}
+                            showAlert={isSuccess}
+                            setShowAlert={setIsSuccess}
+                          />
 
 
                 <h6 style={{ ...rateField }}>Favorite</h6>
@@ -232,7 +371,7 @@ function MediaPage() {
             <Container sx={{ ...mediaReviews }}>
               <h6>Reviews</h6>
               <ReviewSubsection
-                reviews={media?.reviews}
+                reviews={media?.reviews?.filter(review => review.rating !== 0)}
                 setNeedsUpdate={setNeedsUpdate}
               />
               {media?.reviews.length === 0 &&

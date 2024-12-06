@@ -56,7 +56,8 @@ public class MediaService {
             return null;
         }
 
-        int numReviews = reviewRepository.countByMediaId(mediaEntity.get(0).getId());
+        int numReviews = reviewRepository.countByMediaIdAndRatingNot(mediaEntity.get(0).getId(), 0);
+        System.out.println(numReviews);
         List<ReviewEntity> reviewEntities = reviewRepository.findAllByMediaId(
                 mediaEntity.get(0).getId(),
                 PageRequest.of(pageNumber, pageSize)
@@ -102,7 +103,7 @@ public class MediaService {
             entity.setStreamingService(getStreamingServiceByTitle(entity.getMediaTitle(), "us"));
         }
 
-        int numReviews = reviewRepository.countByMediaId(mediaEntity.get(0).getId());
+        int numReviews = reviewRepository.countByMediaIdAndRatingNot(mediaEntity.get(0).getId(), 0);
         List<ReviewEntity> reviewEntities = reviewRepository.findAllByMediaId(
                 mediaEntity.get(0).getId(),
                 PageRequest.of(pageNumber, pageSize)
@@ -145,7 +146,7 @@ public class MediaService {
 
         MediaEntity mediaEntity = mediaEntities.get(0);
 
-        int numReviews = reviewRepository.countByMediaId(mediaEntity.getId());
+        int numReviews = reviewRepository.countByMediaIdAndRatingNot(mediaEntity.getId(), 0);
         float sumReviews = reviewRepository.getSumRatings(mediaEntity.getId());
         float averageRating = (float) Math.round((sumReviews / (float) numReviews) * 2) / 2;
 

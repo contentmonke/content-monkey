@@ -20,6 +20,9 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT COALESCE(SUM(r.rating), 0) FROM ReviewEntity r WHERE r.mediaId IS NOT NULL AND r.mediaId = :id")
     float getSumRatings(Long id);
 
+    int countByMediaIdAndRatingNot(Long mediaId, int rating);
+
+
     List<ReviewEntity> findByUserId(Long userId);
 
     @Query("SELECT r FROM ReviewEntity r WHERE r.userId = :userId AND " +

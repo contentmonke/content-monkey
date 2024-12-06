@@ -147,8 +147,16 @@ public class ReviewService {
         List<ReviewEntity> reviewEntity = reviewRepository.findByMediaIdAndUserId(review.getMediaId(), review.getUserId());
         if (!reviewEntity.isEmpty()) {
             System.out.println("Already have a review for this media");
+            reviewEntity.get(0).setBody(review.getBody());
+            System.out.println(reviewEntity.get(0));
+            reviewEntity.get(0).setStartDate(review.getStartDate());
+            reviewEntity.get(0).setEndDate(review.getEndDate());
+            reviewEntity.get(0).setRating(review.getRating());
+            reviewEntity.get(0).setProgress(review.getProgress());
+            reviewRepository.save(reviewEntity.get(0));
             return null;
         }
+        review.setProgress("Finished");
         ReviewEntity savedEntity = reviewRepository.save(review);
         userService.addReviewIdToUser(savedEntity.getUserId(), savedEntity.getId());
         return savedEntity;
@@ -168,6 +176,7 @@ public class ReviewService {
             reviewEntity.setDownVotes(newReviewEntity.getDownVotes());
             reviewEntity.setStartDate(newReviewEntity.getStartDate());
             reviewEntity.setEndDate(newReviewEntity.getEndDate());
+            reviewEntity.setProgress(newReviewEntity.getProgress());
             reviewRepository.save(reviewEntity);
             return null;
         }
@@ -333,7 +342,6 @@ public class ReviewService {
             LocalDateTime dateB = (b instanceof ReviewWithMediaDTO) ? ((ReviewWithMediaDTO) b).getDateCreated() : ((CommentWithMediaDTO) b).getDateCreated();
             return dateB.compareTo(dateA); // Latest to oldest
         });
-
         return activities;
     }
 

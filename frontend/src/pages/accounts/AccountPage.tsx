@@ -234,58 +234,62 @@ const AccountPage: React.FC = () => {
                 <p className="fave-titles" onClick={() => navigate(`/u/${id}/activity`)}>Recent Reviews</p>
                 <hr className="main-divider" />
                 <ul>
-                  {reviews.map((review, index) => (
-                    <div key={index}>
-                      <li>
-                        <div className="review-header">
-                          {(() => {
-                            const reviewDate = new Date(review.dateCreated);
-                            reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
-                            return (
-                              <>
-                                <Rating
-                                  size={'small'}
-                                  sx={{ my: 0, mr: 1, mb: 0.5 }}
-                                  value={review.rating}
-                                  precision={0.5}
-                                  readOnly
-                                />
-                                <p className="review-date">
-                                  {reviewDate.toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: '2-digit',
-                                  })}{' '}
-                                  {reviewDate.toLocaleTimeString('en-US', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true,
-                                  })}
-                                </p>
-                              </>
-                            );
-                          })()}
-                        </div>
+                  {reviews
+                    .filter((review) => review.rating > 0) // Filter out reviews with a rating of 0
+                    .map((review, index) => (
+                      <div key={index}>
+                        <li>
+                          <div className="review-header">
+                            {(() => {
+                              const reviewDate = new Date(review.dateCreated);
+                              console.log(reviews);
+                              reviewDate.setHours(reviewDate.getHours() - 4); // Subtract 4 hours for EST
+                              return (
+                                <>
+                                  <Rating
+                                    size={'small'}
+                                    sx={{ my: 0, mr: 1, mb: 0.5 }}
+                                    value={review.rating}
+                                    precision={0.5}
+                                    readOnly
+                                  />
+                                  <p className="review-date">
+                                    {reviewDate.toLocaleDateString('en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: '2-digit',
+                                    })}{' '}
+                                    {reviewDate.toLocaleTimeString('en-US', {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: true,
+                                    })}
+                                  </p>
+                                </>
+                              );
+                            })()}
+                          </div>
 
-                        {/* Other content like review title and upvotes/downvotes */}
-                        <p className="review-title">{review.mediaTitle}</p>
+                          {/* Other content like review title and upvotes/downvotes */}
+                          <p className="review-title">{review.mediaTitle}</p>
 
-                        <Container disableGutters>
-                          <IconButton size={'small'}>
-                            <ThumbUp sx={{ width: 15 }} />
-                          </IconButton>
-                          <Typography variant="caption">{review.upVotes}</Typography>
-                          <IconButton>
-                            <ThumbDown sx={{ width: 15 }} />
-                          </IconButton>
-                          <Typography variant="caption">{review.downVotes}</Typography>
-                        </Container>
-                      </li>
+                          <Container disableGutters>
+                            <IconButton size={'small'}>
+                              <ThumbUp sx={{ width: 15 }} />
+                            </IconButton>
+                            <Typography variant="caption">{review.upVotes}</Typography>
+                            <IconButton>
+                              <ThumbDown sx={{ width: 15 }} />
+                            </IconButton>
+                            <Typography variant="caption">{review.downVotes}</Typography>
+                          </Container>
+                        </li>
 
-                      {/* Add a Divider between each review */}
-                      {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
-                    </div>
-                  ))}
+                        {/* Add a Divider between each review */}
+                        {index < reviews.length - 1 && <Divider sx={{ marginY: 2 }} />}
+                      </div>
+                    ))}
+
                 </ul>
               </div>
 

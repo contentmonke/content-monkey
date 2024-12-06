@@ -151,6 +151,9 @@ const ListContent: React.FC<ListContentProps> = ({ reviews:initialReviews, type,
                   </p>
                 )}
               </div>
+              <div className="content-page-date-range">
+                   {review.progress}
+              </div>
               <div className={`content-page-review-body ${expandedReviewIds.has(review.id) ? 'expanded' : 'collapsed'}`} onClick={() => openEditModal(review)}>
                 {review.body}
               </div>

@@ -1,27 +1,39 @@
 import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper } from "@mui/material";
-import { ArrowDropDownIcon } from "@mui/x-date-pickers";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"; // Updated import for ArrowDropDownIcon
 import { buttonGroup } from "../../style/media-page";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const options = [
-  "Watched",
-  "In Progress",
   "Not Started",
-]
+  "In Progress",
+  "Finished",
+];
 
-function StatusDropdown({ isOpen, setOpen, handleClick }: any) {
-
+function StatusDropdown({ isOpen, setOpen, handleClick, defaultStatus }: any) {
   const anchorRef = React.useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(() =>
+      options.indexOf(defaultStatus) !== -1 ? options.indexOf(defaultStatus) : 0
+    );
+
+
+  useEffect(() => {
+      if (defaultStatus) {
+        const index = options.indexOf(defaultStatus);
+        if (index !== -1) {
+          setSelectedIndex(index);
+        }
+      }
+    }, [defaultStatus]);
 
   const handleDropdown = () => {
     setOpen(!isOpen);
   };
 
   const handleMenuItemClick = (index: number) => {
-    setSelectedIndex(index);
-    setOpen(false);
-  };
+      setSelectedIndex(index);
+      handleClick(options[index]);
+      setOpen(false);
+    };
 
   const handleClose = (event: Event) => {
     if (
@@ -43,8 +55,10 @@ function StatusDropdown({ isOpen, setOpen, handleClick }: any) {
       >
         <Button
           sx={{ flexGrow: 1, bgcolor: "#31628F" }}
-          onClick={handleClick}
-        >{options[selectedIndex]}</Button>
+          onClick={() => handleClick(options[selectedIndex])} // Pass the current status when clicked
+        >
+          {options[selectedIndex]}
+        </Button>
         <Button
           size="small"
           sx={{ bgcolor: "#31628F" }}
@@ -53,7 +67,7 @@ function StatusDropdown({ isOpen, setOpen, handleClick }: any) {
         >
           <ArrowDropDownIcon />
         </Button>
-      </ButtonGroup >
+      </ButtonGroup>
       <Popper
         sx={{ zIndex: 1, width: anchorRef.current?.clientWidth }}
         open={isOpen}

@@ -17,6 +17,7 @@ public class ReviewWithMediaDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String mediaTitle;  // Field for the media title
+    private String progress;
 
     public ReviewWithMediaDTO(ReviewEntity review, String mediaTitle) {
         this.id = review.getId();
@@ -30,6 +31,7 @@ public class ReviewWithMediaDTO {
         this.startDate = review.getStartDate();
         this.endDate = review.getEndDate();
         this.mediaTitle = mediaTitle;
+        this.progress = review.getProgress();
     }
 
     public Long getId() {
@@ -118,5 +120,13 @@ public class ReviewWithMediaDTO {
 
     public void setMediaTitle(String mediaTitle) {
         this.mediaTitle = mediaTitle;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 }

@@ -58,6 +58,10 @@ public class ReviewEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @NotNull
+    @Column(name = "progress")
+    private String progress;
+
     @Override
     public String toString() {
         return "ReviewEntity{" +
@@ -72,6 +76,7 @@ public class ReviewEntity {
                 ", downvotes=" + downVotes +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
+                ", progress='" + progress + '\'' +
                 '}';
     }
 }
