@@ -129,10 +129,14 @@ public class UserEntity {
         return this.name;
     }
 
-    public void setPrivate(long priv) { this.priv = priv;}
-
     public Long getId() {
         return this.id;
+    }
+
+    public void setPrivate(Long priv) { this.priv = priv; }
+
+    public Long getPrivate() {
+        return this.priv;
     }
 
 
