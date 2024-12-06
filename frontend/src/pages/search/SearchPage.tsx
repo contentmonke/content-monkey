@@ -16,11 +16,10 @@ import MediaSearchBar from "../reviews/MediaSearchBar";
 
 function SearchPage() {
   const location = useLocation(); // Accessing the state passed from the navbar
-
   const [title, setTitle] = useState((location && location.state) ? location.state.searchQuery : "");
   const [results, setResults] = useState<VolumeInfo[]>([]);
   const [isLoading, setIsLoading] = useState("");
-  const [mediaType, setMediaType] = useState(MediaType.BOOK);
+  const [mediaType, setMediaType] = useState(MediaType.UNSELECTED);
   const [media, setMedia] = useState<Media | null>(null);
   const [page, setPage] = useState(1);
   const [isError, setIsError] = useState(false);
@@ -65,7 +64,7 @@ function SearchPage() {
     <>
       <Container
         disableGutters
-        maxWidth={true}
+        // maxWidth={true}
         sx={{ ...newFullpageContainer }}
       >
         {media !== null &&

@@ -1,0 +1,46 @@
+.invite-modal-header {
+  display: flex;
+  width: auto;
+  justify-content: left;
+  margin-left: 1;
+  margin-top: 1;
+}
+
+.invite-user-list {
+  /* display: flex; */
+  justify-items: center;
+  margin-top: 20px;
+}
+
+.invite-user-item {
+  display: flex;
+  width: 90%;
+  height: 80px;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ddd;
+}
+
+.user-img-container {
+  display: flex;
+  position: relative;
+  width: 70px;
+  height: 70px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.user-img {
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}

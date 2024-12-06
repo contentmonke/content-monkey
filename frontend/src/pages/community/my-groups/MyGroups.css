@@ -1,0 +1,95 @@
+.my-groups {
+  margin-top: 50px;
+  height: 250px;
+  width: 100%;
+  max-width: 850px;
+}
+
+.my-groups-empty {
+  margin-top: 50px;
+  height: 100px;
+  max-width: 100%;
+  width: 850px;
+}
+
+.my-groups-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.browse-all-button {
+  color: gray;
+  background: none;
+}
+
+.my-groups-content {
+  position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+.my-groups-empty-message {
+  color: gray;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.my-groups-list {
+  display: flex;
+  position: relative;
+  height: 200px;
+  width: 100%;
+  gap: 10px;
+  overflow-x: hidden;
+  transition: transform 0.3s ease-in-out;
+
+}
+
+.group-card {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.group-card-content {
+  width: 150px;
+  height: 150px;
+  text-align: center;
+  justify-items: center;
+}
+
+.group-card-picture-container {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
+  flex-shrink: 0;
+  margin-bottom: 5px;
+}
+
+.group-card-picture {
+  /* height: 50%;
+  width: auto; */
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  /* max-width: 130px; */
+  object-fit: cover;
+  /* margin-bottom: 15px; */
+  /* background-color: red; */
+}
+
+.group-card-name {
+  display: -webkit-box;
+  /* text-overflow: ellipsis; */
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.group-card-members {
+  font-size: small;
+  color: gray;
+  margin-top: 5px;
+}

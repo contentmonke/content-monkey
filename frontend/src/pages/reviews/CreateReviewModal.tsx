@@ -148,7 +148,7 @@ function CreateReviewModal({ open, setModalOpen, media, setNeedsUpdate }: params
                   <TextField
                     label={"What are your thoughts?"}
                     multiline
-                    rows={8}
+                    rows={1}
                     sx={{
                       mb: 1,
                       "& .MuiOutlinedInput-root": {

@@ -100,7 +100,7 @@ const AccountPage: React.FC = () => {
           (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
 
-
+        // console.log(userResponse);
         setEmail(userResponse.data.email);
         setName(userResponse.data.username);
         if (userResponse.data.picture != null) {
@@ -118,6 +118,8 @@ const AccountPage: React.FC = () => {
         //console.log(loggedInUserId);
         //console.log(userResponse.data.friend_list);
         if (userResponse.data.priv === 1 && !userResponse.data.friend_list?.includes(String(loggedInUserId)) && id != loggedInUserId) {
+            console.log(id);
+            console.log(loggedInUserId);
             setIsPrivate(true);
             return;
         }
@@ -131,6 +133,23 @@ const AccountPage: React.FC = () => {
     fetchData();
   }, [id, loggedInUserId]);
 
+  useEffect(() => {
+    try {
+      const getUser = async () => {
+        if (isLoading === false && user !== null) {
+          const curr_user = await axios.post("http://localhost:8080/api/user/", user)
+          setLoggedInUserId(curr_user.data[0].id);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests);
+          setLoggedInBlock(curr_user.data[0].blocked_users);
+          setLoggedInUserFriends(curr_user.data[0].friend_list);
+          setLoggedInUserFriendRequests(curr_user.data[0].friend_requests)
+        }
+      }
+      getUser()
+    } catch (err) {
+      console.log("Error getting logged in user", err)
+    }
+  }, [isLoading, user])
 
   const handleFriendRequest = async () => {
     try {
@@ -209,6 +228,7 @@ const AccountPage: React.FC = () => {
                 <li onClick={() => navigate(`/u/${id}/activity`)}>Activity</li>
                 <li onClick={() => navigate(`/u/${id}/friends`)}>Friends</li>
                 <li onClick={() => navigate(`/u/${id}/content`)}>Content</li>
+                <li onClick={() => navigate(`/u/${id}/lists`)}>Lists</li>
                 {(isAuthenticated && user && user.email == email) ?
                   <li onClick={() => navigate('/upload')}>Upload Goodreads Data</li> : (<></>)
                 }
@@ -304,6 +324,7 @@ const AccountPage: React.FC = () => {
   }
 
   return (
+    <>
     <div className="profile-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100vh', paddingTop: '15vh' }}>
       <div style={{
         background: 'rgba(255, 255, 255, 0.9)',
@@ -316,10 +337,9 @@ const AccountPage: React.FC = () => {
       }}>
         <h1 style={{ margin: 0 }}>User is Private!</h1>
       </div>
-    </div>
-  );
-
-
+    </div >
+  </>
+  )
 };
 
 export default AccountPage;

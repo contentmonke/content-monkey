@@ -1,0 +1,41 @@
+.settings-sidebar {
+  width: 200px;
+  padding-right: 20px;
+  border-right: 1px solid #ddd;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.settings-sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.settings-sidebar ul li {
+  margin: 0;
+}
+
+.settings-sidebar ul li a {
+  text-decoration: none;
+  color: #31628F;
+  font-size: 16px;
+  padding: 10px 0;
+  display: block;
+  padding-left: 15px;
+  /* Make sure non-active links are aligned correctly */
+}
+
+.settings-sidebar ul li a:hover {
+  background-color: #ffffff;
+}
+
+.settings-sidebar ul li a.active {
+  font-weight: bold;
+  color: #000;
+  background-color: #ffffff;
+  padding-left: 15px;
+  /* Align active link padding with other links */
+  border-left: 4px solid #31628F;
+  /* Add border to show it's active */
+}

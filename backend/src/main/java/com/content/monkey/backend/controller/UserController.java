@@ -1,5 +1,6 @@
 package com.content.monkey.backend.controller;
 
+import com.content.monkey.backend.model.ListEntity;
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
 import com.content.monkey.backend.model.MediaEntity;
@@ -212,6 +213,17 @@ public class UserController {
 
 
 
+    @PutMapping("/{userId}/add-list")
+    public ResponseEntity<UserEntity> addListToUser(@PathVariable Long userId, @RequestParam Long listId) {
+        UserEntity updatedUser = userService.addListToUser(userId, listId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/{userId}/lists")
+    public ResponseEntity<List<ListEntity>> getUserLists(@PathVariable Long userId) {
+        List<ListEntity> lists = userService.getUserLists(userId);
+        return ResponseEntity.ok(lists);
+    }
 
     @GetMapping("/chat/{id}")
     public List<MediaEntity> chat(@PathVariable Long id){
@@ -221,5 +233,10 @@ public class UserController {
     @GetMapping("/highest-rated/")
     public List<MediaEntity> highestRated() {
         return userService.getHighestRatedMedia();
+    }
+
+    @PostMapping("/list")
+    public List<UserEntity> getListOfUsers(@RequestBody List<Long> userIds) {
+        return userService.getListOfUsers(userIds);
     }
 }

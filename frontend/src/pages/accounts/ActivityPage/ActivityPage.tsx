@@ -116,9 +116,8 @@ const ActivityPage: React.FC = () => {
                             </>
                           ) : (
                             <>
-                              <span className="activity-item-perp">{username}</span> {activity.rating ? 'reviewed' : 'commented on'}{' '}
-                              <span className="activity-item-vict">{activity.mediaTitle}</span>
-                              {activity.rating && (
+                            <span className="activity-item-perp">{username}</span> {(activity.rating != null) ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activity.mediaTitle}</span>
+                            {(activity.rating != null) && (
                                 <Rating
                                   size="small"
                                   value={activity.rating}
@@ -132,23 +131,13 @@ const ActivityPage: React.FC = () => {
                         </div>
                         <div className="activity-item-dates">
                           <span className="activity-relative-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' })
-                              .toLocal()
-                              .minus({ hours: 1 })
-                              .toRelative()}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toRelative()}
                           </span>
                           <span className="activity-absolute-date">
-                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' })
-                              .toLocal()
-                              .minus({ hours: 1 })
-                              .toLocaleString(DateTime.DATETIME_MED)}
+                            {DateTime.fromJSDate(new Date(activity.dateCreated), { zone: 'utc' }).toLocal().minus({hours: 1}).toLocaleString(DateTime.DATETIME_MED)}
                           </span>
                         </div>
-                        <div
-                          className={`activity-item-body ${
-                            expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'
-                          }`}
-                        >
+                        <div className={`activity-item-body ${expandedActivityIds.has(activity.id) ? 'expanded' : 'collapsed'}`}>
                           {activity.body}
                         </div>
                         {((activity.body.split('\n').length > 1) || (activity.body.length > 120)) && (
@@ -183,8 +172,8 @@ const ActivityPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span className="activity-item-perp">{activityWithUser.userName}</span> {activityWithUser.activity.rating ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
-                  {activityWithUser.activity.rating && (
+                    <span className="activity-item-perp">{activityWithUser.userName}</span> {(activityWithUser.activity.rating != null) ? 'reviewed' : 'commented on'} <span className="activity-item-vict">{activityWithUser.activity.mediaTitle}</span>
+                    {(activityWithUser.activity.rating != null) && (
                     <Rating
                       size="small"
                       value={activityWithUser.activity.rating}

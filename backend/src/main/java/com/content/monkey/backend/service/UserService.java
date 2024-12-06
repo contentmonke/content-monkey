@@ -3,11 +3,14 @@ package com.content.monkey.backend.service;
 import com.content.monkey.backend.chatgpt.ChatGPTRequest;
 import com.content.monkey.backend.chatgpt.ChatGPTResponse;
 import com.content.monkey.backend.exceptions.UserNotFoundException;
+import com.content.monkey.backend.model.ListEntity;
+import com.content.monkey.backend.repository.ListRepository;
 import com.content.monkey.backend.model.MediaEntity;
 import com.content.monkey.backend.model.UserEntity;
 import com.content.monkey.backend.model.dto.MediaEntityDTO;
 import com.content.monkey.backend.repository.MediaRepository;
 import com.content.monkey.backend.repository.UserRepository;
+import org.apache.catalina.User;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +28,8 @@ public class UserService {
     private MediaRepository mediaRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ListRepository listRepository;
 
     public UserEntity getUser(Long id) {
         UserEntity user = userRepository.findById(id)
@@ -37,13 +42,21 @@ public class UserService {
     }
 
     public UserEntity createUserEntity (UserEntity created) {
-        created.setUsername(generateUniqueUsername(created.getName()));
-        return userRepository.save(created);
+        List<UserEntity> user = userRepository.findByName(created.getName());
+        System.out.println(user);
+        System.out.println(created.getName());
+        if (!user.isEmpty()) {
+            return user.get(0);
+        } else {
+            created.setUsername(generateUniqueUsername(created.getName()));
+            return userRepository.save(created);
+        }
     }
 
-    public List<UserEntity> getSingleUser(String username) {
-        List<UserEntity> users = userRepository.findByName(username);
-        if (!users.isEmpty() && (users.get(0).getFriend_list() == null || users.get(0).getFriend_requests() == null)) {
+    public List<UserEntity> getSingleUser(String name) {
+        List<UserEntity> users = userRepository.findByName(name);
+        if (!users.isEmpty() && (users.get(0).getFriend_list() == null ||
+                users.get(0).getFriend_requests() == null)) {
             users.get(0).setFriend_list(new ArrayList<>());
             users.get(0).setFriend_requests(new ArrayList<>());
         }
@@ -208,7 +221,7 @@ public class UserService {
         List<Long> favorite_media = user.getFavoriteMedia();
         List<String> favorite_titles = new ArrayList<>();
         for(int i = 0; i < favorite_media.size(); i++) {
-            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).getFirst().getMediaTitle());
+            favorite_titles.add(mediaRepository.findByid(favorite_media.get(i)).get(0).getMediaTitle());
         }
         return favorite_titles;
     }
@@ -218,7 +231,7 @@ public class UserService {
         List<Long> favorite_media = new ArrayList<>();
 
         for(int i = 0; i < favorites.size(); i++) {
-            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).getFirst().getId());
+            favorite_media.add(mediaRepository.findByMediaTitle(favorites.get(i)).get(0).getId());
         }
         user.setFavoriteMedia(favorite_media);
         userRepository.save(user);
@@ -240,12 +253,12 @@ public class UserService {
 
     public UserEntity getUserByEmail(String email) {
         List<UserEntity> user = userRepository.findByEmail(email);
-        return user.getFirst();
+        return user.get(0);
     }
 
     public void unblockUser(String blockedUser, Long userId) {
         UserEntity user = getUser(userId);
-        UserEntity blockedUserE = getSingleUser(blockedUser).getFirst();
+        UserEntity blockedUserE = getSingleUser(blockedUser).get(0);
         List<Long> newBlockedUsers = user.getBlockedUsers();
         newBlockedUsers.remove(blockedUserE.getId());
         user.updateBlockedUsers(newBlockedUsers);
@@ -263,7 +276,13 @@ public class UserService {
     }
 
     public String generateUniqueUsername(String name) {
-        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String baseUsername;
+        if (name.indexOf('@') > 1) {
+            baseUsername = name.substring(0, name.indexOf('@'));
+        } else {
+            baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        }
+
         baseUsername = baseUsername.substring(0, Math.min(baseUsername.length(), 32));
         String username = baseUsername;
         int suffix = 1;
@@ -297,7 +316,7 @@ public class UserService {
             List<String> mediaAsArrList = new ArrayList<>(Arrays.asList(media_recs));
             return returnListOfMedia(mediaAsArrList);
         }
-        List<Long> favMedia = user.getFavoriteMedia();
+        List<Long> favMedia = (user.getFavoriteMedia() == null) ? new ArrayList<>() : user.getFavoriteMedia();
         List<MediaEntity> books = new ArrayList<>();
         List<MediaEntity> tvShows = new ArrayList<>();
         List<MediaEntity> movies = new ArrayList<>();
@@ -452,6 +471,31 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
+    public UserEntity addListToUser(Long userId, Long listId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        List<Long> listIds = user.getListIds();
+        if (listIds == null) {
+            listIds = new ArrayList<>();
+            user.setListIds(listIds);
+        }
+
+        if (!listIds.contains(listId)) {
+            listIds.add(listId);
+            user.setListIds(listIds);
+        }
+
+        return userRepository.save(user);
+    }
+
+    public List<ListEntity> getUserLists(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return listRepository.findAllById(user.getListIds());
+    }
+
     public List<MediaEntity> getHighestRatedMedia() {
         List<MediaEntity> highestRatedBooks = mediaRepository.findHighestRated("Book");
         List<MediaEntity> highestRatedMovies = mediaRepository.findHighestRated("Movie");
@@ -470,5 +514,9 @@ public class UserService {
         // Print the unique media list
 //        uniqueMediaList.forEach(System.out::println);
         return uniqueMediaList;
+    }
+
+    public List<UserEntity> getListOfUsers(List<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 }

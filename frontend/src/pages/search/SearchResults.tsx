@@ -15,12 +15,17 @@ type customParams = {
 
 
 function SearchResults({ results, page, mediaType, handleClick, handlePageChange, scrollRef, location }: customParams) {
-
+  let filteredResults;
+  if (mediaType === "---") {
+    filteredResults = results;
+  } else {
+    filteredResults = results.filter(result => result.mediaType === mediaType)
+  }
   return (
     <List sx={{ padding: 0 }}>
-      {results.length > 0 &&
+      {filteredResults.length > 0 &&
         <>
-          {results.slice((page - 1) * 10, (page * 10)).map((result, index) => (
+          {filteredResults.slice((page - 1) * 10, (page * 10)).map((result, index) => (
             <div key={index}>
               <Divider component="li" />
               <ListItemButton
@@ -32,9 +37,10 @@ function SearchResults({ results, page, mediaType, handleClick, handlePageChange
           ))}
           <CustomPagination
             scrollRef={scrollRef}
-            items={results}
+            items={filteredResults}
             page={page}
-            handlePageChange={handlePageChange} />
+            handlePageChange={handlePageChange}
+          />
         </>
       }
     </List>

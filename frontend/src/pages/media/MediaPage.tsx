@@ -48,9 +48,9 @@ function MediaPage() {
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [userRating, setUserRating] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userId, setUserId] = useState();
 
   useEffect(() => {
-    console.log( "location: ", location );
     if (location && location.state && location.state.result && needsUpdate) {
       setNeedsUpdate(false);
       fetchMedia(location.state.result, setMedia, setStreamingService, setLabels, setIsLoading, setIsError, setDoneSearching);
@@ -60,6 +60,7 @@ function MediaPage() {
       try {
         if (!isLoading && user?.name && media) {
           const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
+          setUserId(idResponse.data[0].id);
           const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + idResponse.data[0].id);
           if (favoritesResponse.data.includes(media.mediaTitle)) {
             setFavorited(true);
@@ -204,6 +205,7 @@ const handleStatusClick = async (status: string) => {
     try {
       const idResponse = await axios.post('http://localhost:8080/api/user/name/' + user?.name);
       const userId = idResponse.data[0].id;
+      setUserId(idResponse.data[0].id);
       const favoritesResponse = await axios.get<string[]>(`http://localhost:8080/api/user/getFavorites?id=` + userId);
 
 
@@ -269,7 +271,10 @@ const handleStatusClick = async (status: string) => {
                     } else {
                       loginWithRedirect();
                     }
-                  }} />
+                  }}
+                  mediaId={media.id}
+                  userId={userId}
+                />
                 <h6 style={{ ...rateField }}>Rate</h6>
                 <div style={{ display: "flex", alignItems: "center" }}>
                         <RatingStars

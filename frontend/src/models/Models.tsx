@@ -83,3 +83,56 @@ export enum MediaType {
   VIDEO_GAME = "Video Game",
   UNSELECTED = "---"
 }
+
+export type Group = {
+  id: number,
+  groupName: string,
+  description: string,
+  owner: number,
+  picture: string | null,
+  isPublic: boolean,
+  members: number[],
+  joinRequests: number[],
+  discussionBoards: number[],
+  dateCreated: Date
+}
+
+export type Post = {
+  id: number,
+  username: string,
+  commentIds: number[],
+  postBody: string,
+  postDate: Date,
+  upVotes: number,
+  downVotes: number,
+  picture: string
+}
+
+export type DiscussionComment = {
+  id: number,
+  userId: number,
+  username: string,
+  postId: number,
+  body: string,
+  dateCreated: Date,
+  upVotes: number,
+  downVotes: number,
+  picture: string
+}
+
+export type GroupInvite = {
+  id: number,
+  groupId: number,
+  groupName: string,
+  inviteeId: number,
+  inviterId: number,
+  inviterName: string,
+  dateSent: Date
+}
+
+export type DiscussionBoard = {
+  id: number,
+  title: string,
+  posts: Post[],
+  post_ids: number[]
+}
